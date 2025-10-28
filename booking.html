@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>HomeGlitz — Booking</title>
 
+  <!-- ✅ Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
 
   <style>
@@ -42,7 +43,6 @@
     }
     .nav-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; color: var(--text); }
     .brand__logo { width: 34px; height: 34px; border-radius: 8px; background: linear-gradient(135deg, var(--ring), #8fa4ff); display: grid; place-items: center; }
-    .nav-toggle { display: none; background: none; border: none; color: var(--text); font-size: 24px; cursor: pointer; }
     .nav-links { display: flex; gap: 24px; list-style: none; margin: 0; padding: 0; }
     .nav-links a { text-decoration: none; color: var(--muted); transition: color var(--transition); }
     .nav-links a:hover, .nav-links a.active { color: var(--accent); }
@@ -103,28 +103,21 @@
     }
     .linen-badge.active { background: var(--ring); color: #fff; box-shadow: 0 0 8px rgba(91,124,255,0.5); }
 
-    .toolbar {
-      display: flex; justify-content: flex-end; gap: 14px; margin-top: 30px;
-      flex-wrap: wrap;
-    }
+    .toolbar { display: flex; justify-content: flex-end; gap: 14px; margin-top: 30px; flex-wrap: wrap; }
 
     .btn {
       border: none; border-radius: 10px; padding: 14px 28px; font-weight: 600; font-size: 16px; cursor: pointer;
       transition: all 0.25s ease;
     }
-
     .btn-save {
       background: linear-gradient(180deg, var(--ring), #2f4cff);
       color: #fff; box-shadow: 0 6px 18px rgba(91,124,255,0.25);
     }
-    .btn-save:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(91,124,255,0.35); }
-
     .btn-reset {
       background: rgba(255,255,255,0.05);
       color: var(--muted);
       border: 1px solid rgba(255,255,255,0.1);
     }
-    .btn-reset:hover { background: rgba(255,255,255,0.12); color: var(--text); }
 
     .btn-next, .btn-back {
       width: 100%; padding: 14px;
@@ -142,6 +135,8 @@
       .form__row-inline, .form__row-pair { grid-template-columns: 1fr; }
       .form__group { padding: 14px 16px; }
       h2.card__title { font-size: 20px; margin-bottom: 24px; }
+      /* only show staged form on mobile */
+      .stage-2.hidden { display: none; }
     }
 
     .app__footer { text-align: center; color: var(--muted); font-size: 13px; margin: 40px 0; }
@@ -180,11 +175,11 @@
           <div class="form__group"><label><i class="fa-solid fa-hourglass-end"></i> End</label><input id="end" type="time" required /></div>
         </div>
 
-        <button type="button" class="btn-next">Next <i class="fa-solid fa-arrow-right"></i></button>
+        <button type="button" class="btn-next mobile-only">Next <i class="fa-solid fa-arrow-right"></i></button>
       </div>
 
       <!-- Stage 2 -->
-      <div class="stage stage-2 hidden">
+      <div class="stage stage-2">
         <div class="form__row-pair">
           <div class="form__group">
             <label><i class="fa-solid fa-user"></i> Cleaner(s)</label>
@@ -211,7 +206,7 @@
         </div>
 
         <div class="toolbar">
-          <button type="button" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back</button>
+          <button type="button" class="btn-back mobile-only"><i class="fa-solid fa-arrow-left"></i> Back</button>
           <button id="submitBtn" type="submit" class="btn btn-save"><i class="fa-solid fa-check"></i> Save Booking</button>
           <button id="resetBtn" type="button" class="btn btn-reset"><i class="fa-solid fa-rotate-left"></i> Reset</button>
         </div>
@@ -238,16 +233,36 @@
       yesBtn.classList.remove('active');
     });
 
-    nextBtn.addEventListener('click', () => {
+    // Only activate staged flow on mobile
+    function isMobile() { return window.innerWidth <= 700; }
+
+    function showStage2() {
+      if (!isMobile()) return;
       stage1.classList.add('hidden');
       stage2.classList.remove('hidden');
       stage2.scrollIntoView({ behavior: 'smooth' });
-    });
+    }
 
-    backBtn.addEventListener('click', () => {
+    function showStage1() {
+      if (!isMobile()) return;
       stage2.classList.add('hidden');
       stage1.classList.remove('hidden');
       stage1.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    if (nextBtn && backBtn) {
+      nextBtn.addEventListener('click', showStage2);
+      backBtn.addEventListener('click', showStage1);
+    }
+
+    // Reset to full form view if resized to desktop
+    window.addEventListener('resize', () => {
+      if (!isMobile()) {
+        stage1.classList.remove('hidden');
+        stage2.classList.remove('hidden');
+      } else {
+        stage2.classList.add('hidden');
+      }
     });
   </script>
 </body>
