@@ -16,6 +16,8 @@
       --muted: #aab2d6;
       --ring: #5b7cff;
       --accent: #7b92ff;
+      --danger: #ff6b6b;
+      --neutral: #34384d;
       --radius: 14px;
       --transition: 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     }
@@ -203,18 +205,38 @@
       box-shadow: 0 0 8px rgba(91,124,255,0.5);
     }
 
+    /* ✅ Toolbar Buttons */
     .toolbar {
       display: flex; justify-content: flex-end; gap: 14px; margin-top: 30px;
       flex-wrap: wrap;
     }
 
     .btn {
-      border: none; border-radius: 10px; padding: 14px 28px; font-weight: 600; font-size: 16px; cursor: pointer; color: #fff;
-      background: linear-gradient(180deg, var(--ring), #2f4cff);
-      box-shadow: 0 6px 18px rgba(91,124,255,0.25); transition: all 0.25s ease;
+      border: none; border-radius: 10px; padding: 14px 28px; font-weight: 600; font-size: 16px; cursor: pointer;
+      transition: all 0.25s ease;
     }
 
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(91,124,255,0.35); }
+    .btn-save {
+      background: linear-gradient(180deg, var(--ring), #2f4cff);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(91,124,255,0.25);
+    }
+
+    .btn-save:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(91,124,255,0.35);
+    }
+
+    .btn-reset {
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .btn-reset:hover {
+      background: rgba(255,255,255,0.12);
+      color: var(--text);
+    }
 
     .app__footer { text-align: center; color: var(--muted); font-size: 13px; margin: 40px 0; }
   </style>
@@ -278,8 +300,8 @@
       </div>
 
       <div class="toolbar">
-        <button id="submitBtn" type="submit" class="btn"><i class="fa-solid fa-check"></i> Save Booking</button>
-        <button id="resetBtn" type="button" class="btn btn--ghost"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+        <button id="submitBtn" type="submit" class="btn btn-save"><i class="fa-solid fa-check"></i> Save Booking</button>
+        <button id="resetBtn" type="button" class="btn btn-reset"><i class="fa-solid fa-rotate-left"></i> Reset</button>
       </div>
     </form>
   </main>
@@ -294,7 +316,6 @@
     const yesBtn = document.getElementById('linenYes');
     const noBtn = document.getElementById('linenNo');
 
-    // Linen Required toggle
     yesBtn.addEventListener('click', () => {
       yesBtn.classList.add('active');
       noBtn.classList.remove('active');
@@ -304,7 +325,6 @@
       yesBtn.classList.remove('active');
     });
 
-    // Animate menu links in sequence
     function animateLinksIn() {
       links.forEach((link, i) => {
         link.style.opacity = 0;
@@ -317,7 +337,14 @@
       });
     }
 
-    // Sidebar toggle
+    function closeSidebar() {
+      navLinks.style.animation = 'slideOut 0.35s ease forwards';
+      setTimeout(() => {
+        navLinks.classList.remove('open');
+        overlay.classList.remove('active');
+      }, 300);
+    }
+
     navToggle.addEventListener('click', () => {
       if (navLinks.classList.contains('open')) {
         closeSidebar();
@@ -327,15 +354,6 @@
         animateLinksIn();
       }
     });
-
-    // Close sidebar function
-    function closeSidebar() {
-      navLinks.style.animation = 'slideOut 0.35s ease forwards';
-      setTimeout(() => {
-        navLinks.classList.remove('open');
-        overlay.classList.remove('active');
-      }, 300);
-    }
 
     overlay.addEventListener('click', closeSidebar);
     links.forEach(link => link.addEventListener('click', closeSidebar));
