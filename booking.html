@@ -5,19 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>HomeGlitz — Booking</title>
 
-  <!-- 🔗 Link to shared stylesheet -->
+  <!-- 🔗 Font Awesome for icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+  />
+
+  <!-- 🔗 Shared stylesheet -->
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 
 <body>
-  <!-- 🧭 Shared Navigation -->
+  <!-- 🧭 Fixed Navbar -->
   <nav class="navbar">
     <div class="nav-brand">
       <div class="brand__logo">🧼</div>
       <span>HomeGlitz</span>
     </div>
-    <button id="navToggle" class="nav-toggle">☰</button>
-    <ul class="nav-links" id="navLinks">
+    <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
       <li><a href="booking.html" class="active">Booking</a></li>
       <li><a href="properties.html">Properties</a></li>
@@ -26,107 +31,88 @@
     </ul>
   </nav>
 
-  <!-- 📱 Sidebar + Overlay for Mobile Navigation -->
-<div id="navSidebar" class="nav-sidebar">
-  <a href="index.html">Home</a>
-  <a href="booking.html" class="active">Booking</a>
-  <a href="properties.html">Properties</a>
-  <a href="cleaners.html">Cleaners</a>
-  <a href="reports.html">Reports</a>
-</div>
-<div id="navOverlay" class="nav-overlay"></div>
+  <!-- 🧩 Booking Layout -->
+  <main class="booking-layout">
+    <aside class="booking-sidebar">
+      <div class="booking-brand">
+        <div class="brand-icon">🧼</div>
+        <h2>HomeGlitz</h2>
+        <p>Airbnb Cleaning Hub</p>
+      </div>
 
-<script>
-  // 🧭 Mobile sidebar logic
-  const navToggle = document.getElementById("navToggle");
-  const sidebar = document.getElementById("navSidebar");
-  const overlay = document.getElementById("navOverlay");
+      <div class="booking-illustration">
+        <img src="https://cdn-icons-png.flaticon.com/512/3094/3094855.png" alt="Cleaner illustration" />
+      </div>
+    </aside>
 
-  navToggle.addEventListener("click", () => {
-    sidebar.classList.toggle("open");
-    overlay.classList.toggle("show");
-  });
+    <section class="booking-panel">
+      <h2 class="card__title">
+        <i class="fa-solid fa-broom"></i> Create Cleaning Booking
+      </h2>
 
-  overlay.addEventListener("click", () => {
-    sidebar.classList.remove("open");
-    overlay.classList.remove("show");
-  });
-</script>
-
-  <script>
-    // 🧭 Mobile menu toggle
-    const toggle = document.getElementById("navToggle");
-    const links = document.getElementById("navLinks");
-    toggle.addEventListener("click", () => links.classList.toggle("open"));
-  </script>
-
-  <main class="app">
-
-    <!-- 📋 Main Booking Card -->
-    <section class="card">
-      <h2 class="card__title">Create Cleaning Booking</h2>
-
-      <!-- ✅ Booking Form -->
       <form id="bookingForm" class="form" autocomplete="off">
-        
-        <!-- 🏠 Property Selector -->
         <div class="form__group">
-          <label class="label" for="property">Property</label>
-          <select id="property" class="select" required></select>
-          <div id="propMeta" class="hint"></div>
+          <label><i class="fa-solid fa-house-chimney"></i> Property</label>
+          <select id="property" required>
+            <option value="">Select property...</option>
+          </select>
         </div>
 
-        <!-- 🗓️ Date & Time Row -->
         <div class="form__row">
           <div class="form__group">
-            <label class="label" for="date">Cleaning Date</label>
+            <label><i class="fa-regular fa-calendar"></i> Cleaning Date</label>
             <input id="date" type="date" required />
           </div>
+
           <div class="form__group">
-            <label class="label" for="start">Start</label>
+            <label><i class="fa-regular fa-clock"></i> Start</label>
             <input id="start" type="time" required />
           </div>
+
           <div class="form__group">
-            <label class="label" for="end">End</label>
+            <label><i class="fa-solid fa-hourglass-end"></i> End</label>
             <input id="end" type="time" required />
           </div>
         </div>
 
-        <!-- 🧺 Linen & Notes Row -->
         <div class="form__row">
           <div class="form__group">
-            <label class="label" for="linen">Linen Required</label>
+            <label><i class="fa-solid fa-bed"></i> Linen Required</label>
             <select id="linen">
               <option value="Yes">Yes</option>
               <option value="No">No</option>
             </select>
-            <div id="linenHint" class="hint">From property: —</div>
           </div>
 
           <div class="form__group">
-            <label class="label" for="notes">Notes</label>
-            <textarea id="notes" rows="3" placeholder="Door code, supplies, special requests..."></textarea>
+            <label><i class="fa-regular fa-note-sticky"></i> Notes</label>
+            <textarea
+              id="notes"
+              rows="3"
+              placeholder="Door code, supplies, special requests..."
+            ></textarea>
           </div>
         </div>
 
-        <!-- 🧭 Toolbar / Buttons -->
         <div class="toolbar">
-          <button id="submitBtn" type="submit" class="btn">Save Booking</button>
-          <button id="resetBtn" type="button" class="btn btn--ghost">Reset</button>
+          <button id="submitBtn" type="submit" class="btn">
+            <i class="fa-solid fa-check"></i> Save Booking
+          </button>
+          <button id="resetBtn" type="button" class="btn btn--ghost">
+            <i class="fa-solid fa-rotate-left"></i> Reset
+          </button>
         </div>
 
-        <!-- 🔔 Toast Notifications -->
         <div id="toast" class="toast" role="status" aria-live="polite"></div>
       </form>
     </section>
-
-    <!-- ⚙️ Footer -->
-    <footer class="app__footer">
-      <span class="muted">Built on Google Sheets • v1</span>
-    </footer>
   </main>
 
-  <!-- 🔗 Link JS files -->
+  <footer class="app__footer">
+    <span class="muted">© 2025 HomeGlitz — Powered by Google Sheets</span>
+  </footer>
+
+  <!-- 🔗 JS -->
   <script src="js/app.js"></script>
   <script src="js/booking.js"></script>
 </body>
