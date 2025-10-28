@@ -67,7 +67,7 @@
       display: flex; gap: 24px; list-style: none;
       margin: 0; padding: 0;
       position: relative;
-      z-index: 3100; /* keep menu ABOVE overlay */
+      z-index: 3100;
     }
 
     .nav-links a {
@@ -94,23 +94,14 @@
         gap: 18px;
         border-right: 1px solid rgba(91,124,255,0.15);
         box-shadow: 5px 0 20px rgba(0,0,0,0.5);
-        transition: all var(--transition);
-        z-index: 3200; /* ensure menu sits on top */
+        transition: left 0.4s ease, opacity 0.4s ease;
+        opacity: 0;
+        z-index: 3200;
       }
 
       .nav-links.open {
-        animation: slideIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-      }
-
-      @keyframes slideIn {
-        0% { left: -270px; transform: scale(0.96) rotateY(6deg); opacity: 0; }
-        60% { left: 10px; transform: scale(1.02) rotateY(-1deg); opacity: 1; }
-        100% { left: 0; transform: scale(1) rotateY(0); }
-      }
-
-      @keyframes slideOut {
-        0% { left: 0; transform: scale(1); opacity: 1; }
-        100% { left: -270px; transform: scale(0.95); opacity: 0; }
+        left: 0;
+        opacity: 1;
       }
 
       .nav-links a {
@@ -124,14 +115,13 @@
         transform: translateX(-10px);
       }
 
-      /* Overlay fix: no obstruction, lower opacity */
       .overlay {
         position: fixed; inset: 0;
         background: rgba(0,0,0,0.25);
         backdrop-filter: blur(3px);
         opacity: 0; visibility: hidden;
         transition: all var(--transition);
-        z-index: 2500; /* below sidebar */
+        z-index: 2500;
       }
       .overlay.active {
         opacity: 1; visibility: visible;
@@ -201,6 +191,10 @@
       .toolbar .btn + .btn {
         margin-left: 10px;
       }
+
+      /* Shorter label for mobile */
+      .btn-save span.text-full { display: none; }
+      .btn-save span.text-short { display: inline; }
     }
 
     .linen-badge-group {
@@ -304,7 +298,11 @@
       </div>
 
       <div class="toolbar">
-        <button id="submitBtn" type="submit" class="btn btn-save"><i class="fa-solid fa-check"></i> Save Booking</button>
+        <button id="submitBtn" type="submit" class="btn btn-save">
+          <i class="fa-solid fa-check"></i>
+          <span class="text-full">Save Booking</span>
+          <span class="text-short">Save</span>
+        </button>
         <button id="resetBtn" type="button" class="btn btn-reset"><i class="fa-solid fa-rotate-left"></i> Reset</button>
       </div>
     </form>
@@ -342,20 +340,22 @@
     }
 
     function closeSidebar() {
-      navLinks.style.animation = 'slideOut 0.35s ease forwards';
-      setTimeout(() => {
-        navLinks.classList.remove('open');
-        overlay.classList.remove('active');
-      }, 300);
+      navLinks.classList.remove('open');
+      overlay.classList.remove('active');
     }
 
     navToggle.addEventListener('click', () => {
-      if (navLinks.classList.contains('open')) {
+      const isOpen = navLinks.classList.contains('open');
+      if (isOpen) {
         closeSidebar();
       } else {
-        navLinks.classList.add('open');
-        overlay.classList.add('active');
-        animateLinksIn();
+        navLinks.style.left = '-270px';
+        navLinks.style.opacity = '0';
+        setTimeout(() => {
+          navLinks.classList.add('open');
+          overlay.classList.add('active');
+          animateLinksIn();
+        }, 50);
       }
     });
 
