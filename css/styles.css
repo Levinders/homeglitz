@@ -174,3 +174,129 @@ textarea {
   .brand__logo { width: 36px; height: 36px; font-size: 18px; }
   .brand__text h1 { font-size: 18px; }
 }
+
+
+/* ===========================================================
+   🧭 NAVIGATION BAR
+   =========================================================== */
+.navbar {
+  background: var(--panel);
+  border-bottom: 1px solid var(--ring-soft);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--text);
+  font-size: 18px;
+}
+
+.nav-brand .brand__logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--ring), #8fa4ff);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--muted);
+  font-weight: 500;
+  padding: 6px 0;
+  transition: color 0.25s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--ring);
+}
+
+.nav-toggle {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 22px;
+  cursor: pointer;
+  display: none;
+}
+
+/* 📱 Mobile Navbar */
+@media (max-width: 700px) {
+  .nav-toggle { display: block; }
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background: var(--panel);
+    border-top: 1px solid var(--ring-soft);
+    margin-top: 10px;
+  }
+  .nav-links.open {
+    display: flex;
+  }
+  .nav-links a {
+    padding: 12px;
+    border-bottom: 1px solid var(--ring-soft);
+  }
+}
+
+/* ===========================================================
+   🏠 HERO SECTION (Home Page)
+   =========================================================== */
+.hero {
+  text-align: center;
+  padding: 80px 20px;
+  background: radial-gradient(circle at top, #1c2142, #0f1220);
+  border-radius: 0 0 20px 20px;
+}
+
+.hero h1 {
+  font-size: clamp(26px, 6vw, 42px);
+  margin-bottom: 10px;
+}
+
+.hero p {
+  color: var(--muted);
+  font-size: clamp(15px, 2vw, 18px);
+  margin-bottom: 30px;
+}
+
+.highlight {
+  color: var(--ring);
+  font-weight: 700;
+}
+
+.btn-primary {
+  display: inline-block;
+  text-decoration: none;
+  background: linear-gradient(180deg, var(--ring), #2f4cff);
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  transition: transform 0.25s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+}
