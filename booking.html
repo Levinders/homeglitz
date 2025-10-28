@@ -4,19 +4,130 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>HomeGlitz — Booking</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
 
-  <!-- 🔗 Font Awesome for icons -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-  />
+  <style>
+    :root {
+      --bg: #0e1024;
+      --panel: #161a2b;
+      --text: #e8ebff;
+      --muted: #aab2d6;
+      --ring: #5b7cff;
+      --accent: #7b92ff;
+      --radius: 14px;
+      --transition: 0.25s ease;
+    }
 
-  <!-- 🔗 Shared stylesheet -->
-  <link rel="stylesheet" href="css/styles.css" />
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      overflow-x: hidden;
+      padding-top: 70px;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; height: 60px;
+      background: rgba(22,26,43,0.95);
+      border-bottom: 1px solid rgba(91,124,255,0.15);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; z-index: 1000; backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; }
+    .brand__logo { width: 34px; height: 34px; border-radius: 8px; background: linear-gradient(135deg, var(--ring), #8fa4ff); display: grid; place-items: center; }
+    .nav-links { display: flex; gap: 24px; list-style: none; margin: 0; padding: 0; }
+    .nav-links a { text-decoration: none; color: var(--muted); transition: color 0.25s ease; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+    /* Main Form Container */
+    main {
+      max-width: 850px; margin: 60px auto; background: var(--panel);
+      border-radius: 20px; padding: 50px 60px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      position: relative; overflow: hidden;
+    }
+
+    main::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(circle at 70% 20%, rgba(91,124,255,0.08), transparent 60%);
+    }
+
+    h2.card__title {
+      font-size: 24px; font-weight: 700; margin-bottom: 35px;
+      display: flex; align-items: center; gap: 10px;
+      color: var(--accent);
+    }
+
+    .form { display: flex; flex-direction: column; gap: 24px; }
+
+    .form__group {
+      display: flex; flex-direction: column;
+      background: rgba(14,18,36,0.75);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      border: 1px solid rgba(91,124,255,0.15);
+      transition: all 0.3s ease;
+    }
+    .form__group:hover { border-color: var(--accent); background: rgba(18,22,46,0.85); }
+
+    .form__group label {
+      font-weight: 600; font-size: 15.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+      color: var(--accent);
+    }
+
+    input, select, textarea {
+      width: 100%; border-radius: 10px; border: 1px solid rgba(91,124,255,0.15);
+      background: rgba(10,14,32,0.9); color: var(--text);
+      padding: 12px 14px; font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,124,255,0.25); outline: none;
+    }
+
+    .form__row-inline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .form__row-pair { display: grid; grid-template-columns: 2fr 1fr; gap: 22px; align-items: stretch; }
+
+    /* New Linen Badge Style */
+    .linen-badge-group {
+      display: flex; align-items: center; justify-content: flex-start; gap: 10px;
+    }
+    .linen-badge {
+      padding: 10px 18px; border-radius: 20px; font-weight: 600;
+      border: 1px solid rgba(91,124,255,0.25);
+      background: rgba(91,124,255,0.15);
+      color: var(--text);
+      cursor: pointer; transition: all 0.3s ease;
+    }
+    .linen-badge.active { background: var(--ring); color: #fff; box-shadow: 0 0 8px rgba(91,124,255,0.5); }
+    .linen-badge:hover { transform: translateY(-2px); }
+
+    .toolbar { display: flex; justify-content: flex-end; gap: 14px; margin-top: 30px; }
+    .btn {
+      border: none; border-radius: 10px; padding: 14px 28px; font-weight: 600; font-size: 16px; cursor: pointer; color: #fff;
+      background: linear-gradient(180deg, var(--ring), #2f4cff);
+      box-shadow: 0 6px 18px rgba(91,124,255,0.25); transition: all 0.25s ease;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(91,124,255,0.35); }
+    .btn--ghost { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text); }
+
+    .app__footer { text-align: center; color: var(--muted); font-size: 13px; margin: 40px 0; }
+
+
+    @media (max-width: 768px) {
+  main { padding: 30px 20px; border-radius: 0; }
+  .form__row-inline, .form__row-pair { grid-template-columns: 1fr; gap: 18px; }
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .btn { width: 100%; }
+}
+
+  </style>
 </head>
 
 <body>
-  <!-- 🧭 Fixed Navbar -->
   <nav class="navbar">
     <div class="nav-brand">
       <div class="brand__logo">🧼</div>
@@ -31,89 +142,66 @@
     </ul>
   </nav>
 
-  <!-- 🧩 Booking Layout -->
-  <main class="booking-layout">
-    <aside class="booking-sidebar">
-      <div class="booking-brand">
-        <div class="brand-icon">🧼</div>
-        <h2>HomeGlitz</h2>
-        <p>Airbnb Cleaning Hub</p>
+  <main>
+    <h2 class="card__title"><i class="fa-solid fa-broom"></i> Create Cleaning Booking</h2>
+    <form id="bookingForm" class="form" autocomplete="off">
+
+      <div class="form__group">
+        <label><i class="fa-solid fa-house-chimney"></i> Property</label>
+        <select id="property" required><option value="">Select property...</option></select>
       </div>
 
-      <div class="booking-illustration">
-        <img src="https://cdn-icons-png.flaticon.com/512/3094/3094855.png" alt="Cleaner illustration" />
+      <div class="form__row-inline">
+        <div class="form__group"><label><i class="fa-regular fa-calendar"></i> Cleaning Date</label><input id="date" type="date" required /></div>
+        <div class="form__group"><label><i class="fa-regular fa-clock"></i> Start</label><input id="start" type="time" required /></div>
+        <div class="form__group"><label><i class="fa-solid fa-hourglass-end"></i> End</label><input id="end" type="time" required /></div>
       </div>
-    </aside>
 
-    <section class="booking-panel">
-      <h2 class="card__title">
-        <i class="fa-solid fa-broom"></i> Create Cleaning Booking
-      </h2>
-
-      <form id="bookingForm" class="form" autocomplete="off">
+      <div class="form__row-pair">
         <div class="form__group">
-          <label><i class="fa-solid fa-house-chimney"></i> Property</label>
-          <select id="property" required>
-            <option value="">Select property...</option>
+          <label><i class="fa-solid fa-user"></i> Cleaner(s)</label>
+          <select id="cleaners">
+            <option value="">Select a cleaner...</option>
+            <option value="John">John</option>
+            <option value="Mary">Mary</option>
+            <option value="Lucy">Lucy</option>
           </select>
         </div>
 
-        <div class="form__row">
-          <div class="form__group">
-            <label><i class="fa-regular fa-calendar"></i> Cleaning Date</label>
-            <input id="date" type="date" required />
-          </div>
-
-          <div class="form__group">
-            <label><i class="fa-regular fa-clock"></i> Start</label>
-            <input id="start" type="time" required />
-          </div>
-
-          <div class="form__group">
-            <label><i class="fa-solid fa-hourglass-end"></i> End</label>
-            <input id="end" type="time" required />
+        <div class="form__group">
+          <label><i class="fa-solid fa-bed"></i> Linen Required</label>
+          <div class="linen-badge-group">
+            <div class="linen-badge active" id="linenYes">Yes</div>
+            <div class="linen-badge" id="linenNo">No</div>
           </div>
         </div>
+      </div>
 
-        <div class="form__row">
-          <div class="form__group">
-            <label><i class="fa-solid fa-bed"></i> Linen Required</label>
-            <select id="linen">
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
-          </div>
+      <div class="form__group">
+        <label><i class="fa-regular fa-note-sticky"></i> Notes</label>
+        <textarea id="notes" rows="3" placeholder="Door code, supplies, special requests..."></textarea>
+      </div>
 
-          <div class="form__group">
-            <label><i class="fa-regular fa-note-sticky"></i> Notes</label>
-            <textarea
-              id="notes"
-              rows="3"
-              placeholder="Door code, supplies, special requests..."
-            ></textarea>
-          </div>
-        </div>
-
-        <div class="toolbar">
-          <button id="submitBtn" type="submit" class="btn">
-            <i class="fa-solid fa-check"></i> Save Booking
-          </button>
-          <button id="resetBtn" type="button" class="btn btn--ghost">
-            <i class="fa-solid fa-rotate-left"></i> Reset
-          </button>
-        </div>
-
-        <div id="toast" class="toast" role="status" aria-live="polite"></div>
-      </form>
-    </section>
+      <div class="toolbar">
+        <button id="submitBtn" type="submit" class="btn"><i class="fa-solid fa-check"></i> Save Booking</button>
+        <button id="resetBtn" type="button" class="btn btn--ghost"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+      </div>
+    </form>
   </main>
 
-  <footer class="app__footer">
-    <span class="muted">© 2025 HomeGlitz — Powered by Google Sheets</span>
-  </footer>
+  <footer class="app__footer"><span class="muted">© 2025 HomeGlitz — Powered by Google Sheets</span></footer>
 
-  <!-- 🔗 JS -->
-  <script src="js/app.js"></script>
-  <script src="js/booking.js"></script>
+  <script>
+    const yesBtn = document.getElementById('linenYes');
+    const noBtn = document.getElementById('linenNo');
+    yesBtn.addEventListener('click', () => {
+      yesBtn.classList.add('active');
+      noBtn.classList.remove('active');
+    });
+    noBtn.addEventListener('click', () => {
+      noBtn.classList.add('active');
+      yesBtn.classList.remove('active');
+    });
+  </script>
 </body>
 </html>
