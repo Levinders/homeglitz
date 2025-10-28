@@ -10,6 +10,29 @@
 </head>
 
 <body>
+  <!-- 🧭 Shared Navigation -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <div class="brand__logo">🧼</div>
+      <span>HomeGlitz</span>
+    </div>
+    <button id="navToggle" class="nav-toggle">☰</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="booking.html" class="active">Booking</a></li>
+      <li><a href="properties.html">Properties</a></li>
+      <li><a href="cleaners.html">Cleaners</a></li>
+      <li><a href="reports.html">Reports</a></li>
+    </ul>
+  </nav>
+
+  <script>
+    // 🧭 Mobile menu toggle
+    const toggle = document.getElementById("navToggle");
+    const links = document.getElementById("navLinks");
+    toggle.addEventListener("click", () => links.classList.toggle("open"));
+  </script>
+
   <main class="app">
     <!-- 🧼 Header / Branding -->
     <header class="app__header">
