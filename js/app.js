@@ -1,9 +1,17 @@
-// js/app.js
+/**
+ * app.js
+ * -------
+ * Shared global utilities and API communication helpers.
+ * Used by all pages (booking, properties, cleaners, etc.)
+ */
+
+// 🧩 Replace this with your actual Apps Script Web App deployment URL
 const API_URL = "https://script.google.com/macros/s/AKfycbzxYBxLSqvIgNBfl0WOVPzVAsAjYxoU5kw_xj-ZuXmvU1x9fXLRYdA98yTF3Q0Lj3SP/exec";
 
 /**
- * Generic API caller for all backend actions
- * @param {string} action - backend action (e.g. 'createBooking')
+ * 🛰️ callApi(action, payload)
+ * Generic helper to call your Apps Script backend.
+ * @param {string} action - backend function (e.g., 'createBooking')
  * @param {object} payload - data to send to backend
  */
 async function callApi(action, payload = {}) {
@@ -20,11 +28,15 @@ async function callApi(action, payload = {}) {
   }
 }
 
-// Simple toast popup
-function toast(msg) {
+/**
+ * 🪄 toast(message)
+ * Simple notification system for feedback messages.
+ * Appears briefly then fades out automatically.
+ */
+function toast(message) {
   const el = document.getElementById("toast");
-  if (!el) return alert(msg);
-  el.textContent = msg;
+  if (!el) return alert(message);
+  el.textContent = message;
   el.style.opacity = 1;
   setTimeout(() => (el.style.opacity = 0), 3000);
 }
