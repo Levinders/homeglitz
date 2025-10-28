@@ -16,8 +16,10 @@
       --muted: #aab2d6;
       --ring: #5b7cff;
       --accent: #7b92ff;
+      --danger: #ff6b6b;
+      --neutral: #34384d;
       --radius: 14px;
-      --transition: 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      --transition: 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     * { box-sizing: border-box; }
@@ -31,7 +33,7 @@
       padding-top: 70px;
     }
 
-    /* ===== NAVBAR ===== */
+    /* ============ NAVBAR ============ */
     .navbar {
       position: fixed; top: 0; left: 0; right: 0; height: 60px;
       background: rgba(22,26,43,0.95);
@@ -41,22 +43,107 @@
       backdrop-filter: blur(10px);
       box-shadow: 0 4px 15px rgba(0,0,0,0.35);
     }
-    .nav-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; color: var(--text); }
-    .brand__logo { width: 34px; height: 34px; border-radius: 8px; background: linear-gradient(135deg, var(--ring), #8fa4ff); display: grid; place-items: center; }
-    .nav-links { display: flex; gap: 24px; list-style: none; margin: 0; padding: 0; }
-    .nav-links a { text-decoration: none; color: var(--muted); transition: color var(--transition); }
-    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
 
-    /* ===== FORM CONTAINER ===== */
+    .nav-brand {
+      display: flex; align-items: center; gap: 8px;
+      font-weight: 700; font-size: 18px; color: var(--text);
+    }
+
+    .brand__logo {
+      width: 34px; height: 34px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--ring), #8fa4ff);
+      display: grid; place-items: center;
+    }
+
+    .nav-toggle {
+      display: none;
+      background: none; border: none; color: var(--text);
+      font-size: 24px; cursor: pointer;
+      transition: transform 0.25s ease;
+    }
+    .nav-toggle:active { transform: scale(0.9); }
+
+    .nav-links {
+      display: flex; gap: 24px; list-style: none;
+      margin: 0; padding: 0;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      transition: color var(--transition);
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent);
+    }
+
+    /* ============ SIDEBAR (MOBILE) ============ */
+    @media (max-width: 768px) {
+      .nav-toggle { display: block; }
+
+      .nav-links {
+        position: fixed; top: 0; left: -270px;
+        width: 250px; height: 100vh;
+        background: rgba(22,26,43,0.98);
+        backdrop-filter: blur(12px);
+        flex-direction: column;
+        padding: 80px 24px;
+        gap: 18px;
+        border-right: 1px solid rgba(91,124,255,0.15);
+        box-shadow: 5px 0 20px rgba(0,0,0,0.5);
+        transition: all var(--transition);
+        z-index: 2100;
+      }
+
+      .nav-links.open {
+        animation: slideIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+
+      @keyframes slideIn {
+        0% { left: -270px; transform: scale(0.96) rotateY(6deg); opacity: 0; }
+        60% { left: 10px; transform: scale(1.02) rotateY(-1deg); opacity: 1; }
+        100% { left: 0; transform: scale(1) rotateY(0); }
+      }
+
+      @keyframes slideOut {
+        0% { left: 0; transform: scale(1); opacity: 1; }
+        100% { left: -270px; transform: scale(0.95); opacity: 0; }
+      }
+
+      .nav-links a {
+        color: var(--text);
+        font-size: 17px;
+        font-weight: 500;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        transition: all 0.25s ease;
+        opacity: 0;
+        transform: translateX(-10px);
+      }
+
+      .overlay {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.4);
+        backdrop-filter: blur(4px);
+        opacity: 0; visibility: hidden;
+        transition: all var(--transition);
+        z-index: 2050;
+      }
+      .overlay.active {
+        opacity: 1; visibility: visible;
+      }
+    }
+
+    /* ============ FORM ============ */
     main {
       max-width: 850px; margin: 80px auto; background: var(--panel);
-      border-radius: 20px; padding: 50px 60px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      border-radius: 20px; padding: 50px 60px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
       position: relative; overflow: hidden;
     }
 
     main::before {
-      content: ""; position: absolute; inset: 0;
+      content: ""; position: absolute; inset: 0; pointer-events: none;
       background: radial-gradient(circle at 70% 20%, rgba(91,124,255,0.08), transparent 60%);
     }
 
@@ -94,49 +181,61 @@
     .form__row-inline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
     .form__row-pair { display: grid; grid-template-columns: 2fr 1fr; gap: 22px; }
 
-    .linen-badge-group { display: flex; align-items: center; gap: 10px; }
+    @media (max-width: 700px) {
+      main { padding: 30px 20px; margin: 60px 10px; }
+      .form__row-inline, .form__row-pair { grid-template-columns: 1fr; }
+      .form__group { padding: 14px 16px; }
+      h2.card__title { font-size: 20px; margin-bottom: 24px; }
+    }
+
+    .linen-badge-group {
+      display: flex; align-items: center; gap: 10px;
+    }
+
     .linen-badge {
       padding: 10px 18px; border-radius: 20px; font-weight: 600;
       border: 1px solid rgba(91,124,255,0.25);
-      background: rgba(91,124,255,0.15); color: var(--text);
-      cursor: pointer; transition: all 0.3s ease;
+      background: rgba(91,124,255,0.15);
+      color: var(--text); cursor: pointer;
+      transition: all 0.3s ease;
     }
-    .linen-badge.active { background: var(--ring); color: #fff; box-shadow: 0 0 8px rgba(91,124,255,0.5); }
 
-    .toolbar { display: flex; justify-content: flex-end; gap: 14px; margin-top: 30px; flex-wrap: wrap; }
+    .linen-badge.active {
+      background: var(--ring); color: #fff;
+      box-shadow: 0 0 8px rgba(91,124,255,0.5);
+    }
+
+    /* ✅ Toolbar Buttons */
+    .toolbar {
+      display: flex; justify-content: flex-end; gap: 14px; margin-top: 30px;
+      flex-wrap: wrap;
+    }
 
     .btn {
       border: none; border-radius: 10px; padding: 14px 28px; font-weight: 600; font-size: 16px; cursor: pointer;
       transition: all 0.25s ease;
     }
+
     .btn-save {
       background: linear-gradient(180deg, var(--ring), #2f4cff);
-      color: #fff; box-shadow: 0 6px 18px rgba(91,124,255,0.25);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(91,124,255,0.25);
     }
+
+    .btn-save:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(91,124,255,0.35);
+    }
+
     .btn-reset {
       background: rgba(255,255,255,0.05);
       color: var(--muted);
       border: 1px solid rgba(255,255,255,0.1);
     }
 
-    .btn-next, .btn-back {
-      width: 100%; padding: 14px;
-      background: var(--ring); color: #fff; border: none;
-      font-weight: 600; border-radius: 10px;
-      transition: all 0.3s ease;
-    }
-    .btn-next:hover, .btn-back:hover { opacity: 0.9; }
-
-    .stage { transition: transform var(--transition), opacity var(--transition); }
-    .hidden { opacity: 0; pointer-events: none; transform: translateX(20px); position: absolute; width: 100%; }
-
-    @media (max-width: 700px) {
-      main { padding: 30px 20px; margin: 60px 10px; }
-      .form__row-inline, .form__row-pair { grid-template-columns: 1fr; }
-      .form__group { padding: 14px 16px; }
-      h2.card__title { font-size: 20px; margin-bottom: 24px; }
-      /* only show staged form on mobile */
-      .stage-2.hidden { display: none; }
+    .btn-reset:hover {
+      background: rgba(255,255,255,0.12);
+      color: var(--text);
     }
 
     .app__footer { text-align: center; color: var(--muted); font-size: 13px; margin: 40px 0; }
@@ -149,7 +248,8 @@
       <div class="brand__logo">🧼</div>
       <span>HomeGlitz</span>
     </div>
-    <ul class="nav-links">
+    <button class="nav-toggle" id="navToggle"><i class="fa-solid fa-bars"></i></button>
+    <ul class="nav-links" id="navLinks">
       <li><a href="index.html">Home</a></li>
       <li><a href="booking.html" class="active">Booking</a></li>
       <li><a href="properties.html">Properties</a></li>
@@ -158,58 +258,50 @@
     </ul>
   </nav>
 
+  <div class="overlay" id="overlay"></div>
+
   <main>
     <h2 class="card__title"><i class="fa-solid fa-broom"></i> Create Cleaning Booking</h2>
     <form id="bookingForm" class="form" autocomplete="off">
-
-      <!-- Stage 1 -->
-      <div class="stage stage-1">
-        <div class="form__group">
-          <label><i class="fa-solid fa-house-chimney"></i> Property</label>
-          <select id="property" required><option value="">Select property...</option></select>
-        </div>
-
-        <div class="form__row-inline">
-          <div class="form__group"><label><i class="fa-regular fa-calendar"></i> Cleaning Date</label><input id="date" type="date" required /></div>
-          <div class="form__group"><label><i class="fa-regular fa-clock"></i> Start</label><input id="start" type="time" required /></div>
-          <div class="form__group"><label><i class="fa-solid fa-hourglass-end"></i> End</label><input id="end" type="time" required /></div>
-        </div>
-
-        <button type="button" class="btn-next mobile-only">Next <i class="fa-solid fa-arrow-right"></i></button>
+      <div class="form__group">
+        <label><i class="fa-solid fa-house-chimney"></i> Property</label>
+        <select id="property" required><option value="">Select property...</option></select>
       </div>
 
-      <!-- Stage 2 -->
-      <div class="stage stage-2">
-        <div class="form__row-pair">
-          <div class="form__group">
-            <label><i class="fa-solid fa-user"></i> Cleaner(s)</label>
-            <select id="cleaners">
-              <option value="">Select a cleaner...</option>
-              <option value="John">John</option>
-              <option value="Mary">Mary</option>
-              <option value="Lucy">Lucy</option>
-            </select>
-          </div>
+      <div class="form__row-inline">
+        <div class="form__group"><label><i class="fa-regular fa-calendar"></i> Cleaning Date</label><input id="date" type="date" required /></div>
+        <div class="form__group"><label><i class="fa-regular fa-clock"></i> Start</label><input id="start" type="time" required /></div>
+        <div class="form__group"><label><i class="fa-solid fa-hourglass-end"></i> End</label><input id="end" type="time" required /></div>
+      </div>
 
-          <div class="form__group">
-            <label><i class="fa-solid fa-bed"></i> Linen Required</label>
-            <div class="linen-badge-group">
-              <div class="linen-badge active" id="linenYes">Yes</div>
-              <div class="linen-badge" id="linenNo">No</div>
-            </div>
-          </div>
+      <div class="form__row-pair">
+        <div class="form__group">
+          <label><i class="fa-solid fa-user"></i> Cleaner(s)</label>
+          <select id="cleaners">
+            <option value="">Select a cleaner...</option>
+            <option value="John">John</option>
+            <option value="Mary">Mary</option>
+            <option value="Lucy">Lucy</option>
+          </select>
         </div>
 
         <div class="form__group">
-          <label><i class="fa-regular fa-note-sticky"></i> Notes</label>
-          <textarea id="notes" rows="3" placeholder="Door code, supplies, special requests..."></textarea>
+          <label><i class="fa-solid fa-bed"></i> Linen Required</label>
+          <div class="linen-badge-group">
+            <div class="linen-badge active" id="linenYes">Yes</div>
+            <div class="linen-badge" id="linenNo">No</div>
+          </div>
         </div>
+      </div>
 
-        <div class="toolbar">
-          <button type="button" class="btn-back mobile-only"><i class="fa-solid fa-arrow-left"></i> Back</button>
-          <button id="submitBtn" type="submit" class="btn btn-save"><i class="fa-solid fa-check"></i> Save Booking</button>
-          <button id="resetBtn" type="button" class="btn btn-reset"><i class="fa-solid fa-rotate-left"></i> Reset</button>
-        </div>
+      <div class="form__group">
+        <label><i class="fa-regular fa-note-sticky"></i> Notes</label>
+        <textarea id="notes" rows="3" placeholder="Door code, supplies, special requests..."></textarea>
+      </div>
+
+      <div class="toolbar">
+        <button id="submitBtn" type="submit" class="btn btn-save"><i class="fa-solid fa-check"></i> Save Booking</button>
+        <button id="resetBtn" type="button" class="btn btn-reset"><i class="fa-solid fa-rotate-left"></i> Reset</button>
       </div>
     </form>
   </main>
@@ -217,12 +309,12 @@
   <footer class="app__footer"><span class="muted">© 2025 HomeGlitz — Powered by Google Sheets</span></footer>
 
   <script>
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+    const overlay = document.getElementById('overlay');
+    const links = navLinks.querySelectorAll('a');
     const yesBtn = document.getElementById('linenYes');
     const noBtn = document.getElementById('linenNo');
-    const nextBtn = document.querySelector('.btn-next');
-    const backBtn = document.querySelector('.btn-back');
-    const stage1 = document.querySelector('.stage-1');
-    const stage2 = document.querySelector('.stage-2');
 
     yesBtn.addEventListener('click', () => {
       yesBtn.classList.add('active');
@@ -233,37 +325,38 @@
       yesBtn.classList.remove('active');
     });
 
-    // Only activate staged flow on mobile
-    function isMobile() { return window.innerWidth <= 700; }
-
-    function showStage2() {
-      if (!isMobile()) return;
-      stage1.classList.add('hidden');
-      stage2.classList.remove('hidden');
-      stage2.scrollIntoView({ behavior: 'smooth' });
+    function animateLinksIn() {
+      links.forEach((link, i) => {
+        link.style.opacity = 0;
+        link.style.transform = 'translateX(-10px)';
+        setTimeout(() => {
+          link.style.transition = 'all 0.4s ease';
+          link.style.opacity = 1;
+          link.style.transform = 'translateX(0)';
+        }, 100 * i + 150);
+      });
     }
 
-    function showStage1() {
-      if (!isMobile()) return;
-      stage2.classList.add('hidden');
-      stage1.classList.remove('hidden');
-      stage1.scrollIntoView({ behavior: 'smooth' });
+    function closeSidebar() {
+      navLinks.style.animation = 'slideOut 0.35s ease forwards';
+      setTimeout(() => {
+        navLinks.classList.remove('open');
+        overlay.classList.remove('active');
+      }, 300);
     }
 
-    if (nextBtn && backBtn) {
-      nextBtn.addEventListener('click', showStage2);
-      backBtn.addEventListener('click', showStage1);
-    }
-
-    // Reset to full form view if resized to desktop
-    window.addEventListener('resize', () => {
-      if (!isMobile()) {
-        stage1.classList.remove('hidden');
-        stage2.classList.remove('hidden');
+    navToggle.addEventListener('click', () => {
+      if (navLinks.classList.contains('open')) {
+        closeSidebar();
       } else {
-        stage2.classList.add('hidden');
+        navLinks.classList.add('open');
+        overlay.classList.add('active');
+        animateLinksIn();
       }
     });
+
+    overlay.addEventListener('click', closeSidebar);
+    links.forEach(link => link.addEventListener('click', closeSidebar));
   </script>
 </body>
 </html>
