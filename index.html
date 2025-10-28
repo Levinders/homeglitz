@@ -24,6 +24,34 @@
     </ul>
   </nav>
 
+  <!-- 📱 Sidebar + Overlay for Mobile Navigation -->
+<div id="navSidebar" class="nav-sidebar">
+  <a href="index.html">Home</a>
+  <a href="booking.html" class="active">Booking</a>
+  <a href="properties.html">Properties</a>
+  <a href="cleaners.html">Cleaners</a>
+  <a href="reports.html">Reports</a>
+</div>
+<div id="navOverlay" class="nav-overlay"></div>
+
+<script>
+  // 🧭 Mobile sidebar logic
+  const navToggle = document.getElementById("navToggle");
+  const sidebar = document.getElementById("navSidebar");
+  const overlay = document.getElementById("navOverlay");
+
+  navToggle.addEventListener("click", () => {
+    sidebar.classList.toggle("open");
+    overlay.classList.toggle("show");
+  });
+
+  overlay.addEventListener("click", () => {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+  });
+</script>
+
+
   <!-- 🏠 Hero Section -->
   <main class="hero">
     <h1>Welcome to <span class="highlight">HomeGlitz</span></h1>
