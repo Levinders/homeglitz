@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HomeGlitz — Airbnb Cleaning Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+  <!-- 🧭 Navigation -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <div class="brand__logo">🧼</div>
+      <span>HomeGlitz</span>
+    </div>
+    <button id="navToggle" class="nav-toggle">☰</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="booking.html">Booking</a></li>
+      <li><a href="properties.html">Properties</a></li>
+      <li><a href="cleaners.html">Cleaners</a></li>
+      <li><a href="reports.html">Reports</a></li>
+    </ul>
+  </nav>
+
+  <!-- 🏠 Hero Section -->
+  <main class="hero">
+    <h1>Welcome to <span class="highlight">HomeGlitz</span></h1>
+    <p>Your all-in-one Airbnb cleaning and scheduling hub.</p>
+
+    <a href="booking.html" class="btn btn-primary">Book a Cleaning</a>
+  </main>
+
+  <!-- 🦶 Footer -->
+  <footer class="app__footer">
+    <span class="muted">© <span id="year"></span> HomeGlitz — Powered by Google Sheets</span>
+  </footer>
+
+  <script>
+    // 🧭 Handle Mobile Navigation Toggle
+    const toggle = document.getElementById("navToggle");
+    const links = document.getElementById("navLinks");
+    toggle.addEventListener("click", () => links.classList.toggle("open"));
+
+    // 🗓️ Dynamic year
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
