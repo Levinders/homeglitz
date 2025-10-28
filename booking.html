@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>HomeGlitz — Booking</title>
 
+  <!-- ✅ Favicon -->
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/64%C3%9764pxlogo.png" />
+
   <!-- ✅ Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
 
@@ -45,14 +48,13 @@
     }
 
     .nav-brand {
-      display: flex; align-items: center; gap: 8px;
+      display: flex; align-items: center; gap: 10px;
       font-weight: 700; font-size: 18px; color: var(--text);
     }
 
-    .brand__logo {
-      width: 34px; height: 34px; border-radius: 8px;
-      background: linear-gradient(135deg, var(--ring), #8fa4ff);
-      display: grid; place-items: center;
+    .brand__logo img {
+      width: 28px; height: 28px;
+      border-radius: 6px;
     }
 
     .nav-toggle {
@@ -94,7 +96,7 @@
         gap: 18px;
         border-right: 1px solid rgba(91,124,255,0.15);
         box-shadow: 5px 0 20px rgba(0,0,0,0.5);
-        transition: left 0.4s ease, opacity 0.4s ease;
+        transition: left 0.35s ease, opacity 0.35s ease;
         opacity: 0;
         z-index: 3200;
       }
@@ -180,7 +182,6 @@
       .form__group { padding: 14px 16px; }
       h2.card__title { font-size: 20px; margin-bottom: 24px; }
 
-      /* Mobile buttons: side by side */
       .toolbar {
         justify-content: space-between;
         flex-wrap: nowrap;
@@ -192,7 +193,6 @@
         margin-left: 10px;
       }
 
-      /* Shorter label for mobile */
       .btn-save span.text-full { display: none; }
       .btn-save span.text-short { display: inline; }
     }
@@ -243,7 +243,9 @@
 <body>
   <nav class="navbar">
     <div class="nav-brand">
-      <div class="brand__logo">🧼</div>
+      <div class="brand__logo">
+        <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/48%C3%9748pxlogo.png" alt="HomeGlitz Logo">
+      </div>
       <span>HomeGlitz</span>
     </div>
     <button class="nav-toggle" id="navToggle"><i class="fa-solid fa-bars"></i></button>
@@ -301,7 +303,7 @@
         <button id="submitBtn" type="submit" class="btn btn-save">
           <i class="fa-solid fa-check"></i>
           <span class="text-short">Save</span>
-          <span class="text-full">Booking</span>
+          <span class="text-full"> Booking</span>
         </button>
         <button id="resetBtn" type="button" class="btn btn-reset"><i class="fa-solid fa-rotate-left"></i> Reset</button>
       </div>
@@ -345,17 +347,12 @@
     }
 
     navToggle.addEventListener('click', () => {
-      const isOpen = navLinks.classList.contains('open');
-      if (isOpen) {
+      if (navLinks.classList.contains('open')) {
         closeSidebar();
       } else {
-        navLinks.style.left = '-270px';
-        navLinks.style.opacity = '0';
-        setTimeout(() => {
-          navLinks.classList.add('open');
-          overlay.classList.add('active');
-          animateLinksIn();
-        }, 50);
+        navLinks.classList.add('open');
+        overlay.classList.add('active');
+        animateLinksIn();
       }
     });
 
