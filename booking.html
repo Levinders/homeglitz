@@ -48,13 +48,14 @@
     }
 
     .nav-brand {
-      display: flex; align-items: center; gap: 10px;
-      font-weight: 700; font-size: 18px; color: var(--text);
+      display: flex; align-items: center; justify-content: center;
     }
 
     .brand__logo img {
-      width: 28px; height: 28px;
-      border-radius: 6px;
+      height: 42px;
+      width: auto;
+      display: block;
+      filter: drop-shadow(0 2px 5px rgba(0,0,0,0.4));
     }
 
     .nav-toggle {
@@ -244,9 +245,8 @@
   <nav class="navbar">
     <div class="nav-brand">
       <div class="brand__logo">
-        <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/48%C3%9748pxlogo.png" alt="HomeGlitz Logo">
+        <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png" alt="HomeGlitz Logo">
       </div>
-      <span>HomeGlitz</span>
     </div>
     <button class="nav-toggle" id="navToggle"><i class="fa-solid fa-bars"></i></button>
     <ul class="nav-links" id="navLinks">
