@@ -359,41 +359,37 @@
     overlay.addEventListener('click', closeSidebar);
     links.forEach(link => link.addEventListener('click', closeSidebar));
 
-    // ====== GOOGLE SHEETS INTEGRATION ======
-const bookingForm = document.getElementById('bookingForm');
-bookingForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
 
-  const property = document.getElementById('property').value;
-  const date = document.getElementById('date').value;
-  const start = document.getElementById('start').value;
-  const end = document.getElementById('end').value;
-  const cleaner = document.getElementById('cleaners').value;
-  const linen = document.getElementById('linenYes').classList.contains('active') ? 'Yes' : 'No';
-  const notes = document.getElementById('notes').value;
 
-  const bookingData = { property, date, start, end, cleaner, linen, notes };
 
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbx1H1fqjMA8EooxhLkDiNylEBr9t65xGTs7VIxC6pytA2StxaoZr2bQa9OVCR-5EE67/exec'; // 🧠 replace with your actual web app URL
+    // ====== FETCH PROPERTY LIST FROM GOOGLE SHEETS ======
+const propertySelect = document.getElementById('property');
+const scriptBaseURL = 'https://script.google.com/macros/s/AKfycbztYryTSzk3xxRfB_Em-DtBRNtvC0J3euUjOJVJHzQxO7GQzRKwLrdMnhGWYmTEDwU/exec'; // 🧠 Replace with your Web App URL
 
+async function loadProperties() {
   try {
-    const res = await fetch(scriptURL, {
-      method: 'POST',
-      body: JSON.stringify(bookingData),
-      headers: { 'Content-Type': 'application/json' },
-    });
+    const res = await fetch(scriptBaseURL);
+    const properties = await res.json();
 
-    const result = await res.json();
-    if (result.result === 'success') {
-      alert('✅ Booking successfully saved!');
-      bookingForm.reset();
+    if (Array.isArray(properties)) {
+      propertySelect.innerHTML = '<option value="">Select property...</option>';
+      properties.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.name;
+        opt.textContent = p.name;
+        propertySelect.appendChild(opt);
+      });
     } else {
-      alert('❌ Failed to save booking. Please try again.');
+      propertySelect.innerHTML = '<option value="">No active properties found</option>';
     }
   } catch (err) {
-    alert('⚠️ Connection error: ' + err.message);
+    console.error('Error loading properties:', err);
+    propertySelect.innerHTML = '<option value="">Error loading properties</option>';
   }
-});
+}
+
+// Load property list on page load
+window.addEventListener('DOMContentLoaded', loadProperties);
 
   </script>
 </body>
