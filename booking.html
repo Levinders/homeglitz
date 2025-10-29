@@ -312,85 +312,145 @@
 
   <footer class="app__footer"><span class="muted">© HomeGlitz - Home & BnB Cleaning</span></footer>
 
-  <script>
-    const navToggle = document.getElementById('navToggle');
-    const navLinks = document.getElementById('navLinks');
-    const overlay = document.getElementById('overlay');
-    const links = navLinks.querySelectorAll('a');
-    const yesBtn = document.getElementById('linenYes');
-    const noBtn = document.getElementById('linenNo');
+ <script>
+const scriptBaseURL = "https://script.google.com/macros/s/AKfycbyElHIo9Ifv9e8pOzhbnExlT3xVvfVASL6C9luMPCVNwt4ZoZc99wmXcLLdj3hi6-qQ/exec"; // replace with your Google Apps Script web app URL
 
-    yesBtn.addEventListener('click', () => {
-      yesBtn.classList.add('active');
-      noBtn.classList.remove('active');
-    });
-    noBtn.addEventListener('click', () => {
-      noBtn.classList.add('active');
-      yesBtn.classList.remove('active');
-    });
-
-    function animateLinksIn() {
-      links.forEach((link, i) => {
-        link.style.opacity = 0;
-        link.style.transform = 'translateX(-10px)';
-        setTimeout(() => {
-          link.style.transition = 'all 0.4s ease';
-          link.style.opacity = 1;
-          link.style.transform = 'translateX(0)';
-        }, 100 * i + 150);
-      });
-    }
-
-    function closeSidebar() {
-      navLinks.classList.remove('open');
-      overlay.classList.remove('active');
-    }
-
-    navToggle.addEventListener('click', () => {
-      if (navLinks.classList.contains('open')) {
-        closeSidebar();
-      } else {
-        navLinks.classList.add('open');
-        overlay.classList.add('active');
-        animateLinksIn();
-      }
-    });
-
-    overlay.addEventListener('click', closeSidebar);
-    links.forEach(link => link.addEventListener('click', closeSidebar));
-
-
-
-
-    // ====== FETCH PROPERTY LIST FROM GOOGLE SHEETS ======
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+const overlay = document.getElementById('overlay');
+const links = navLinks.querySelectorAll('a');
 const propertySelect = document.getElementById('property');
-const scriptBaseURL = 'https://script.google.com/macros/s/AKfycbztYryTSzk3xxRfB_Em-DtBRNtvC0J3euUjOJVJHzQxO7GQzRKwLrdMnhGWYmTEDwU/exec'; // 🧠 Replace with your Web App URL
+const cleanerSelect = document.getElementById('cleaners');
+const propertyInfoBox = document.createElement('div');
 
+// 🧼 Property Info Card
+propertyInfoBox.classList.add('property-info');
+propertySelect.parentNode.appendChild(propertyInfoBox);
+
+document.querySelectorAll('.linen-badge').forEach(el =>
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.linen-badge').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+  })
+);
+
+function closeSidebar() {
+  navLinks.classList.remove('open');
+  overlay.classList.remove('active');
+}
+
+navToggle.addEventListener('click', () => {
+  if (navLinks.classList.contains('open')) closeSidebar();
+  else {
+    navLinks.classList.add('open');
+    overlay.classList.add('active');
+  }
+});
+overlay.addEventListener('click', closeSidebar);
+links.forEach(link => link.addEventListener('click', closeSidebar));
+
+
+// 🏠 Load Properties from Google Sheets
 async function loadProperties() {
   try {
-    const res = await fetch(scriptBaseURL);
+    const res = await fetch(`${scriptBaseURL}?type=properties`);
     const properties = await res.json();
 
-    if (Array.isArray(properties)) {
-      propertySelect.innerHTML = '<option value="">Select property...</option>';
-      properties.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p.name;
-        opt.textContent = p.name;
-        propertySelect.appendChild(opt);
-      });
-    } else {
-      propertySelect.innerHTML = '<option value="">No active properties found</option>';
-    }
+    propertySelect.innerHTML = '<option value="">Select property...</option>';
+    properties.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.name;
+      opt.textContent = p.name;
+      opt.dataset.details = JSON.stringify(p);
+      propertySelect.appendChild(opt);
+    });
   } catch (err) {
     console.error('Error loading properties:', err);
-    propertySelect.innerHTML = '<option value="">Error loading properties</option>';
   }
 }
 
-// Load property list on page load
-window.addEventListener('DOMContentLoaded', loadProperties);
 
-  </script>
+// 👤 Load Cleaners from Google Sheets
+async function loadCleaners() {
+  try {
+    const res = await fetch(`${scriptBaseURL}?type=cleaners`);
+    const cleaners = await res.json();
+
+    cleanerSelect.innerHTML = '<option value="">Select a cleaner...</option>';
+    cleaners.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.name;
+      opt.textContent = `${c.name}`;
+      cleanerSelect.appendChild(opt);
+    });
+  } catch (err) {
+    console.error('Error loading cleaners:', err);
+  }
+}
+
+
+// 🧩 Display Property Info When Selected
+propertySelect.addEventListener('change', e => {
+  const selectedOption = e.target.selectedOptions[0];
+  if (!selectedOption || !selectedOption.dataset.details) {
+    propertyInfoBox.innerHTML = '';
+    return;
+  }
+
+  const p = JSON.parse(selectedOption.dataset.details);
+  propertyInfoBox.innerHTML = `
+    <div class="property-card">
+      <p><i class="fa-solid fa-location-dot"></i> <strong>${p.address}</strong></p>
+      <div class="grid-info">
+        <span><i class="fa-solid fa-bed"></i> ${p.totalBeds} Beds</span>
+        <span><i class="fa-solid fa-bath"></i> ${p.bathrooms} Baths</span>
+        <span><i class="fa-solid fa-users"></i> Max ${p.maxOccupants} Guests</span>
+        <span><i class="fa-solid fa-layer-group"></i> Linen: ${p.linenSupplied}</span>
+        <span><i class="fa-solid fa-code"></i> Bed Code: ${p.bedCode}</span>
+      </div>
+    </div>
+  `;
+});
+
+// 🏁 Initialize
+window.addEventListener('DOMContentLoaded', () => {
+  loadProperties();
+  loadCleaners();
+});
+</script>
+
+<style>
+/* 🧾 Property Info Box Styling */
+.property-info {
+  margin-top: 14px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(91,124,255,0.15);
+  padding: 16px 20px;
+  font-size: 14px;
+  color: var(--muted);
+  transition: all 0.3s ease;
+}
+.property-info .property-card p {
+  margin: 0 0 10px;
+  color: var(--accent);
+}
+.property-info .grid-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 6px;
+  color: var(--text);
+}
+.property-info span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.9;
+}
+.property-info i {
+  color: var(--ring);
+}
+</style>
+
 </body>
 </html>
