@@ -306,10 +306,10 @@
 
   <footer class="app__footer"><span class="muted">© HomeGlitz — Home & BnB Cleaning</span></footer>
 
-  <script>
+<script>
   const scriptBaseURL = "https://script.google.com/macros/s/AKfycbxpVtVbGq2XOEBM1GYU0xXll2asXgL5O73mCh5rAp32LkwO1SKEEECbbQ8S8u-mMSNL/exec";
- 
-  // Sidebar toggle
+
+  // --- 🧭 Sidebar toggle ---
   const navToggle = document.getElementById('navToggle');
   const navLinks = document.getElementById('navLinks');
   const overlay = document.getElementById('overlay');
@@ -322,19 +322,19 @@
     overlay.classList.remove('active');
   };
 
-  // Linen toggle
+  // --- 🧺 Linen toggle ---
   const yesBtn = document.getElementById('linenYes');
   const noBtn = document.getElementById('linenNo');
   yesBtn.onclick = () => { yesBtn.classList.add('active'); noBtn.classList.remove('active'); };
   noBtn.onclick = () => { noBtn.classList.add('active'); yesBtn.classList.remove('active'); };
 
-  // Toast & Loader
+  // --- 🔔 Toast & Loader setup ---
   const toast = document.createElement("div");
   toast.className = "toast";
   document.body.appendChild(toast);
   const loader = document.createElement("div");
   loader.className = "loader-overlay";
-  loader.innerHTML = `<div class='loader-box'><div class='spinner'></div><p>Saving booking...</p></div>`;
+  loader.innerHTML = `<div class='loader-box'><div class='spinner'></div><p>Loading data...</p></div>`;
   document.body.appendChild(loader);
 
   function showToast(msg, type="success") {
@@ -343,65 +343,88 @@
     setTimeout(() => toast.className = "toast", 3500);
   }
 
-  // ✅ Load dropdowns safely with Apps Script CORS handling
+  // --- 🧠 Safe JSON parser (for Apps Script quirks) ---
+  async function safeJSON(res) {
+    const text = await res.text();
+    if (text.startsWith("<")) {
+      console.warn("⚠️ Received HTML instead of JSON:", text.slice(0, 100));
+      throw new Error("Invalid JSON: HTML received");
+    }
+    try { return JSON.parse(text); }
+    catch (err) {
+      console.error("JSON parse failed:", err, "Raw text:", text.slice(0, 100));
+      throw new Error("Invalid JSON format");
+    }
+  }
+
+  // --- 🚀 Load dropdowns ---
   async function loadDropdowns() {
+    loader.classList.add("active");
     const propSel = document.getElementById('property');
     const cleanSel = document.getElementById('cleaners');
-    const infoBox = document.getElementById('propertyInfo');
-    
+    let propData = [], cleanerData = [];
+
     try {
+      console.log("🔹 Fetching properties...");
       const propRes = await fetch(`${scriptBaseURL}?type=properties`, { cache: "no-store" });
-      const cleanersRes = await fetch(`${scriptBaseURL}?type=cleaners`, { cache: "no-store" });
+      propData = await safeJSON(propRes);
+      console.log("✅ Properties loaded:", propData.length);
 
-      if (!propRes.ok || !cleanersRes.ok) throw new Error("Bad response");
-
-      const propsText = await propRes.text();
-      const cleanersText = await cleanersRes.text();
-
-      // Sometimes Google returns HTML first — ensure valid JSON
-      const props = JSON.parse(propsText.startsWith("<") ? "[]" : propsText);
-      const cleaners = JSON.parse(cleanersText.startsWith("<") ? "[]" : cleanersText);
-
-      if (!Array.isArray(props) || !Array.isArray(cleaners)) throw new Error("Invalid JSON");
+      console.log("🔹 Fetching cleaners...");
+      const cleanerRes = await fetch(`${scriptBaseURL}?type=cleaners`, { cache: "no-store" });
+      cleanerData = await safeJSON(cleanerRes);
+      console.log("✅ Cleaners loaded:", cleanerData.length);
 
       // Populate property dropdown
       propSel.innerHTML = `<option value="">Select property...</option>`;
-      props.forEach(p => {
+      propData.forEach(p => {
         propSel.innerHTML += `<option value="${p.name}">${p.name}</option>`;
       });
 
-      // Populate cleaners dropdown
+      // Populate cleaner dropdown
       cleanSel.innerHTML = `<option value="">Select a cleaner...</option>`;
-      cleaners.forEach(c => {
+      cleanerData.forEach(c => {
         cleanSel.innerHTML += `<option value="${c.name}">${c.name}</option>`;
       });
 
-      // When a property is selected, show details
+      // Property info display
+      const infoBox = document.createElement("div");
+      infoBox.id = "propertyInfo";
+      infoBox.style.marginTop = "8px";
+      infoBox.style.fontSize = "14px";
+      infoBox.style.color = "var(--muted)";
+      propSel.parentNode.appendChild(infoBox);
+
       propSel.onchange = () => {
-        const p = props.find(x => x.name === propSel.value);
+        const p = propData.find(x => x.name === propSel.value);
         if (p) {
           infoBox.innerHTML = `
-            <strong>${p.address}</strong><br>
-            ${p.bedrooms} Beds • ${p.bathrooms} Baths<br>
-            King: ${p.kingBeds}, Queen: ${p.queenBeds}, Double: ${p.doubleBeds}, Single: ${p.singleBeds}<br>
-            Sofa: ${p.sofaBeds} | Total: ${p.totalBeds} | Max: ${p.maxOccupants}<br>
-            Linen: ${p.linenSupplied} | Code: ${p.bedCode}
-          `;
-        } else {
-          infoBox.innerHTML = "";
-        }
+            <div style="line-height:1.5;">
+              <strong>${p.address}</strong><br>
+              🛏️ ${p.bedrooms} Beds • 🛁 ${p.bathrooms} Baths<br>
+              👑 ${p.kingBeds}K • 👸 ${p.queenBeds}Q • 🛋️ ${p.sofaBeds}Sofa<br>
+              Total: ${p.totalBeds} | Max: ${p.maxOccupants}<br>
+              Linen: ${p.linenSupplied} | Code: ${p.bedCode}
+            </div>`;
+        } else infoBox.innerHTML = "";
       };
+
+      showToast("✅ Data loaded successfully");
     } catch (err) {
-      console.error("Dropdown load error:", err);
+      console.error("❌ Dropdown load error:", err);
       showToast("⚠️ Error loading data", "error");
+    } finally {
+      loader.classList.remove("active");
     }
   }
 
   loadDropdowns();
 
-  // ✅ Booking Form Submit
+  // --- 💾 Booking submission ---
   document.getElementById("bookingForm").onsubmit = async (e) => {
     e.preventDefault();
+    loader.classList.add("active");
+    loader.querySelector("p").textContent = "Saving booking...";
 
     const data = {
       property: property.value,
@@ -413,9 +436,8 @@
       notes: notes.value
     };
 
-    loader.classList.add("active");
-
     try {
+      console.log("📤 Sending booking:", data);
       const res = await fetch(scriptBaseURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -423,10 +445,11 @@
       });
 
       const text = await res.text();
+      console.log("📥 Raw booking response:", text.slice(0, 100));
       const result = JSON.parse(text.startsWith("<") ? "{}" : text);
 
       if (result.result === "success") {
-        showToast("✅ Booking saved successfully!", "success");
+        showToast("✅ Booking saved successfully!");
         e.target.reset();
         yesBtn.classList.add("active");
         noBtn.classList.remove("active");
@@ -435,22 +458,23 @@
         throw new Error(result.message || "Unknown error");
       }
     } catch (err) {
-      console.error("Save error:", err);
+      console.error("❌ Booking save error:", err);
       showToast("❌ Failed to connect. Please try later.", "error");
     } finally {
       loader.classList.remove("active");
     }
   };
 
-  // ✅ Reset button
+  // --- 🧹 Reset form ---
   document.getElementById("resetBtn").onclick = () => {
     bookingForm.reset();
     yesBtn.classList.add("active");
     noBtn.classList.remove("active");
-    document.getElementById("propertyInfo").innerHTML = "";
-    showToast("🧹 Form reset successfully", "success");
+    document.getElementById("propertyInfo")?.remove();
+    showToast("🧼 Form reset successfully", "success");
   };
 </script>
+
 
 </body>
 </html>
