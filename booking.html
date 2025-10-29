@@ -307,97 +307,150 @@
   <footer class="app__footer"><span class="muted">© HomeGlitz — Home & BnB Cleaning</span></footer>
 
   <script>
-    const scriptBaseURL = "https://script.google.com/macros/s/AKfycbydX8J59oeqyvddBUWRJUs6zSs8fPQBYhyryaCNlGhM3Z2ducEdBZzxRHzvwAQbotsH/exec";
+  const scriptBaseURL = "https://script.google.com/macros/s/AKfycbydX8J59oeqyvddBUWRJUs6zSs8fPQBYhyryaCNlGhM3Z2ducEdBZzxRHzvwAQbotsH/exec";
 
-    // ✅ Sidebar toggle
-    const navToggle = document.getElementById('navToggle');
-    const navLinks = document.getElementById('navLinks');
-    const overlay = document.getElementById('overlay');
-    navToggle.onclick = () => {
-      navLinks.classList.toggle('open');
-      overlay.classList.toggle('active');
-    };
-    overlay.onclick = () => {
-      navLinks.classList.remove('open');
-      overlay.classList.remove('active');
-    };
+  // Sidebar toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  const overlay = document.getElementById('overlay');
+  navToggle.onclick = () => {
+    navLinks.classList.toggle('open');
+    overlay.classList.toggle('active');
+  };
+  overlay.onclick = () => {
+    navLinks.classList.remove('open');
+    overlay.classList.remove('active');
+  };
 
-    // ✅ Linen toggle
-    const yesBtn = document.getElementById('linenYes');
-    const noBtn = document.getElementById('linenNo');
-    yesBtn.onclick = () => { yesBtn.classList.add('active'); noBtn.classList.remove('active'); };
-    noBtn.onclick = () => { noBtn.classList.add('active'); yesBtn.classList.remove('active'); };
+  // Linen toggle
+  const yesBtn = document.getElementById('linenYes');
+  const noBtn = document.getElementById('linenNo');
+  yesBtn.onclick = () => { yesBtn.classList.add('active'); noBtn.classList.remove('active'); };
+  noBtn.onclick = () => { noBtn.classList.add('active'); yesBtn.classList.remove('active'); };
 
-    // ✅ Load data from Google Sheets
-    async function loadDropdowns() {
-      const propSel = document.getElementById('property');
-      const cleanSel = document.getElementById('cleaners');
-      const infoBox = document.getElementById('propertyInfo');
-      try {
-        const [props, cleaners] = await Promise.all([
-          fetch(`${scriptBaseURL}?type=properties`).then(r => r.json()),
-          fetch(`${scriptBaseURL}?type=cleaners`).then(r => r.json())
-        ]);
-        props.forEach(p => propSel.innerHTML += `<option value="${p.name}">${p.name}</option>`);
-        cleaners.forEach(c => cleanSel.innerHTML += `<option value="${c.name}">${c.name}</option>`);
-        propSel.onchange = () => {
-          const p = props.find(x => x.name === propSel.value);
-          if (p) infoBox.innerHTML = `<strong>${p.address}</strong><br>${p.bedrooms} Beds, ${p.bathrooms} Baths<br>Linen: ${p.linenSupplied} | Code: ${p.bedCode}`;
-          else infoBox.innerHTML = "";
-        };
-      } catch (e) { showToast("⚠️ Error loading data", "error"); }
-    }
-    loadDropdowns();
+  // Toast & Loader
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  document.body.appendChild(toast);
+  const loader = document.createElement("div");
+  loader.className = "loader-overlay";
+  loader.innerHTML = `<div class='loader-box'><div class='spinner'></div><p>Saving booking...</p></div>`;
+  document.body.appendChild(loader);
 
-    // ✅ Toast + Loader setup
-    const toast = document.createElement("div");
-    toast.className = "toast"; document.body.appendChild(toast);
-    const loader = document.createElement("div");
-    loader.className = "loader-overlay";
-    loader.innerHTML = `<div class='loader-box'><div class='spinner'></div><p>Saving booking...</p></div>`;
-    document.body.appendChild(loader);
+  function showToast(msg, type="success") {
+    toast.textContent = msg;
+    toast.className = `toast show ${type}`;
+    setTimeout(() => toast.className = "toast", 3500);
+  }
 
-    function showToast(msg, type="success"){ toast.textContent=msg; toast.className=`toast show ${type}`; setTimeout(()=>toast.className="toast",3500); }
+  // ✅ Load dropdowns safely with Apps Script CORS handling
+  async function loadDropdowns() {
+    const propSel = document.getElementById('property');
+    const cleanSel = document.getElementById('cleaners');
+    const infoBox = document.getElementById('propertyInfo');
+    
+    try {
+      const propRes = await fetch(`${scriptBaseURL}?type=properties`, { cache: "no-store" });
+      const cleanersRes = await fetch(`${scriptBaseURL}?type=cleaners`, { cache: "no-store" });
 
-    // ✅ Booking form submit
-    document.getElementById("bookingForm").onsubmit = async e => {
-      e.preventDefault();
-      const data = {
-        property: property.value,
-        date: date.value,
-        start: start.value,
-        end: end.value,
-        cleaner: cleaners.value,
-        linen: document.querySelector(".linen-badge.active").textContent,
-        notes: notes.value
+      if (!propRes.ok || !cleanersRes.ok) throw new Error("Bad response");
+
+      const propsText = await propRes.text();
+      const cleanersText = await cleanersRes.text();
+
+      // Sometimes Google returns HTML first — ensure valid JSON
+      const props = JSON.parse(propsText.startsWith("<") ? "[]" : propsText);
+      const cleaners = JSON.parse(cleanersText.startsWith("<") ? "[]" : cleanersText);
+
+      if (!Array.isArray(props) || !Array.isArray(cleaners)) throw new Error("Invalid JSON");
+
+      // Populate property dropdown
+      propSel.innerHTML = `<option value="">Select property...</option>`;
+      props.forEach(p => {
+        propSel.innerHTML += `<option value="${p.name}">${p.name}</option>`;
+      });
+
+      // Populate cleaners dropdown
+      cleanSel.innerHTML = `<option value="">Select a cleaner...</option>`;
+      cleaners.forEach(c => {
+        cleanSel.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+      });
+
+      // When a property is selected, show details
+      propSel.onchange = () => {
+        const p = props.find(x => x.name === propSel.value);
+        if (p) {
+          infoBox.innerHTML = `
+            <strong>${p.address}</strong><br>
+            ${p.bedrooms} Beds • ${p.bathrooms} Baths<br>
+            King: ${p.kingBeds}, Queen: ${p.queenBeds}, Double: ${p.doubleBeds}, Single: ${p.singleBeds}<br>
+            Sofa: ${p.sofaBeds} | Total: ${p.totalBeds} | Max: ${p.maxOccupants}<br>
+            Linen: ${p.linenSupplied} | Code: ${p.bedCode}
+          `;
+        } else {
+          infoBox.innerHTML = "";
+        }
       };
-      loader.classList.add("active");
-      try {
-        const res = await fetch(scriptBaseURL, {
-          method: "POST",
-          body: JSON.stringify(data),
-          headers: { "Content-Type": "application/json" }
-        });
+    } catch (err) {
+      console.error("Dropdown load error:", err);
+      showToast("⚠️ Error loading data", "error");
+    }
+  }
 
-        const result = await res.json();
-        if (result.result === "success") {
-          showToast("✅ Booking saved successfully!","success");
-          e.target.reset();
-          yesBtn.classList.add("active"); noBtn.classList.remove("active");
-          document.getElementById("propertyInfo").innerHTML = "";
-        } else throw new Error(result.message || "Error");
-      } catch (err) {
-        showToast("❌ Failed to connect. Please try later.","error");
-      } finally { loader.classList.remove("active"); }
+  loadDropdowns();
+
+  // ✅ Booking Form Submit
+  document.getElementById("bookingForm").onsubmit = async (e) => {
+    e.preventDefault();
+
+    const data = {
+      property: property.value,
+      date: date.value,
+      start: start.value,
+      end: end.value,
+      cleaner: cleaners.value,
+      linen: document.querySelector(".linen-badge.active").textContent,
+      notes: notes.value
     };
 
-    // ✅ Reset button
-    document.getElementById("resetBtn").onclick = () => {
-      bookingForm.reset();
-      yesBtn.classList.add("active"); noBtn.classList.remove("active");
-      document.getElementById("propertyInfo").innerHTML = "";
-      showToast("🧹 Form reset successfully","success");
-    };
-  </script>
+    loader.classList.add("active");
+
+    try {
+      const res = await fetch(scriptBaseURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const text = await res.text();
+      const result = JSON.parse(text.startsWith("<") ? "{}" : text);
+
+      if (result.result === "success") {
+        showToast("✅ Booking saved successfully!", "success");
+        e.target.reset();
+        yesBtn.classList.add("active");
+        noBtn.classList.remove("active");
+        document.getElementById("propertyInfo").innerHTML = "";
+      } else {
+        throw new Error(result.message || "Unknown error");
+      }
+    } catch (err) {
+      console.error("Save error:", err);
+      showToast("❌ Failed to connect. Please try later.", "error");
+    } finally {
+      loader.classList.remove("active");
+    }
+  };
+
+  // ✅ Reset button
+  document.getElementById("resetBtn").onclick = () => {
+    bookingForm.reset();
+    yesBtn.classList.add("active");
+    noBtn.classList.remove("active");
+    document.getElementById("propertyInfo").innerHTML = "";
+    showToast("🧹 Form reset successfully", "success");
+  };
+</script>
+
 </body>
 </html>
