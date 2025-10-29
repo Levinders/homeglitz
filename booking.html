@@ -36,7 +36,7 @@
       padding-top: 70px;
     }
 
-    /* ============ NAVBAR ============ */
+    /* ======== NAVBAR ======== */
     .navbar {
       position: fixed; top: 0; left: 0; right: 0; height: 60px;
       background: rgba(22,26,43,0.95);
@@ -52,7 +52,7 @@
     }
 
     .brand__logo img {
-      height: 50px;
+      height: 52px;
       width: auto;
       display: block;
       filter: drop-shadow(0 2px 5px rgba(0,0,0,0.4));
@@ -64,13 +64,10 @@
       font-size: 24px; cursor: pointer;
       transition: transform 0.25s ease;
     }
-    .nav-toggle:active { transform: scale(0.9); }
 
     .nav-links {
       display: flex; gap: 24px; list-style: none;
       margin: 0; padding: 0;
-      position: relative;
-      z-index: 3100;
     }
 
     .nav-links a {
@@ -83,7 +80,7 @@
       color: var(--accent);
     }
 
-    /* ============ SIDEBAR (MOBILE) ============ */
+    /* ======== SIDEBAR (MOBILE) ======== */
     @media (max-width: 768px) {
       .nav-toggle { display: block; }
 
@@ -113,9 +110,6 @@
         font-weight: 500;
         padding: 10px 0;
         border-bottom: 1px solid rgba(255,255,255,0.05);
-        transition: all 0.25s ease;
-        opacity: 0;
-        transform: translateX(-10px);
       }
 
       .overlay {
@@ -126,21 +120,17 @@
         transition: all var(--transition);
         z-index: 2500;
       }
+
       .overlay.active {
         opacity: 1; visibility: visible;
       }
     }
 
-    /* ============ FORM ============ */
+    /* ======== FORM ======== */
     main {
       max-width: 850px; margin: 80px auto; background: var(--panel);
       border-radius: 20px; padding: 50px 60px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
       position: relative; overflow: hidden;
-    }
-
-    main::before {
-      content: ""; position: absolute; inset: 0; pointer-events: none;
-      background: radial-gradient(circle at 70% 20%, rgba(91,124,255,0.08), transparent 60%);
     }
 
     h2.card__title {
@@ -157,46 +147,16 @@
       border-radius: var(--radius);
       padding: 16px 20px;
       border: 1px solid rgba(91,124,255,0.15);
-      transition: all 0.3s ease;
-    }
-
-    .form__group:hover { border-color: var(--accent); background: rgba(18,22,46,0.85); }
-
-    .form__group label {
-      font-weight: 600; font-size: 15.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
-      color: var(--accent);
     }
 
     input, select, textarea {
       width: 100%; border-radius: 10px; border: 1px solid rgba(91,124,255,0.15);
       background: rgba(10,14,32,0.9); color: var(--text);
       padding: 12px 14px; font-size: 16px;
-      transition: all 0.3s ease;
     }
 
     .form__row-inline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
     .form__row-pair { display: grid; grid-template-columns: 2fr 1fr; gap: 22px; }
-
-    @media (max-width: 700px) {
-      main { padding: 30px 20px; margin: 60px 10px; }
-      .form__row-inline, .form__row-pair { grid-template-columns: 1fr; }
-      .form__group { padding: 14px 16px; }
-      h2.card__title { font-size: 20px; margin-bottom: 24px; }
-
-      .toolbar {
-        justify-content: space-between;
-        flex-wrap: nowrap;
-      }
-      .toolbar .btn {
-        flex: 1;
-      }
-      .toolbar .btn + .btn {
-        margin-left: 10px;
-      }
-
-      .btn-save span.text-full { display: none; }
-      .btn-save span.text-short { display: inline; }
-    }
 
     .linen-badge-group {
       display: flex; align-items: center; gap: 10px;
@@ -213,6 +173,15 @@
     .linen-badge.active {
       background: var(--ring); color: #fff;
       box-shadow: 0 0 8px rgba(91,124,255,0.5);
+    }
+
+    .property-info {
+      background: rgba(91,124,255,0.05);
+      border: 1px solid rgba(91,124,255,0.15);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 14px;
+      color: var(--muted);
     }
 
     .toolbar {
@@ -237,7 +206,59 @@
       border: 1px solid rgba(255,255,255,0.1);
     }
 
-    .app__footer { text-align: center; color: var(--muted); font-size: 13px; margin: 40px 0; }
+    /* Toast + Loader */
+    .toast {
+      position: fixed;
+      bottom: 30px; right: 30px;
+      background: rgba(30,33,54,0.95);
+      color: var(--text);
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-weight: 500;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.4s ease;
+      z-index: 5000;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.success { border-left: 4px solid #4ade80; }
+    .toast.error { border-left: 4px solid #f87171; }
+
+    .loader-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(14,16,30,0.75);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s ease;
+      z-index: 4000;
+    }
+    .loader-overlay.active { opacity: 1; visibility: visible; }
+    .loader-box { text-align: center; color: var(--text); background: rgba(22,26,43,0.9); padding: 30px 40px; border-radius: 18px; }
+    .spinner {
+      width: 38px; height: 38px;
+      border: 3px solid rgba(123,146,255,0.25);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      margin: 0 auto 14px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 700px) {
+      main { padding: 30px 20px; margin: 60px 10px; }
+      .form__row-inline, .form__row-pair { grid-template-columns: 1fr; }
+      .toolbar { justify-content: space-between; }
+      .toolbar .btn { flex: 1; }
+      .toolbar .btn + .btn { margin-left: 10px; }
+      .btn-save span.text-full { display: none; }
+      .btn-save span.text-short { display: inline; }
+    }
   </style>
 </head>
 
@@ -262,10 +283,12 @@
 
   <main>
     <h2 class="card__title"><i class="fa-solid fa-broom"></i> Create Cleaning Booking</h2>
+
     <form id="bookingForm" class="form" autocomplete="off">
       <div class="form__group">
         <label><i class="fa-solid fa-house-chimney"></i> Property</label>
         <select id="property" required><option value="">Select property...</option></select>
+        <div class="property-info" id="propertyInfo"></div>
       </div>
 
       <div class="form__row-inline">
@@ -277,12 +300,7 @@
       <div class="form__row-pair">
         <div class="form__group">
           <label><i class="fa-solid fa-user"></i> Cleaner(s)</label>
-          <select id="cleaners">
-            <option value="">Select a cleaner...</option>
-            <option value="John">John</option>
-            <option value="Mary">Mary</option>
-            <option value="Lucy">Lucy</option>
-          </select>
+          <select id="cleaners"><option value="">Select a cleaner...</option></select>
         </div>
 
         <div class="form__group">
@@ -310,295 +328,144 @@
     </form>
   </main>
 
-  <footer class="app__footer"><span class="muted">© HomeGlitz - Home & BnB Cleaning</span></footer>
+  <footer class="app__footer"><span class="muted">© HomeGlitz — Home & BnB Cleaning</span></footer>
 
- <script>
-const scriptBaseURL = "https://script.google.com/macros/s/AKfycbyElHIo9Ifv9e8pOzhbnExlT3xVvfVASL6C9luMPCVNwt4ZoZc99wmXcLLdj3hi6-qQ/exec"; // replace with your Google Apps Script web app URL
+  <script>
+    const scriptBaseURL = "https://script.google.com/macros/s/AKfycbw5cWoIYLq1PF5YJjnJ8HRM5snS1rwpdEUUifFHh1QtmR6X_63aNtS7s5KJV4pIR6k/exec";
 
-const navToggle = document.getElementById('navToggle');
-const navLinks = document.getElementById('navLinks');
-const overlay = document.getElementById('overlay');
-const links = navLinks.querySelectorAll('a');
-const propertySelect = document.getElementById('property');
-const cleanerSelect = document.getElementById('cleaners');
-const propertyInfoBox = document.createElement('div');
+    // Navbar toggle
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+    const overlay = document.getElementById('overlay');
+    const links = navLinks.querySelectorAll('a');
 
-// 🧼 Property Info Card
-propertyInfoBox.classList.add('property-info');
-propertySelect.parentNode.appendChild(propertyInfoBox);
-
-document.querySelectorAll('.linen-badge').forEach(el =>
-  el.addEventListener('click', () => {
-    document.querySelectorAll('.linen-badge').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-  })
-);
-
-function closeSidebar() {
-  navLinks.classList.remove('open');
-  overlay.classList.remove('active');
-}
-
-navToggle.addEventListener('click', () => {
-  if (navLinks.classList.contains('open')) closeSidebar();
-  else {
-    navLinks.classList.add('open');
-    overlay.classList.add('active');
-  }
-});
-overlay.addEventListener('click', closeSidebar);
-links.forEach(link => link.addEventListener('click', closeSidebar));
-
-
-// 🏠 Load Properties from Google Sheets
-async function loadProperties() {
-  try {
-    const res = await fetch(`${scriptBaseURL}?type=properties`);
-    const properties = await res.json();
-
-    propertySelect.innerHTML = '<option value="">Select property...</option>';
-    properties.forEach(p => {
-      const opt = document.createElement('option');
-      opt.value = p.name;
-      opt.textContent = p.name;
-      opt.dataset.details = JSON.stringify(p);
-      propertySelect.appendChild(opt);
+    navToggle.addEventListener('click', () => {
+      if (navLinks.classList.contains('open')) {
+        navLinks.classList.remove('open');
+        overlay.classList.remove('active');
+      } else {
+        navLinks.classList.add('open');
+        overlay.classList.add('active');
+      }
     });
-  } catch (err) {
-    console.error('Error loading properties:', err);
-  }
-}
-
-
-// 👤 Load Cleaners from Google Sheets
-async function loadCleaners() {
-  try {
-    const res = await fetch(`${scriptBaseURL}?type=cleaners`);
-    const cleaners = await res.json();
-
-    cleanerSelect.innerHTML = '<option value="">Select a cleaner...</option>';
-    cleaners.forEach(c => {
-      const opt = document.createElement('option');
-      opt.value = c.name;
-      opt.textContent = `${c.name}`;
-      cleanerSelect.appendChild(opt);
-    });
-  } catch (err) {
-    console.error('Error loading cleaners:', err);
-  }
-}
-
-
-// 🧩 Display Property Info When Selected
-propertySelect.addEventListener('change', e => {
-  const selectedOption = e.target.selectedOptions[0];
-  if (!selectedOption || !selectedOption.dataset.details) {
-    propertyInfoBox.innerHTML = '';
-    return;
-  }
-
-  const p = JSON.parse(selectedOption.dataset.details);
-  propertyInfoBox.innerHTML = `
-    <div class="property-card">
-      <p><i class="fa-solid fa-location-dot"></i> <strong>${p.address}</strong></p>
-      <div class="grid-info">
-        <span><i class="fa-solid fa-bed"></i> ${p.totalBeds} Beds</span>
-        <span><i class="fa-solid fa-bath"></i> ${p.bathrooms} Baths</span>
-        <span><i class="fa-solid fa-users"></i> Max ${p.maxOccupants} Guests</span>
-        <span><i class="fa-solid fa-layer-group"></i> Linen: ${p.linenSupplied}</span>
-        <span><i class="fa-solid fa-code"></i> Bed Code: ${p.bedCode}</span>
-      </div>
-    </div>
-  `;
-});
-
-// 🏁 Initialize
-window.addEventListener('DOMContentLoaded', () => {
-  loadProperties();
-  loadCleaners();
-});
-
-
-   /* ==========================
-   🧾 FORM SUBMISSION HANDLER
-========================== */
-const bookingForm = document.getElementById('bookingForm');
-const submitBtn = document.getElementById('submitBtn');
-
-// Toast container
-const toast = document.createElement('div');
-toast.className = 'toast';
-document.body.appendChild(toast);
-
-// Overlay loader
-const loaderOverlay = document.createElement('div');
-loaderOverlay.className = 'loader-overlay';
-loaderOverlay.innerHTML = `
-  <div class="loader-box">
-    <div class="spinner"></div>
-    <p>Saving booking...</p>
-  </div>
-`;
-document.body.appendChild(loaderOverlay);
-
-// Handle submission
-bookingForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const linenRequired = document.querySelector('.linen-badge.active').textContent.trim();
-  const payload = {
-    property: document.getElementById('property').value,
-    date: document.getElementById('date').value,
-    start: document.getElementById('start').value,
-    end: document.getElementById('end').value,
-    cleaner: document.getElementById('cleaners').value,
-    linen: linenRequired,
-    notes: document.getElementById('notes').value
-  };
-
-  if (!payload.property || !payload.date || !payload.start || !payload.end) {
-    showToast('Please fill all required fields', 'error');
-    return;
-  }
-
-  // Show loader
-  loaderOverlay.classList.add('active');
-  submitBtn.disabled = true;
-
-  try {
-    const res = await fetch(scriptBaseURL, {
-      method: 'POST',
-      body: JSON.stringify(payload),
-      headers: { 'Content-Type': 'application/json' }
+    overlay.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      overlay.classList.remove('active');
     });
 
-    const result = await res.json();
+    // Linen toggle
+    const yesBtn = document.getElementById('linenYes');
+    const noBtn = document.getElementById('linenNo');
+    yesBtn.onclick = () => { yesBtn.classList.add('active'); noBtn.classList.remove('active'); };
+    noBtn.onclick = () => { noBtn.classList.add('active'); yesBtn.classList.remove('active'); };
 
-    if (result.result === 'success') {
-      showToast('Booking saved successfully ✅', 'success');
-      bookingForm.reset();
-      document.querySelectorAll('.linen-badge').forEach(b => b.classList.remove('active'));
-      document.getElementById('linenYes').classList.add('active');
-    } else {
-      showToast('Error saving booking. Try again.', 'error');
+    // Load properties + cleaners
+    async function loadDropdowns() {
+      const propertySelect = document.getElementById('property');
+      const cleanerSelect = document.getElementById('cleaners');
+      const propertyInfo = document.getElementById('propertyInfo');
+
+      try {
+        const [propRes, cleanRes] = await Promise.all([
+          fetch(`${scriptBaseURL}?type=properties`),
+          fetch(`${scriptBaseURL}?type=cleaners`)
+        ]);
+        const [properties, cleaners] = await Promise.all([propRes.json(), cleanRes.json()]);
+
+        properties.forEach(p => {
+          const option = document.createElement('option');
+          option.value = p.name;
+          option.textContent = p.name;
+          propertySelect.appendChild(option);
+        });
+
+        cleaners.forEach(c => {
+          const option = document.createElement('option');
+          option.value = c.name;
+          option.textContent = c.name;
+          cleanerSelect.appendChild(option);
+        });
+
+        propertySelect.addEventListener('change', e => {
+          const selected = properties.find(p => p.name === e.target.value);
+          if (!selected) return (propertyInfo.innerHTML = '');
+          propertyInfo.innerHTML = `
+            <strong>${selected.address}</strong><br>
+            ${selected.bedrooms} Beds, ${selected.bathrooms} Baths<br>
+            Linen: ${selected.linenSupplied} | Code: ${selected.bedCode}
+          `;
+        });
+      } catch (err) {
+        console.error('Error loading data:', err);
+      }
     }
-  } catch (err) {
-    console.error(err);
-    showToast('Failed to connect. Please try later.', 'error');
-  } finally {
-    loaderOverlay.classList.remove('active');
-    submitBtn.disabled = false;
-  }
-});
 
-// Toast function
-function showToast(message, type = 'info') {
-  toast.textContent = message;
-  toast.className = `toast show ${type}`;
-  setTimeout(() => toast.className = 'toast', 3500);
-}
+    loadDropdowns();
 
-</script>
+    /* ========== Booking Form Logic ========== */
+    const bookingForm = document.getElementById('bookingForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    document.body.appendChild(toast);
 
-<style>
-/* 🧾 Property Info Box Styling */
-.property-info {
-  margin-top: 14px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 12px;
-  border: 1px solid rgba(91,124,255,0.15);
-  padding: 16px 20px;
-  font-size: 14px;
-  color: var(--muted);
-  transition: all 0.3s ease;
-}
-.property-info .property-card p {
-  margin: 0 0 10px;
-  color: var(--accent);
-}
-.property-info .grid-info {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 6px;
-  color: var(--text);
-}
-.property-info span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  opacity: 0.9;
-}
-.property-info i {
-  color: var(--ring);
-}
+    const loaderOverlay = document.createElement('div');
+    loaderOverlay.className = 'loader-overlay';
+    loaderOverlay.innerHTML = `<div class="loader-box"><div class="spinner"></div><p>Saving booking...</p></div>`;
+    document.body.appendChild(loaderOverlay);
 
-  /* ===== Toast Notification ===== */
-.toast {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  padding: 14px 22px;
-  border-radius: 12px;
-  background: rgba(30, 33, 54, 0.95);
-  color: var(--text);
-  font-weight: 500;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-  opacity: 0;
-  transform: translateY(40px);
-  transition: all 0.4s ease;
-  z-index: 5000;
-}
-.toast.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-.toast.success {
-  border-left: 4px solid #4ade80;
-}
-.toast.error {
-  border-left: 4px solid #f87171;
-}
+    bookingForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const linenRequired = document.querySelector('.linen-badge.active').textContent.trim();
+      const payload = {
+        property: document.getElementById('property').value,
+        date: document.getElementById('date').value,
+        start: document.getElementById('start').value,
+        end: document.getElementById('end').value,
+        cleaner: document.getElementById('cleaners').value,
+        linen: linenRequired,
+        notes: document.getElementById('notes').value
+      };
 
-/* ===== Loader Overlay ===== */
-.loader-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(14,16,30,0.75);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.4s ease;
-  z-index: 4000;
-}
-.loader-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-.loader-box {
-  text-align: center;
-  color: var(--text);
-  background: rgba(22,26,43,0.9);
-  padding: 30px 40px;
-  border-radius: 18px;
-  box-shadow: 0 0 40px rgba(91,124,255,0.25);
-}
-.spinner {
-  width: 38px;
-  height: 38px;
-  border: 3px solid rgba(123,146,255,0.25);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  margin: 0 auto 14px;
-  animation: spin 1s linear infinite;
-}
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+      loaderOverlay.classList.add('active');
+      submitBtn.disabled = true;
 
-</style>
+      try {
+        const res = await fetch(scriptBaseURL, {
+          method: 'POST',
+          body: JSON.stringify(payload),
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const result = await res.json();
+        if (result.result === 'success') {
+          showToast('✅ Booking saved successfully!', 'success');
+          bookingForm.reset();
+          yesBtn.classList.add('active'); noBtn.classList.remove('active');
+          document.getElementById('propertyInfo').innerHTML = '';
+        } else {
+          showToast('Error saving booking. Try again.', 'error');
+        }
+      } catch {
+        showToast('Failed to connect. Please try later.', 'error');
+      } finally {
+        loaderOverlay.classList.remove('active');
+        submitBtn.disabled = false;
+      }
+    });
 
+    resetBtn.addEventListener('click', () => {
+      bookingForm.reset();
+      yesBtn.classList.add('active'); noBtn.classList.remove('active');
+      document.getElementById('propertyInfo').innerHTML = '';
+      showToast('Form reset successfully 🧹', 'success');
+    });
+
+    function showToast(message, type = 'success') {
+      toast.textContent = message;
+      toast.className = `toast show ${type}`;
+      setTimeout(() => toast.className = 'toast', 3500);
+    }
+  </script>
 </body>
 </html>
