@@ -417,6 +417,87 @@ window.addEventListener('DOMContentLoaded', () => {
   loadProperties();
   loadCleaners();
 });
+
+
+   /* ==========================
+   🧾 FORM SUBMISSION HANDLER
+========================== */
+const bookingForm = document.getElementById('bookingForm');
+const submitBtn = document.getElementById('submitBtn');
+
+// Toast container
+const toast = document.createElement('div');
+toast.className = 'toast';
+document.body.appendChild(toast);
+
+// Overlay loader
+const loaderOverlay = document.createElement('div');
+loaderOverlay.className = 'loader-overlay';
+loaderOverlay.innerHTML = `
+  <div class="loader-box">
+    <div class="spinner"></div>
+    <p>Saving booking...</p>
+  </div>
+`;
+document.body.appendChild(loaderOverlay);
+
+// Handle submission
+bookingForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const linenRequired = document.querySelector('.linen-badge.active').textContent.trim();
+  const payload = {
+    property: document.getElementById('property').value,
+    date: document.getElementById('date').value,
+    start: document.getElementById('start').value,
+    end: document.getElementById('end').value,
+    cleaner: document.getElementById('cleaners').value,
+    linen: linenRequired,
+    notes: document.getElementById('notes').value
+  };
+
+  if (!payload.property || !payload.date || !payload.start || !payload.end) {
+    showToast('Please fill all required fields', 'error');
+    return;
+  }
+
+  // Show loader
+  loaderOverlay.classList.add('active');
+  submitBtn.disabled = true;
+
+  try {
+    const res = await fetch(scriptBaseURL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    const result = await res.json();
+
+    if (result.result === 'success') {
+      showToast('Booking saved successfully ✅', 'success');
+      bookingForm.reset();
+      document.querySelectorAll('.linen-badge').forEach(b => b.classList.remove('active'));
+      document.getElementById('linenYes').classList.add('active');
+    } else {
+      showToast('Error saving booking. Try again.', 'error');
+    }
+  } catch (err) {
+    console.error(err);
+    showToast('Failed to connect. Please try later.', 'error');
+  } finally {
+    loaderOverlay.classList.remove('active');
+    submitBtn.disabled = false;
+  }
+});
+
+// Toast function
+function showToast(message, type = 'info') {
+  toast.textContent = message;
+  toast.className = `toast show ${type}`;
+  setTimeout(() => toast.className = 'toast', 3500);
+}
+
 </script>
 
 <style>
@@ -450,6 +531,73 @@ window.addEventListener('DOMContentLoaded', () => {
 .property-info i {
   color: var(--ring);
 }
+
+  /* ===== Toast Notification ===== */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  padding: 14px 22px;
+  border-radius: 12px;
+  background: rgba(30, 33, 54, 0.95);
+  color: var(--text);
+  font-weight: 500;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.4s ease;
+  z-index: 5000;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.toast.success {
+  border-left: 4px solid #4ade80;
+}
+.toast.error {
+  border-left: 4px solid #f87171;
+}
+
+/* ===== Loader Overlay ===== */
+.loader-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(14,16,30,0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s ease;
+  z-index: 4000;
+}
+.loader-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+.loader-box {
+  text-align: center;
+  color: var(--text);
+  background: rgba(22,26,43,0.9);
+  padding: 30px 40px;
+  border-radius: 18px;
+  box-shadow: 0 0 40px rgba(91,124,255,0.25);
+}
+.spinner {
+  width: 38px;
+  height: 38px;
+  border: 3px solid rgba(123,146,255,0.25);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  margin: 0 auto 14px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 </style>
 
 </body>
