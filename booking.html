@@ -373,7 +373,13 @@
       };
       loader.classList.add("active");
       try {
-        const res = await fetch(scriptBaseURL, { method:"POST", body:JSON.stringify(data), headers:{ "Content-Type":"application/json" }});
+        const res = await fetch(scriptBaseURL, {
+          method: "POST",
+          mode: "no-cors", // 👈 add this
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" }
+        });
+
         const result = await res.json();
         if (result.result === "success") {
           showToast("✅ Booking saved successfully!","success");
