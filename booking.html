@@ -307,7 +307,7 @@
   <footer class="app__footer"><span class="muted">© HomeGlitz — Home & BnB Cleaning</span></footer>
 
   <script>
-    const scriptBaseURL = "https://script.google.com/macros/s/AKfycbw5cWoIYLq1PF5YJjnJ8HRM5snS1rwpdEUUifFHh1QtmR6X_63aNtS7s5KJV4pIR6k/exec";
+    const scriptBaseURL = "https://script.google.com/macros/s/AKfycbydX8J59oeqyvddBUWRJUs6zSs8fPQBYhyryaCNlGhM3Z2ducEdBZzxRHzvwAQbotsH/exec";
 
     // ✅ Sidebar toggle
     const navToggle = document.getElementById('navToggle');
@@ -375,7 +375,6 @@
       try {
         const res = await fetch(scriptBaseURL, {
           method: "POST",
-          mode: "no-cors", // 👈 add this
           body: JSON.stringify(data),
           headers: { "Content-Type": "application/json" }
         });
