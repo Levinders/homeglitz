@@ -126,11 +126,16 @@
       }
     }
 
-    /* ======== FORM ======== */
+    /* ======== FORM STYLING (your original version) ======== */
     main {
       max-width: 850px; margin: 80px auto; background: var(--panel);
       border-radius: 20px; padding: 50px 60px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
       position: relative; overflow: hidden;
+    }
+
+    main::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(circle at 70% 20%, rgba(91,124,255,0.08), transparent 60%);
     }
 
     h2.card__title {
@@ -147,12 +152,21 @@
       border-radius: var(--radius);
       padding: 16px 20px;
       border: 1px solid rgba(91,124,255,0.15);
+      transition: all 0.3s ease;
+    }
+
+    .form__group:hover { border-color: var(--accent); background: rgba(18,22,46,0.85); }
+
+    .form__group label {
+      font-weight: 600; font-size: 15.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+      color: var(--accent);
     }
 
     input, select, textarea {
       width: 100%; border-radius: 10px; border: 1px solid rgba(91,124,255,0.15);
       background: rgba(10,14,32,0.9); color: var(--text);
       padding: 12px 14px; font-size: 16px;
+      transition: all 0.3s ease;
     }
 
     .form__row-inline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
@@ -177,47 +191,28 @@
 
     .property-info {
       background: rgba(91,124,255,0.05);
-      border: 1px solid rgba(91,124,255,0.15);
-      border-radius: 12px;
-      padding: 14px 16px;
+      border-radius: 10px;
+      padding: 12px;
       font-size: 14px;
       color: var(--muted);
+      margin-top: 10px;
     }
 
-    .toolbar {
-      display: flex; justify-content: flex-end; gap: 14px; margin-top: 30px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      border: none; border-radius: 10px; padding: 14px 28px; font-weight: 600; font-size: 16px; cursor: pointer;
-      transition: all 0.25s ease;
-    }
-
-    .btn-save {
-      background: linear-gradient(180deg, var(--ring), #2f4cff);
-      color: #fff;
-      box-shadow: 0 6px 18px rgba(91,124,255,0.25);
-    }
-
-    .btn-reset {
-      background: rgba(255,255,255,0.05);
-      color: var(--muted);
-      border: 1px solid rgba(255,255,255,0.1);
-    }
+    /* Buttons */
+    .toolbar { display: flex; justify-content: flex-end; gap: 14px; margin-top: 30px; flex-wrap: wrap; }
+    .btn { border: none; border-radius: 10px; padding: 14px 28px; font-weight: 600; font-size: 16px; cursor: pointer; transition: all 0.25s ease; }
+    .btn-save { background: linear-gradient(180deg, var(--ring), #2f4cff); color: #fff; box-shadow: 0 6px 18px rgba(91,124,255,0.25); }
+    .btn-reset { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid rgba(255,255,255,0.1); }
+    .btn-reset:hover { background: rgba(255,255,255,0.12); color: var(--text); }
 
     /* Toast + Loader */
     .toast {
-      position: fixed;
-      bottom: 30px; right: 30px;
+      position: fixed; bottom: 30px; right: 30px;
       background: rgba(30,33,54,0.95);
-      color: var(--text);
-      padding: 14px 22px;
-      border-radius: 12px;
-      font-weight: 500;
+      color: var(--text); padding: 14px 22px;
+      border-radius: 12px; font-weight: 500;
       box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-      opacity: 0;
-      transform: translateY(40px);
+      opacity: 0; transform: translateY(40px);
       transition: all 0.4s ease;
       z-index: 5000;
     }
@@ -225,29 +220,10 @@
     .toast.success { border-left: 4px solid #4ade80; }
     .toast.error { border-left: 4px solid #f87171; }
 
-    .loader-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(14,16,30,0.75);
-      backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.4s ease;
-      z-index: 4000;
-    }
+    .loader-overlay { position: fixed; inset: 0; background: rgba(14,16,30,0.75); display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.4s ease; z-index: 4000; }
     .loader-overlay.active { opacity: 1; visibility: visible; }
     .loader-box { text-align: center; color: var(--text); background: rgba(22,26,43,0.9); padding: 30px 40px; border-radius: 18px; }
-    .spinner {
-      width: 38px; height: 38px;
-      border: 3px solid rgba(123,146,255,0.25);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      margin: 0 auto 14px;
-      animation: spin 1s linear infinite;
-    }
+    .spinner { width: 38px; height: 38px; border: 3px solid rgba(123,146,255,0.25); border-top-color: var(--accent); border-radius: 50%; margin: 0 auto 14px; animation: spin 1s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     @media (max-width: 700px) {
@@ -333,139 +309,90 @@
   <script>
     const scriptBaseURL = "https://script.google.com/macros/s/AKfycbw5cWoIYLq1PF5YJjnJ8HRM5snS1rwpdEUUifFHh1QtmR6X_63aNtS7s5KJV4pIR6k/exec";
 
-    // Navbar toggle
+    // ✅ Sidebar toggle
     const navToggle = document.getElementById('navToggle');
     const navLinks = document.getElementById('navLinks');
     const overlay = document.getElementById('overlay');
-    const links = navLinks.querySelectorAll('a');
-
-    navToggle.addEventListener('click', () => {
-      if (navLinks.classList.contains('open')) {
-        navLinks.classList.remove('open');
-        overlay.classList.remove('active');
-      } else {
-        navLinks.classList.add('open');
-        overlay.classList.add('active');
-      }
-    });
-    overlay.addEventListener('click', () => {
+    navToggle.onclick = () => {
+      navLinks.classList.toggle('open');
+      overlay.classList.toggle('active');
+    };
+    overlay.onclick = () => {
       navLinks.classList.remove('open');
       overlay.classList.remove('active');
-    });
+    };
 
-    // Linen toggle
+    // ✅ Linen toggle
     const yesBtn = document.getElementById('linenYes');
     const noBtn = document.getElementById('linenNo');
     yesBtn.onclick = () => { yesBtn.classList.add('active'); noBtn.classList.remove('active'); };
     noBtn.onclick = () => { noBtn.classList.add('active'); yesBtn.classList.remove('active'); };
 
-    // Load properties + cleaners
+    // ✅ Load data from Google Sheets
     async function loadDropdowns() {
-      const propertySelect = document.getElementById('property');
-      const cleanerSelect = document.getElementById('cleaners');
-      const propertyInfo = document.getElementById('propertyInfo');
-
+      const propSel = document.getElementById('property');
+      const cleanSel = document.getElementById('cleaners');
+      const infoBox = document.getElementById('propertyInfo');
       try {
-        const [propRes, cleanRes] = await Promise.all([
-          fetch(`${scriptBaseURL}?type=properties`),
-          fetch(`${scriptBaseURL}?type=cleaners`)
+        const [props, cleaners] = await Promise.all([
+          fetch(`${scriptBaseURL}?type=properties`).then(r => r.json()),
+          fetch(`${scriptBaseURL}?type=cleaners`).then(r => r.json())
         ]);
-        const [properties, cleaners] = await Promise.all([propRes.json(), cleanRes.json()]);
-
-        properties.forEach(p => {
-          const option = document.createElement('option');
-          option.value = p.name;
-          option.textContent = p.name;
-          propertySelect.appendChild(option);
-        });
-
-        cleaners.forEach(c => {
-          const option = document.createElement('option');
-          option.value = c.name;
-          option.textContent = c.name;
-          cleanerSelect.appendChild(option);
-        });
-
-        propertySelect.addEventListener('change', e => {
-          const selected = properties.find(p => p.name === e.target.value);
-          if (!selected) return (propertyInfo.innerHTML = '');
-          propertyInfo.innerHTML = `
-            <strong>${selected.address}</strong><br>
-            ${selected.bedrooms} Beds, ${selected.bathrooms} Baths<br>
-            Linen: ${selected.linenSupplied} | Code: ${selected.bedCode}
-          `;
-        });
-      } catch (err) {
-        console.error('Error loading data:', err);
-      }
+        props.forEach(p => propSel.innerHTML += `<option value="${p.name}">${p.name}</option>`);
+        cleaners.forEach(c => cleanSel.innerHTML += `<option value="${c.name}">${c.name}</option>`);
+        propSel.onchange = () => {
+          const p = props.find(x => x.name === propSel.value);
+          if (p) infoBox.innerHTML = `<strong>${p.address}</strong><br>${p.bedrooms} Beds, ${p.bathrooms} Baths<br>Linen: ${p.linenSupplied} | Code: ${p.bedCode}`;
+          else infoBox.innerHTML = "";
+        };
+      } catch (e) { showToast("⚠️ Error loading data", "error"); }
     }
-
     loadDropdowns();
 
-    /* ========== Booking Form Logic ========== */
-    const bookingForm = document.getElementById('bookingForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    document.body.appendChild(toast);
+    // ✅ Toast + Loader setup
+    const toast = document.createElement("div");
+    toast.className = "toast"; document.body.appendChild(toast);
+    const loader = document.createElement("div");
+    loader.className = "loader-overlay";
+    loader.innerHTML = `<div class='loader-box'><div class='spinner'></div><p>Saving booking...</p></div>`;
+    document.body.appendChild(loader);
 
-    const loaderOverlay = document.createElement('div');
-    loaderOverlay.className = 'loader-overlay';
-    loaderOverlay.innerHTML = `<div class="loader-box"><div class="spinner"></div><p>Saving booking...</p></div>`;
-    document.body.appendChild(loaderOverlay);
+    function showToast(msg, type="success"){ toast.textContent=msg; toast.className=`toast show ${type}`; setTimeout(()=>toast.className="toast",3500); }
 
-    bookingForm.addEventListener('submit', async e => {
+    // ✅ Booking form submit
+    document.getElementById("bookingForm").onsubmit = async e => {
       e.preventDefault();
-      const linenRequired = document.querySelector('.linen-badge.active').textContent.trim();
-      const payload = {
-        property: document.getElementById('property').value,
-        date: document.getElementById('date').value,
-        start: document.getElementById('start').value,
-        end: document.getElementById('end').value,
-        cleaner: document.getElementById('cleaners').value,
-        linen: linenRequired,
-        notes: document.getElementById('notes').value
+      const data = {
+        property: property.value,
+        date: date.value,
+        start: start.value,
+        end: end.value,
+        cleaner: cleaners.value,
+        linen: document.querySelector(".linen-badge.active").textContent,
+        notes: notes.value
       };
-
-      loaderOverlay.classList.add('active');
-      submitBtn.disabled = true;
-
+      loader.classList.add("active");
       try {
-        const res = await fetch(scriptBaseURL, {
-          method: 'POST',
-          body: JSON.stringify(payload),
-          headers: { 'Content-Type': 'application/json' }
-        });
+        const res = await fetch(scriptBaseURL, { method:"POST", body:JSON.stringify(data), headers:{ "Content-Type":"application/json" }});
         const result = await res.json();
-        if (result.result === 'success') {
-          showToast('✅ Booking saved successfully!', 'success');
-          bookingForm.reset();
-          yesBtn.classList.add('active'); noBtn.classList.remove('active');
-          document.getElementById('propertyInfo').innerHTML = '';
-        } else {
-          showToast('Error saving booking. Try again.', 'error');
-        }
-      } catch {
-        showToast('Failed to connect. Please try later.', 'error');
-      } finally {
-        loaderOverlay.classList.remove('active');
-        submitBtn.disabled = false;
-      }
-    });
+        if (result.result === "success") {
+          showToast("✅ Booking saved successfully!","success");
+          e.target.reset();
+          yesBtn.classList.add("active"); noBtn.classList.remove("active");
+          document.getElementById("propertyInfo").innerHTML = "";
+        } else throw new Error(result.message || "Error");
+      } catch (err) {
+        showToast("❌ Failed to connect. Please try later.","error");
+      } finally { loader.classList.remove("active"); }
+    };
 
-    resetBtn.addEventListener('click', () => {
+    // ✅ Reset button
+    document.getElementById("resetBtn").onclick = () => {
       bookingForm.reset();
-      yesBtn.classList.add('active'); noBtn.classList.remove('active');
-      document.getElementById('propertyInfo').innerHTML = '';
-      showToast('Form reset successfully 🧹', 'success');
-    });
-
-    function showToast(message, type = 'success') {
-      toast.textContent = message;
-      toast.className = `toast show ${type}`;
-      setTimeout(() => toast.className = 'toast', 3500);
-    }
+      yesBtn.classList.add("active"); noBtn.classList.remove("active");
+      document.getElementById("propertyInfo").innerHTML = "";
+      showToast("🧹 Form reset successfully","success");
+    };
   </script>
 </body>
 </html>
