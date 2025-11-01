@@ -532,52 +532,64 @@ async function init() {
   };
 
   // Submit
-  formEl.onsubmit = async (e) => {
-    e.preventDefault();
+// ====== Submit Booking (Fixed + Toast + Auto Refresh) ======
+formEl.onsubmit = async (e) => {
+  e.preventDefault();
 
-    // Basic guard
-    if (!propertyTypeEl.value || !propertyEl.value || !date.value || !cleanersEl.value) {
-      showToast('Please complete all required fields');
-      return;
-    }
+  // Guard for required fields
+  if (!propertyTypeEl.value || !propertyEl.value || !date.value || !cleanersEl.value) {
+    showToast('Please complete all required fields');
+    return;
+  }
 
-    const payload = {
-      propertyType: propertyTypeEl.value,              // "airbnb" | "office"
-      property: propertyEl.value,                      // Property Name
-      date: date.value,                                // Cleaning Date
-      cleaner: cleanersEl.value,                       // Cleaner Name
-      b2b: document.querySelector('.linen-badge.active').textContent, // "Yes"/"No"
-      notes: notes.value
-    };
-
-    try {
-      showLoader('Saving booking…');
-      const res = await fetch(scriptBaseURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const text = await res.text();
-      const result = JSON.parse(text);
-
-      if (result.result === 'success') {
-        showToast('Booking saved');
-        formEl.reset();
-        setB2BDefaultNo();
-        clearPropertyInfo();
-        // Light refresh feel without page reload (keeps UX steady)
-        // If you prefer a full refresh, uncomment next line:
-        // location.reload();
-      } else {
-        throw new Error(result.message || 'Save failed');
-      }
-    } catch (err) {
-      console.error(err);
-      showToast('Error saving booking');
-    } finally {
-      hideLoader();
-    }
+  const payload = {
+    propertyType: propertyTypeEl.value,              // "airbnb" | "office"
+    property: propertyEl.value,                      // Property Name
+    date: date.value,                                // Cleaning Date
+    cleaner: cleanersEl.value,                       // Cleaner Name
+    b2b: document.querySelector('.linen-badge.active').textContent, // "Yes"/"No"
+    notes: notes.value
   };
+
+  try {
+    showLoader('Saving booking…');
+    const res = await fetch(scriptBaseURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    // ✅ Try parsing JSON safely
+    const text = await res.text();
+    let result;
+    try {
+      result = JSON.parse(text);
+    } catch {
+      throw new Error("Non-JSON response received");
+    }
+
+    // ✅ Detect success result regardless of case or whitespace
+    if (result && result.result && result.result.toLowerCase() === 'success') {
+      showToast('✅ Booking saved successfully!');
+      formEl.reset();
+      setB2BDefaultNo();
+      clearPropertyInfo();
+
+      // ✨ Smooth auto refresh after 1.2s
+      setTimeout(() => {
+        location.reload();
+      }, 1200);
+    } else {
+      throw new Error(result && result.message ? result.message : 'Save failed');
+    }
+  } catch (err) {
+    console.error('Booking Error:', err);
+    showToast('⚠️ Error saving booking');
+  } finally {
+    hideLoader();
+  }
+};
+
 
   // Boot
   setB2BDefaultNo();
