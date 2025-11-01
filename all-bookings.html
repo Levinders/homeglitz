@@ -19,142 +19,105 @@
       --shadow: 0 6px 20px rgba(15,114,180,0.1);
       --transition: 0.3s ease;
     }
-
     * { box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
     html, body { margin: 0; padding: 0; overflow-x: hidden; }
     body { display: flex; min-height: 100vh; background: var(--primary-light); color: var(--text); }
 
-    /* Sidebar & Topbar (same as Create New) */
-    .sidebar {
-      position: fixed; left: 0; top: 0; bottom: 0;
-      width: 250px; background: var(--panel); border-right: 1px solid var(--border);
-      box-shadow: var(--shadow); display: flex; flex-direction: column;
-      padding: 20px 0; overflow-y: auto; z-index: 2000;
-    }
+    /* == Sidebar (copy of Create New) == */
+    .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 250px; background: var(--panel); border-right: 1px solid var(--border); box-shadow: var(--shadow); display: flex; flex-direction: column; padding: 20px 0; overflow-y: auto; z-index: 2000; }
     .sidebar .brand { display: flex; align-items: center; justify-content: center; margin-bottom: 30px; }
     .sidebar .brand img { height: 48px; }
     .nav-links { list-style: none; padding: 0; margin: 0; }
     .nav-item { position: relative; }
-    .nav-links li a {
-      display: flex; align-items: center; gap: 12px; padding: 14px 22px;
-      color: var(--muted); font-weight: 500; text-decoration: none; transition: all var(--transition);
-    }
-    .nav-links li a:hover, .nav-links li a.active {
-      background: var(--primary-light); color: var(--primary);
-      border-left: 4px solid var(--primary);
-    }
+    .nav-links li a { display: flex; align-items: center; gap: 12px; padding: 14px 22px; color: var(--muted); font-weight: 500; text-decoration: none; transition: all var(--transition); }
+    .nav-links li a:hover, .nav-links li a.active { background: var(--primary-light); color: var(--primary); border-left: 4px solid var(--primary); }
     .sub-menu { display: none; flex-direction: column; margin-left: 40px; }
     .sub-menu a { font-size: 14px; color: var(--muted); padding: 8px 0; }
     .nav-item.open .sub-menu { display: flex; }
 
-    .topbar {
-      height: 60px; background: var(--panel); border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 25px; box-shadow: var(--shadow);
-      position: fixed; top: 0; left: 250px; right: 0; z-index: 1000;
-    }
+    /* == Topbar == */
+    .topbar { height: 60px; background: var(--panel); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; box-shadow: var(--shadow); position: fixed; top: 0; left: 250px; right: 0; z-index: 1000; }
+    .menu-toggle { background: none; border: none; font-size: 20px; color: var(--primary); cursor: pointer; }
+    .topbar-right { display: flex; align-items: center; gap: 20px; color: var(--muted); }
 
-    main { flex: 1; margin-left: 250px; padding: 100px 40px 40px; background: var(--primary-light); }
+    /* == Main Layout == */
+    main { flex: 1; margin-left: 250px; padding: 84px 40px 40px; background: var(--primary-light); }
 
-    .card {
-      background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow);
-      border: 1px solid var(--border); padding: 30px 40px;
-    }
+    .card { position: relative; background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); padding: 0; overflow: hidden; }
 
-    h2.card__title {
-      font-size: 22px; font-weight: 700; color: var(--primary);
-      display: flex; align-items: center; gap: 10px; margin-bottom: 25px;
-      border-bottom: 2px solid rgba(15,114,180,0.1); padding-bottom: 10px;
-    }
+    /* Sticky header (title + filters) */
+    .card-header { position: sticky; top: 60px; z-index: 5; background: #fff; border-bottom: 1px solid var(--border); padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    h2.card__title { margin: 0; font-size: 22px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
 
-    /* === Table === */
-    .table-container {
-      overflow-x: auto;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      background: #fff;
-      box-shadow: var(--shadow);
-    }
+    /* Filters row */
+    .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .filters .input, .filters select { border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 14px; background: #fdfdfd; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 999px; background: #fff; cursor: pointer; font-weight: 600; color: var(--muted); transition: .2s; }
+    .pill.active { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 900px;
-    }
+    /* Scroll area with sticky thead */
+    .table-wrap { height: calc(100vh - 60px - 76px - 24px); /* viewport minus topbar, header, margin */ overflow: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 980px; }
+    thead { position: sticky; top: 0; z-index: 4; background: var(--primary); color: #fff; }
+    th, td { padding: 12px 12px; font-size: 14px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tbody tr:hover { background: var(--primary-light); cursor: pointer; }
+    .status-select { border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; font-size: 13px; background: #f9fbfd; color: var(--text); cursor: pointer; }
+    tr.flash { background: #e9f7ff !important; transition: background .5s ease; }
 
-    thead {
-      background: var(--primary);
-      color: #fff;
-      font-size: 14px;
-    }
+    /* Drawer (details page feel) */
+    .drawer { position: fixed; top: 60px; right: -560px; width: 560px; max-width: 100vw; height: calc(100vh - 60px); background: #fff; box-shadow: -12px 0 30px rgba(0,0,0,.08); border-left: 1px solid var(--border); transition: right .35s ease; z-index: 1200; display: flex; flex-direction: column; }
+    .drawer.open { right: 0; }
+    .drawer-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .drawer-title { font-weight: 700; color: var(--primary); display: flex; gap: 10px; align-items: center; }
+    .drawer-body { padding: 16px 20px 24px; overflow: auto; }
+    .section { border: 1px solid var(--border); border-radius: 12px; padding: 14px 14px; margin-bottom: 14px; background: #fff; box-shadow: 0 6px 14px rgba(0,0,0,.04); }
+    .section h4 { margin: 0 0 10px; font-size: 14px; color: var(--muted); font-weight: 700; letter-spacing: .3px; text-transform: uppercase; }
+    .kv { display: grid; grid-template-columns: 150px 1fr; gap: 8px 12px; font-size: 14px; }
+    .kv .k { color: var(--muted); font-weight: 600; }
+    .kv .v { color: var(--text); }
 
-    th, td {
-      padding: 12px 10px;
-      font-size: 14px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      vertical-align: middle;
-    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-2 .form__group { display: flex; flex-direction: column; gap: 6px; }
+    label { font-weight: 600; color: var(--primary); font-size: 13px; }
+    input, select, textarea { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 14px; background: #fdfdfd; }
 
-    tbody tr:hover { background: var(--primary-light); }
+    .b2b-badges { display: flex; gap: 10px; }
+    .badge { flex: 1; text-align: center; padding: 8px 10px; border-radius: 20px; font-weight: 700; border: 1px solid rgba(15,114,180,.25); background: rgba(15,114,180,.06); color: var(--primary); cursor: pointer; }
+    .badge.active { background: var(--primary); color: #fff; }
 
-    select.status-select {
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 5px 8px;
-      font-size: 13px;
-      background: #f9fbfd;
-      cursor: pointer;
-      color: var(--text);
-    }
+    .drawer-actions { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+    .btn { border: none; border-radius: 8px; padding: 12px 18px; font-weight: 700; cursor: pointer; font-size: 14px; transition: var(--transition); }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: #0d5f95; }
+    .btn-ghost { background: #f1f3f5; color: var(--muted); }
 
-    tr.flash {
-      background: #e9f7ff !important;
-      transition: background 0.5s ease;
-    }
+    /* Overlay for drawer */
+    .drawer-mask { position: fixed; inset: 60px 0 0 0; background: rgba(0,0,0,.25); opacity: 0; visibility: hidden; transition: .3s ease; z-index: 1100; }
+    .drawer-mask.active { opacity: 1; visibility: visible; }
 
     @media (max-width: 900px) {
       .sidebar { left: -250px; }
       .sidebar.open { left: 0; }
       .topbar { left: 0; right: 0; }
-      main { margin-left: 0; padding: 100px 10px 40px; }
-      table { font-size: 13px; min-width: 600px; }
+      main { margin-left: 0; padding: 84px 10px 10px; }
+      .card-header { flex-direction: column; align-items: flex-start; gap: 12px; top: 60px; }
+      .table-wrap { height: calc(100vh - 60px - 120px); }
+      table { min-width: 720px; }
+      .drawer { width: 100%; }
     }
 
     /* Toast + Loader */
-    .hz-toast {
-      position: fixed; bottom: 24px; right: 24px;
-      background: #0F72B4; color: #fff; padding: 12px 16px;
-      border-radius: 10px; font-weight: 600;
-      box-shadow: 0 10px 24px rgba(15,114,180,.25);
-      opacity: 0; transform: translateY(16px);
-      transition: .3s ease; z-index: 5000;
-    }
+    .hz-toast { position: fixed; bottom: 24px; right: 24px; background: #0F72B4; color: #fff; padding: 12px 16px; border-radius: 10px; font-weight: 600; box-shadow: 0 10px 24px rgba(15,114,180,.25); opacity: 0; transform: translateY(16px); transition: .3s ease; z-index: 5000; }
     .hz-toast.show { opacity: 1; transform: translateY(0); }
-
-    .hz-loader {
-      position: fixed; inset: 0; background: rgba(0,0,0,.25);
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; visibility: hidden;
-      transition: opacity .15s ease; z-index: 4000;
-    }
+    .hz-loader { position: fixed; inset: 0; background: rgba(0,0,0,.25); display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity .15s ease; z-index: 4000; }
     .hz-loader.active { opacity: 1; visibility: visible; }
-    .hz-loader .box {
-      background: #fff; border: 1px solid #e4e9ef;
-      box-shadow: 0 10px 30px rgba(0,0,0,.08);
-      padding: 18px 22px; border-radius: 12px;
-      color: #222; font-weight: 600;
-      display: flex; align-items: center; gap: 12px;
-    }
-    .hz-loader .spin {
-      width: 18px; height: 18px; border-radius: 50%;
-      border: 2px solid rgba(15,114,180,.2); border-top-color: #0F72B4;
-      animation: hzspin 1s linear infinite;
-    }
+    .hz-loader .box { background: #fff; border: 1px solid #e4e9ef; box-shadow: 0 10px 30px rgba(0,0,0,.08); padding: 18px 22px; border-radius: 12px; color: #222; font-weight: 600; display: flex; align-items: center; gap: 12px; }
+    .hz-loader .spin { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(15,114,180,.2); border-top-color: #0F72B4; animation: hzspin 1s linear infinite; }
     @keyframes hzspin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
+  <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="brand">
       <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png" alt="HomeGlitz Logo">
@@ -188,18 +151,37 @@
 
     <main>
       <div class="card">
-        <h2 class="card__title"><i class="fa-solid fa-list"></i> All Bookings</h2>
-        <div class="table-container">
+        <div class="card-header">
+          <h2 class="card__title"><i class="fa-solid fa-list"></i> All Bookings</h2>
+          <div class="filters">
+            <div class="pill-group">
+              <span class="pill active" data-type="all"><i class="fa-solid fa-layer-group"></i> All</span>
+              <span class="pill" data-type="airbnb"><i class="fa-solid fa-building"></i> Airbnb Cleaning</span>
+              <span class="pill" data-type="office"><i class="fa-solid fa-briefcase"></i> Home / Office Cleaning</span>
+            </div>
+            <input class="input" id="search" placeholder="Search booking/property/cleaner" />
+            <select id="statusFilter">
+              <option value="">All Statuses</option>
+              <option>Pending</option>
+              <option>Clean Underway</option>
+              <option>Completed</option>
+            </select>
+            <input type="date" id="fromDate" class="input" />
+            <input type="date" id="toDate" class="input" />
+          </div>
+        </div>
+
+        <div class="table-wrap">
           <table id="bookingsTable">
             <thead>
               <tr>
-                <th>Booking ID</th>
+                <th style="width:142px">Booking ID</th>
                 <th>Property Name</th>
                 <th>Cleaner</th>
-                <th>Cleaning Date</th>
-                <th>B2B</th>
-                <th>Type</th>
-                <th>Status</th>
+                <th style="width:130px">Cleaning Date</th>
+                <th style="width:90px">B2B</th>
+                <th style="width:140px">Type</th>
+                <th style="width:160px">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -211,18 +193,34 @@
     </main>
   </div>
 
+  <!-- Drawer (Details Page) -->
+  <div class="drawer-mask" id="drawerMask"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-header">
+      <div class="drawer-title"><i class="fa-solid fa-receipt"></i> <span id="dTitle">Booking</span></div>
+      <button class="btn btn-ghost" id="dClose"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="drawer-body" id="dBody">
+      <!-- Filled by JS -->
+    </div>
+    <div class="drawer-actions">
+      <button class="btn btn-ghost" id="dCancel">Close</button>
+      <button class="btn btn-primary" id="dSave"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+    </div>
+  </aside>
+
   <script>
+    // == Sidebar interactions ==
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
     const menuToggle = document.getElementById('menuToggle');
     const bookingMenu = document.getElementById('bookingMenu');
     const bookingItem = bookingMenu.parentElement;
-
     menuToggle.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
     overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
     bookingMenu.onclick = (e) => { e.preventDefault(); bookingItem.classList.toggle('open'); };
 
-    // Toast + Loader
+    // == Toast + Loader ==
     const toast = document.createElement('div');
     toast.className = 'hz-toast';
     document.body.appendChild(toast);
@@ -230,77 +228,257 @@
     loader.className = 'hz-loader';
     loader.innerHTML = `<div class="box"><div class="spin"></div><span>Loading…</span></div>`;
     document.body.appendChild(loader);
-    function showToast(msg){toast.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2000);}
+    function showToast(msg){toast.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2000);} 
     function showLoader(){loader.classList.add('active');}
     function hideLoader(){loader.classList.remove('active');}
 
+    // == API base (same pattern; swap to your live URL when wiring) ==
     const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbwSxJh9hlbw1eF_dg4PgWj0jR9TExYTOGQZVgmtMBiICKPkYHxuq6NbVy9CSorNtwJd/exec");
 
-    async function loadBookings() {
-      showLoader();
-      try {
-        const res = await fetch(`${scriptBaseURL}?type=bookings`, { cache: 'no-store' });
-        const data = await res.json();
-        renderTable(data);
-      } catch (e) {
-        console.error(e);
-        showToast('Error loading bookings');
-      } finally {
-        hideLoader();
-      }
+    // == State ==
+    let RAW_ROWS = []; // original from API
+    let VIEW_ROWS = []; // filtered
+    let CURRENT_DETAIL = null; // object for drawer edit
+
+    function typeOfRow(r){
+      // Infer type if not explicitly present
+      if (r["Type"]) return r["Type"]; // optional future field
+      return (r["Flat Sheets King"] !== undefined) ? "Airbnb Cleaning" : "Home / Office Cleaning";
     }
 
-    function renderTable(rows) {
+    // == Fetch and render ==
+    async function loadBookings(){
+      showLoader();
+      try{
+        const res = await fetch(`${scriptBaseURL}?type=bookings`, {cache:'no-store'});
+        const data = await res.json();
+        RAW_ROWS = Array.isArray(data) ? data : [];
+        applyFilters();
+      }catch(e){
+        console.error(e); showToast('Error loading bookings');
+      }finally{ hideLoader(); }
+    }
+
+    function applyFilters(){
+      const activePill = document.querySelector('.pill.active')?.dataset.type || 'all';
+      const q = document.getElementById('search').value.trim().toLowerCase();
+      const st = document.getElementById('statusFilter').value;
+      const from = document.getElementById('fromDate').value ? new Date(document.getElementById('fromDate').value) : null;
+      const to   = document.getElementById('toDate').value   ? new Date(document.getElementById('toDate').value)   : null;
+
+      VIEW_ROWS = RAW_ROWS.filter(r => {
+        const t = typeOfRow(r);
+        if (activePill==='airbnb' && t!=='Airbnb Cleaning') return false;
+        if (activePill==='office' && t!=='Home / Office Cleaning') return false;
+        if (st && r["Status"]!==st) return false;
+        if (q){
+          const blob = `${r["Booking ID"]||''} ${r["Property Name"]||''} ${r["Cleaners"]||''} ${t}`.toLowerCase();
+          if (!blob.includes(q)) return false;
+        }
+        if (from || to){
+          const d = r["Cleaning Date"] ? new Date(r["Cleaning Date"]) : null;
+          if (!d) return false;
+          if (from && d < from) return false;
+          if (to && d > to) return false;
+        }
+        return true;
+      });
+      renderTable(VIEW_ROWS);
+    }
+
+    function renderTable(rows){
       const tbody = document.querySelector('#bookingsTable tbody');
-      if (!rows || rows.length === 0) {
+      if (!rows || rows.length===0){
         tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px;">No bookings found</td></tr>`;
         return;
       }
-
-      tbody.innerHTML = rows.map(r => `
-        <tr data-id="${r["Booking ID"] || ""}">
-          <td>${r["Booking ID"] || ""}</td>
-          <td>${r["Property Name"] || ""}</td>
-          <td>${r["Cleaners"] || ""}</td>
-          <td>${r["Cleaning Date"] ? new Date(r["Cleaning Date"]).toLocaleDateString() : ""}</td>
-          <td>${r["B2B"] || ""}</td>
-          <td>${r["Type"] || (r["Flat Sheets King"] ? "Airbnb" : "Home/Office")}</td>
+      tbody.innerHTML = rows.map(r => {
+        const t = typeOfRow(r);
+        const dateStr = r["Cleaning Date"] ? new Date(r["Cleaning Date"]).toLocaleDateString() : "";
+        const id = r["Booking ID"] || "";
+        const st = r["Status"] || "Pending";
+        return `
+        <tr data-id="${id}">
+          <td>${id}</td>
+          <td>${r["Property Name"]||""}</td>
+          <td>${r["Cleaners"]||""}</td>
+          <td>${dateStr}</td>
+          <td>${r["B2B"]||""}</td>
+          <td>${t}</td>
           <td>
-            <select class="status-select">
-              ${["Pending","Completed","Cancelled"].map(s=>`<option value="${s}" ${r["Status"]===s?"selected":""}>${s}</option>`).join("")}
+            <select class="status-select" data-id="${id}">
+              ${["Pending","Clean Underway","Completed"].map(s=>`<option value="${s}" ${st===s?"selected":""}>${s}</option>`).join("")}
             </select>
           </td>
-        </tr>
-      `).join("");
+        </tr>`;
+      }).join("");
 
-      // Attach listeners
-      document.querySelectorAll('.status-select').forEach(sel=>{
-        sel.addEventListener('change', e=>{
-          const row = e.target.closest('tr');
-          updateStatus(row.dataset.id, e.target.value, row);
+      // Row click -> open drawer
+      document.querySelectorAll('#bookingsTable tbody tr').forEach(tr => {
+        tr.addEventListener('click', (e) => {
+          if (e.target.closest('select')) return; // ignore clicks on status select
+          const id = tr.dataset.id;
+          const row = RAW_ROWS.find(r => (r["Booking ID"]||"")===id);
+          if (row) openDrawer(row);
+        });
+      });
+
+      // Inline status updates
+      document.querySelectorAll('.status-select').forEach(sel => {
+        sel.addEventListener('change', async (e) => {
+          const id = e.target.dataset.id;
+          const newStatus = e.target.value;
+          await updateStatus(id, newStatus, e.target.closest('tr'));
         });
       });
     }
 
-    async function updateStatus(bookingId, newStatus, rowEl){
-      try {
-        showLoader();
-        await fetch(scriptBaseURL, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({action:'updateStatus', bookingId, status:newStatus})
-        });
+    async function updateStatus(bookingId, status, rowEl){
+      try{ showLoader();
+        // Hook for backend wiring
+        await fetch(scriptBaseURL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'updateStatus', bookingId, status }) });
         showToast('Status updated');
-        rowEl.classList.add('flash');
-        setTimeout(()=>rowEl.classList.remove('flash'),1000);
-      } catch (err){
-        console.error(err);
-        showToast('Error updating status');
-      } finally {
-        hideLoader();
-      }
+        if (rowEl){ rowEl.classList.add('flash'); setTimeout(()=>rowEl.classList.remove('flash'), 800); }
+      }catch(err){ console.error(err); showToast('Error updating status'); }
+      finally{ hideLoader(); }
     }
 
+    // == Drawer (Details) ==
+    const drawer = document.getElementById('drawer');
+    const drawerMask = document.getElementById('drawerMask');
+    const dTitle = document.getElementById('dTitle');
+    const dBody = document.getElementById('dBody');
+    document.getElementById('dClose').onclick = closeDrawer;
+    document.getElementById('dCancel').onclick = closeDrawer;
+    drawerMask.onclick = closeDrawer;
+
+    function openDrawer(row){
+      CURRENT_DETAIL = JSON.parse(JSON.stringify(row)); // deep-ish clone
+      dTitle.textContent = `${row["Booking ID"]||''}`;
+
+      const isAirbnb = typeOfRow(row)==='Airbnb Cleaning';
+      const packingKeys = [
+        'Flat Sheets King','Flat Sheets Queen','Flat Sheets Double','Flat Sheets Single',
+        'Doona King','Doona Queen','Doona Double','Doona Single',
+        'Pillowcases','Bath Towels','Hand Towels','Face Towels','Bathmats','Tea Towels','King Fitted','Queen Fitted','Single Fitted'
+      ];
+
+      // Build sections
+      const summaryHTML = `
+        <div class="section">
+          <h4>Summary</h4>
+          <div class="kv">
+            <div class="k">Booking ID</div><div class="v">${row["Booking ID"]||''}</div>
+            <div class="k">Timestamp</div><div class="v">${row["Timestamp"]? new Date(row["Timestamp"]).toLocaleString():''}</div>
+            <div class="k">Type</div><div class="v">${typeOfRow(row)}</div>
+          </div>
+        </div>`;
+
+      const propertyHTML = `
+        <div class="section">
+          <h4>Property</h4>
+          <div class="kv">
+            <div class="k">Name</div><div class="v">${row["Property Name"]||''}</div>
+            <div class="k">Address</div><div class="v">${row["Address"]||''}</div>
+            <div class="k">B2B</div><div class="v">${row["B2B"]||'No'}</div>
+          </div>
+        </div>`;
+
+      const editHTML = `
+        <div class="section">
+          <h4>Edit</h4>
+          <div class="grid-2">
+            <div class="form__group">
+              <label>Cleaning Date</label>
+              <input type="date" id="dDate" value="${row["Cleaning Date"] ? toYMD(row["Cleaning Date"]) : ''}">
+            </div>
+            <div class="form__group">
+              <label>Cleaner</label>
+              <input type="text" id="dCleaner" value="${row["Cleaners"]||''}">
+            </div>
+            <div class="form__group">
+              <label>Status</label>
+              <select id="dStatus">
+                ${["Pending","Clean Underway","Completed"].map(s=>`<option ${row["Status"]===s?'selected':''}>${s}</option>`).join('')}
+              </select>
+            </div>
+            <div class="form__group">
+              <label>B2B</label>
+              <div class="b2b-badges">
+                <div class="badge ${row["B2B"]==='Yes'?'active':''}" data-v="Yes">Yes</div>
+                <div class="badge ${row["B2B"]!=='Yes'?'active':''}" data-v="No">No</div>
+              </div>
+            </div>
+          </div>
+          <div class="form__group" style="margin-top:10px;">
+            <label>Notes</label>
+            <textarea id="dNotes" rows="3" placeholder="Internal notes">${row["Note"]||''}</textarea>
+          </div>
+        </div>`;
+
+      const packHTML = isAirbnb ? `
+        <div class="section">
+          <h4>Packing List</h4>
+          <div class="grid-2">
+            ${packingKeys.map(k=>{
+              const v = row[k]!==undefined ? row[k] : '';
+              return `<div class="form__group"><label>${k}</label><input type="number" min="0" step="1" data-pack="${k}" value="${v}"></div>`;
+            }).join('')}
+          </div>
+        </div>` : '';
+
+      dBody.innerHTML = summaryHTML + propertyHTML + editHTML + packHTML;
+
+      // B2B toggle in drawer
+      dBody.querySelectorAll('.badge').forEach(b=>{
+        b.addEventListener('click', ()=>{
+          dBody.querySelectorAll('.badge').forEach(x=>x.classList.remove('active'));
+          b.classList.add('active');
+        });
+      });
+
+      drawer.classList.add('open');
+      drawerMask.classList.add('active');
+    }
+
+    function closeDrawer(){ drawer.classList.remove('open'); drawerMask.classList.remove('active'); CURRENT_DETAIL=null; }
+
+    function toYMD(d){ const dt=new Date(d); const m=('0'+(dt.getMonth()+1)).slice(-2); const day=('0'+dt.getDate()).slice(-2); return `${dt.getFullYear()}-${m}-${day}`; }
+
+    // Save changes from drawer (hooks ready for backend)
+    document.getElementById('dSave').addEventListener('click', async ()=>{
+      if (!CURRENT_DETAIL) return;
+      const id = CURRENT_DETAIL["Booking ID"]; if (!id) return;
+
+      // Collect edits
+      const payload = { action:'updateBooking', bookingId:id };
+      const dDate = document.getElementById('dDate').value; if (dDate) payload.date = dDate;
+      payload.cleaner = document.getElementById('dCleaner').value || '';
+      payload.status = document.getElementById('dStatus').value || 'Pending';
+      payload.notes = document.getElementById('dNotes').value || '';
+      payload.b2b = [...document.querySelectorAll('.badge.active')].pop()?.dataset.v || 'No';
+
+      // Packing edits (Airbnb only)
+      document.querySelectorAll('[data-pack]').forEach(inp=>{ payload[inp.dataset.pack]= inp.value? Number(inp.value): 0; });
+
+      try{
+        showLoader();
+        await fetch(scriptBaseURL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+        showToast('Saved');
+        closeDrawer();
+        await loadBookings(); // refresh table
+      }catch(e){ console.error(e); showToast('Error saving'); }
+      finally{ hideLoader(); }
+    });
+
+    // Filters wire-up
+    document.getElementById('search').addEventListener('input', applyFilters);
+    document.getElementById('statusFilter').addEventListener('change', applyFilters);
+    document.getElementById('fromDate').addEventListener('change', applyFilters);
+    document.getElementById('toDate').addEventListener('change', applyFilters);
+    document.querySelectorAll('.pill').forEach(p => p.addEventListener('click', () => { document.querySelectorAll('.pill').forEach(x=>x.classList.remove('active')); p.classList.add('active'); applyFilters(); }));
+
+    // Boot
     loadBookings();
   </script>
 </body>
