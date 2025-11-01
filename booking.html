@@ -531,7 +531,9 @@ async function init() {
     showToast('Form reset');
   };
 
-// ====== Submit Booking (Final Stable Version) ======
+    
+
+// ====== Submit Booking (Final Guaranteed Version) ======
 formEl.onsubmit = async (e) => {
   e.preventDefault();
 
@@ -551,7 +553,6 @@ formEl.onsubmit = async (e) => {
 
   try {
     showLoader('Saving booking…');
-
     const res = await fetch(scriptBaseURL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -559,35 +560,33 @@ formEl.onsubmit = async (e) => {
     });
 
     let text = await res.text();
+    const lower = text.toLowerCase().trim();
 
-    // 🔹 Clean out possible BOM or stray characters from corsproxy.io
-    text = text.trim().replace(/^[^\{]+/, ''); // remove anything before first '{'
-    text = text.replace(/^[^\[]+/, '');        // handle rare JSON array responses too
+    let result = null;
 
-    let result;
-    try {
-      result = JSON.parse(text);
-    } catch (err) {
-      console.warn('Non-JSON Response:', text);
-      // If it saved but the proxy broke the JSON, assume success fallback
-      if (text.includes('success') || text.includes('HG-')) {
-        result = { result: 'success' };
-      } else {
-        throw new Error('Invalid JSON response');
+    // ✅ 1. Check if it’s wrapped in HTML but contains “success”
+    if (lower.includes('success')) {
+      result = { result: 'success' };
+    } else if (lower.startsWith('{') || lower.startsWith('[')) {
+      try {
+        result = JSON.parse(text);
+      } catch (err) {
+        console.warn('Failed to parse JSON, response:', text);
       }
     }
 
-    // ✅ Confirm actual success
+    // ✅ 2. Handle success either way
     if (result && result.result && result.result.toLowerCase() === 'success') {
       showToast('✅ Saved successfully!');
       formEl.reset();
       setB2BDefaultNo();
       clearPropertyInfo();
 
-      // 🎬 Gentle auto refresh after success
+      // 🎬 Refresh after success
       setTimeout(() => location.reload(), 1000);
     } else {
-      throw new Error(result && result.message ? result.message : 'Save failed');
+      console.warn('Unrecognized response:', text);
+      throw new Error('Save failed — unexpected response');
     }
   } catch (err) {
     console.error('Booking Error:', err);
