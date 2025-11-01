@@ -24,19 +24,16 @@
     html, body { margin: 0; padding: 0; overflow-x: hidden; }
     body { display: flex; min-height: 100vh; background: var(--primary-light); color: var(--text); }
 
-    /* === SIDEBAR === */
+    /* Sidebar & Topbar (same as Create New) */
     .sidebar {
       position: fixed; left: 0; top: 0; bottom: 0;
       width: 250px; background: var(--panel); border-right: 1px solid var(--border);
       box-shadow: var(--shadow); display: flex; flex-direction: column;
       padding: 20px 0; overflow-y: auto; z-index: 2000;
     }
-
     .sidebar .brand { display: flex; align-items: center; justify-content: center; margin-bottom: 30px; }
-    .sidebar .brand img { height: 48px; transition: all var(--transition); }
-
+    .sidebar .brand img { height: 48px; }
     .nav-links { list-style: none; padding: 0; margin: 0; }
-
     .nav-item { position: relative; }
     .nav-links li a {
       display: flex; align-items: center; gap: 12px; padding: 14px 22px;
@@ -46,13 +43,10 @@
       background: var(--primary-light); color: var(--primary);
       border-left: 4px solid var(--primary);
     }
-
     .sub-menu { display: none; flex-direction: column; margin-left: 40px; }
-    .sub-menu a { font-size: 14px; color: var(--muted); padding: 8px 0; transition: 0.2s; }
-    .sub-menu a:hover { color: var(--primary); }
+    .sub-menu a { font-size: 14px; color: var(--muted); padding: 8px 0; }
     .nav-item.open .sub-menu { display: flex; }
 
-    /* === TOPBAR === */
     .topbar {
       height: 60px; background: var(--panel); border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
@@ -60,11 +54,6 @@
       position: fixed; top: 0; left: 250px; right: 0; z-index: 1000;
     }
 
-    .menu-toggle { background: none; border: none; font-size: 20px; color: var(--primary); cursor: pointer; }
-
-    .topbar-right { display: flex; align-items: center; gap: 20px; color: var(--muted); }
-
-    /* === MAIN === */
     main { flex: 1; margin-left: 250px; padding: 100px 40px 40px; background: var(--primary-light); }
 
     .card {
@@ -78,7 +67,7 @@
       border-bottom: 2px solid rgba(15,114,180,0.1); padding-bottom: 10px;
     }
 
-    /* === TABLE === */
+    /* === Table === */
     .table-container {
       overflow-x: auto;
       border-radius: var(--radius);
@@ -99,38 +88,30 @@
       font-size: 14px;
     }
 
-    thead th {
-      padding: 14px 12px;
-      text-align: left;
-      white-space: nowrap;
-    }
-
-    tbody tr {
-      border-bottom: 1px solid var(--border);
-      transition: background 0.2s ease;
-    }
-
-    tbody tr:hover {
-      background: var(--primary-light);
-    }
-
-    td {
+    th, td {
       padding: 12px 10px;
       font-size: 14px;
-      color: var(--text);
+      text-align: left;
+      border-bottom: 1px solid var(--border);
       vertical-align: middle;
     }
 
-    .status-badge {
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-weight: 600;
-      text-transform: capitalize;
+    tbody tr:hover { background: var(--primary-light); }
+
+    select.status-select {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 8px;
       font-size: 13px;
+      background: #f9fbfd;
+      cursor: pointer;
+      color: var(--text);
     }
-    .status-pending { background: #fff4d6; color: #b38300; }
-    .status-completed { background: #d4f8e8; color: #10793f; }
-    .status-cancelled { background: #fde2e2; color: #c92a2a; }
+
+    tr.flash {
+      background: #e9f7ff !important;
+      transition: background 0.5s ease;
+    }
 
     @media (max-width: 900px) {
       .sidebar { left: -250px; }
@@ -214,16 +195,15 @@
               <tr>
                 <th>Booking ID</th>
                 <th>Property Name</th>
-                <th>Address</th>
-                <th>Cleaning Date</th>
                 <th>Cleaner</th>
-                <th>Status</th>
+                <th>Cleaning Date</th>
                 <th>B2B</th>
                 <th>Type</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:20px;">Loading bookings...</td></tr>
+              <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px;">Loading bookings...</td></tr>
             </tbody>
           </table>
         </div>
@@ -232,7 +212,6 @@
   </div>
 
   <script>
-    // ===== Sidebar Behaviour =====
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
     const menuToggle = document.getElementById('menuToggle');
@@ -243,62 +222,85 @@
     overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
     bookingMenu.onclick = (e) => { e.preventDefault(); bookingItem.classList.toggle('open'); };
 
-    // ===== Toast + Loader =====
+    // Toast + Loader
     const toast = document.createElement('div');
     toast.className = 'hz-toast';
     document.body.appendChild(toast);
-    function showToast(msg) {
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2500);
-    }
-
     const loader = document.createElement('div');
     loader.className = 'hz-loader';
-    loader.innerHTML = `<div class="box"><div class="spin"></div><span>Loading bookings…</span></div>`;
+    loader.innerHTML = `<div class="box"><div class="spin"></div><span>Loading…</span></div>`;
     document.body.appendChild(loader);
+    function showToast(msg){toast.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2000);}
+    function showLoader(){loader.classList.add('active');}
+    function hideLoader(){loader.classList.remove('active');}
 
-    function showLoader() { loader.classList.add('active'); }
-    function hideLoader() { loader.classList.remove('active'); }
-
-    // ===== Fetch Bookings =====
     const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbwSxJh9hlbw1eF_dg4PgWj0jR9TExYTOGQZVgmtMBiICKPkYHxuq6NbVy9CSorNtwJd/exec");
 
     async function loadBookings() {
       showLoader();
       try {
-        const res = await fetch(`${scriptBaseURL}?type=bookings`, { cache: "no-store" });
+        const res = await fetch(`${scriptBaseURL}?type=bookings`, { cache: 'no-store' });
         const data = await res.json();
         renderTable(data);
-      } catch (err) {
-        console.error(err);
-        showToast("Error loading bookings");
+      } catch (e) {
+        console.error(e);
+        showToast('Error loading bookings');
       } finally {
         hideLoader();
       }
     }
 
     function renderTable(rows) {
-      const tbody = document.querySelector("#bookingsTable tbody");
+      const tbody = document.querySelector('#bookingsTable tbody');
       if (!rows || rows.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:20px;">No bookings found</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px;">No bookings found</td></tr>`;
         return;
       }
+
       tbody.innerHTML = rows.map(r => `
-        <tr>
+        <tr data-id="${r["Booking ID"] || ""}">
           <td>${r["Booking ID"] || ""}</td>
           <td>${r["Property Name"] || ""}</td>
-          <td>${r["Address"] || ""}</td>
-          <td>${r["Cleaning Date"] ? new Date(r["Cleaning Date"]).toLocaleDateString() : ""}</td>
           <td>${r["Cleaners"] || ""}</td>
-          <td><span class="status-badge status-${(r["Status"] || "pending").toLowerCase()}">${r["Status"] || "Pending"}</span></td>
+          <td>${r["Cleaning Date"] ? new Date(r["Cleaning Date"]).toLocaleDateString() : ""}</td>
           <td>${r["B2B"] || ""}</td>
-          <td>${r["Type"] || (r["Flat Sheets King"] ? "Airbnb" : "Office/Home")}</td>
+          <td>${r["Type"] || (r["Flat Sheets King"] ? "Airbnb" : "Home/Office")}</td>
+          <td>
+            <select class="status-select">
+              ${["Pending","Completed","Cancelled"].map(s=>`<option value="${s}" ${r["Status"]===s?"selected":""}>${s}</option>`).join("")}
+            </select>
+          </td>
         </tr>
       `).join("");
+
+      // Attach listeners
+      document.querySelectorAll('.status-select').forEach(sel=>{
+        sel.addEventListener('change', e=>{
+          const row = e.target.closest('tr');
+          updateStatus(row.dataset.id, e.target.value, row);
+        });
+      });
     }
 
-    // Boot
+    async function updateStatus(bookingId, newStatus, rowEl){
+      try {
+        showLoader();
+        await fetch(scriptBaseURL, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({action:'updateStatus', bookingId, status:newStatus})
+        });
+        showToast('Status updated');
+        rowEl.classList.add('flash');
+        setTimeout(()=>rowEl.classList.remove('flash'),1000);
+      } catch (err){
+        console.error(err);
+        showToast('Error updating status');
+      } finally {
+        hideLoader();
+      }
+    }
+
     loadBookings();
   </script>
 </body>
