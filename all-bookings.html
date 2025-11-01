@@ -25,7 +25,7 @@
     html, body { margin: 0; padding: 0; overflow-x: hidden; }
     body { display: flex; min-height: 100vh; background: var(--primary-light); color: var(--text); }
 
-    /* === SIDEBAR (identical to Create New) === */
+    /* === SIDEBAR (exact from Create New) === */
     .sidebar {
       position: fixed; left: 0; top: 0; bottom: 0;
       width: 250px; background: var(--panel); border-right: 1px solid var(--border);
@@ -43,57 +43,91 @@
     .sub-menu a:hover { color: var(--primary); }
     .nav-item.open .sub-menu { display: flex; }
 
-    /* === TOPBAR (identical) === */
-    .topbar { height: 60px; background: var(--panel); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; box-shadow: var(--shadow); position: fixed; top: 0; left: 250px; right: 0; z-index: 1000; }
+    /* === TOPBAR (exact) === */
+    .topbar {
+      height: 60px; background: var(--panel); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 25px; box-shadow: var(--shadow);
+      position: fixed; top: 0; left: 250px; right: 0; z-index: 1000;
+    }
     .menu-toggle { background: none; border: none; font-size: 20px; color: var(--primary); cursor: pointer; }
     .topbar-right { display: flex; align-items: center; gap: 20px; color: var(--muted); }
 
     /* === MAIN === */
     main { flex: 1; margin-left: 250px; padding: 100px 40px 40px; background: var(--primary-light); }
 
-    .card { background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); padding: 0; overflow: hidden; }
+    /* Card becomes a column layout so footer can be fixed at bottom of card */
+    .card {
+      background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow);
+      border: 1px solid var(--border); padding: 0; overflow: hidden;
+      display: flex; flex-direction: column;
+      /* Fill viewport height below topbar with some breathing room */
+      height: calc(100vh - 120px);
+    }
 
     /* Sticky header area inside card */
     .card__header {
-      position: sticky; top: 60px; /* below topbar */
       background: var(--panel);
       border-bottom: 1px solid var(--border);
       z-index: 5;
-      padding: 18px 24px;
+      padding: 16px 20px;
     }
 
-    h2.card__title { font-size: 22px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; margin: 0 0 12px 0; }
+    h2.card__title {
+      font-size: 22px; font-weight: 700; color: var(--primary);
+      display: flex; align-items: center; gap: 10px; margin: 0 0 12px 0;
+    }
 
-    /* Filters row (compact inline with title area) */
+    /* Filters row (title + filters on the same horizontal) */
     .filters {
       display: grid;
-      grid-template-columns: 1.3fr 1fr 1fr 1fr 1fr auto;
-      gap: 12px;
+      grid-template-columns: 1.2fr 1fr 1fr 1fr auto;
+      gap: 10px;
       align-items: center;
     }
-    .filters .field { display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; background: #fdfdfd; }
-    .filters .field input, .filters .field select { border: none; outline: none; background: transparent; font-size: 14px; flex: 1; }
+    .filters .field {
+      display: flex; align-items: center; gap: 8px;
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 8px 12px; background: #fdfdfd;
+    }
+    .filters .field input, .filters .field select, .filters .field button {
+      border: none; outline: none; background: transparent; font-size: 14px; flex: 1;
+    }
     .filters .btn-clear {
-      border: none; border-radius: 10px; padding: 10px 16px; background: #f1f3f5; color: var(--muted); font-weight: 600; cursor: pointer; transition: var(--transition);
+      border: none; border-radius: 10px; padding: 10px 16px;
+      background: #f1f3f5; color: var(--muted); font-weight: 600;
+      cursor: pointer; transition: var(--transition);
     }
     .filters .btn-clear:hover { background: #e9ecef; }
 
-    /* Table wrapper: scrollable body, sticky thead */
+    /* Table area scrolls (both axes) with sticky header */
     .table-wrap {
-      max-height: calc(100vh - 60px - 120px - 32px - 40px); /* viewport - topbar - header/filters - padding - bottom gap */
-      overflow: auto;
+      flex: 1 1 auto;
+      overflow: auto;               /* vertical + horizontal scroll */
       border-top: 1px solid var(--border);
+      background: #fff;
     }
 
-    table { width: 100%; border-collapse: collapse; min-width: 900px; }
+    table { width: 100%; border-collapse: collapse; min-width: 1100px; }
     thead th {
       position: sticky; top: 0;
       background: var(--primary); color: #fff; z-index: 2; font-size: 14px;
+      white-space: nowrap;
     }
-    th, td { padding: 12px 10px; font-size: 14px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    th, td {
+      padding: 12px 10px; font-size: 14px; text-align: left;
+      border-bottom: 1px solid var(--border); vertical-align: middle;
+    }
     tbody tr:hover { background: var(--primary-light); cursor: pointer; }
-    tbody tr .cell-actions { cursor: default; } /* prevent drawer open from clicks inside controls */
+    td.cell-actions { cursor: default; }
 
+    /* Property name cell: show first 3 words + ellipsis, full on hover via title */
+    .prop-trunc {
+      max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      display: inline-block;
+    }
+
+    /* Inline status select */
     select.status-select {
       border: 1px solid var(--border);
       border-radius: 6px;
@@ -105,21 +139,42 @@
     }
     tr.flash { background: #e9f7ff !important; transition: background 0.5s ease; }
 
-    /* Drawer (slide-in details panel) */
+    /* Card footer (fixed at bottom of card) */
+    .card__footer {
+      border-top: 1px solid var(--border);
+      background: var(--panel);
+      padding: 10px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex: 0 0 auto;
+    }
+    .pagination {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .pagination .btn {
+      border: none; border-radius: 8px; padding: 8px 14px; font-weight: 600; cursor: pointer; font-size: 14px; transition: var(--transition);
+      background: #f1f3f5; color: var(--muted);
+    }
+    .pagination .btn:hover { background: #e9ecef; }
+    .pagination .btn[disabled] { opacity: .5; cursor: not-allowed; }
+    .page-indicator { color: var(--muted); font-weight: 600; }
+
+    /* Drawer (details panel) */
     .drawer-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.25);
       opacity: 0; visibility: hidden; transition: var(--transition); z-index: 3000;
     }
     .drawer-overlay.active { opacity: 1; visibility: visible; }
-
     .drawer {
       position: fixed; top: 60px; right: 0; bottom: 0; width: min(560px, 100%);
-      background: var(--panel); border-left: 1px solid var(--border); box-shadow: -10px 0 30px rgba(0,0,0,.08);
-      transform: translateX(100%); transition: var(--transition); z-index: 3100; display: flex; flex-direction: column;
+      background: var(--panel); border-left: 1px solid var(--border);
+      box-shadow: -10px 0 30px rgba(0,0,0,.08);
+      transform: translateX(100%); transition: var(--transition); z-index: 3100;
+      display: flex; flex-direction: column;
     }
     .drawer.active { transform: translateX(0); }
     .drawer__head {
-      padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
       position: sticky; top: 0; background: var(--panel); z-index: 1;
     }
     .drawer__title { font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
@@ -134,7 +189,6 @@
     .b2b-badges { display: flex; gap: 10px; }
     .badge { flex: 1; text-align: center; padding: 8px 10px; border-radius: 18px; border: 1px solid rgba(15,114,180,0.25); background: rgba(15,114,180,0.08); color: var(--primary); font-weight: 600; cursor: pointer; }
     .badge.active { background: var(--primary); color: #fff; box-shadow: 0 0 8px rgba(15,114,180,0.3); }
-
     .drawer__footer {
       border-top: 1px solid var(--border); padding: 14px 20px; display: flex; justify-content: flex-end; gap: 10px;
       position: sticky; bottom: 0; background: var(--panel);
@@ -145,7 +199,7 @@
     .btn-light { background: #f1f3f5; color: var(--muted); }
     .btn-light:hover { background: #e9ecef; }
 
-    /* Toast + Loader (same as Create New) */
+    /* Toast + Loader (same visuals as Create New) */
     .hz-toast {
       position: fixed; bottom: 24px; right: 24px;
       background: #0F72B4; color: #fff; padding: 12px 16px;
@@ -153,7 +207,6 @@
       opacity: 0; transform: translateY(16px); transition: .3s ease; z-index: 5000;
     }
     .hz-toast.show { opacity: 1; transform: translateY(0); }
-
     .hz-loader {
       position: fixed; inset: 0; background: rgba(0,0,0,.25);
       display: flex; align-items: center; justify-content: center;
@@ -175,7 +228,7 @@
       main { margin-left: 0; padding: 100px 10px 40px; }
       .filters { grid-template-columns: 1fr 1fr; gap: 10px; }
       .drawer { top: 60px; width: 100%; }
-      table { min-width: 700px; }
+      table { min-width: 800px; }
     }
   </style>
 </head>
@@ -216,18 +269,24 @@
 
     <main>
       <div class="card">
+        <!-- Header (title + inline filters) -->
         <div class="card__header">
           <h2 class="card__title"><i class="fa-solid fa-list"></i> All Bookings</h2>
           <div class="filters" id="filtersBar">
-            <div class="field"><i class="fa-solid fa-magnifying-glass"></i><input id="fSearch" type="text" placeholder="Search booking, property, cleaner…" /></div>
-            <div class="field"><i class="fa-solid fa-layer-group"></i>
+            <div class="field" title="Search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input id="fSearch" type="text" placeholder="Search booking, property, cleaner…"/>
+            </div>
+            <div class="field" title="Type">
+              <i class="fa-solid fa-layer-group"></i>
               <select id="fType">
                 <option value="all">All Types</option>
                 <option value="airbnb">Airbnb Cleaning</option>
                 <option value="office">Home / Office Cleaning</option>
               </select>
             </div>
-            <div class="field"><i class="fa-solid fa-flag"></i>
+            <div class="field" title="Status">
+              <i class="fa-solid fa-flag"></i>
               <select id="fStatus">
                 <option value="all">All Status</option>
                 <option value="Pending">Pending</option>
@@ -235,29 +294,41 @@
                 <option value="Completed">Completed</option>
               </select>
             </div>
-            <div class="field"><i class="fa-regular fa-calendar"></i><input id="fFrom" type="date" /></div>
-            <div class="field"><i class="fa-regular fa-calendar"></i><input id="fTo" type="date" /></div>
-            <button class="btn-clear" id="fClear"><i class="fa-solid fa-rotate-left"></i> Clear</button>
+            <div class="field" title="Date">
+              <i class="fa-regular fa-calendar"></i>
+              <input id="fDate" type="date"/>
+            </div>
+            <button class="btn-clear" id="fClear" title="Clear filters"><i class="fa-solid fa-rotate-left"></i> Clear</button>
           </div>
         </div>
 
+        <!-- Table -->
         <div class="table-wrap">
           <table id="bookingsTable">
             <thead>
               <tr>
                 <th>Booking ID</th>
+                <th>Status</th>
                 <th>Property Name</th>
                 <th>Cleaner</th>
                 <th>Cleaning Date</th>
                 <th>B2B</th>
                 <th>Type</th>
-                <th class="cell-actions">Status</th>
               </tr>
             </thead>
             <tbody>
               <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px;">Loading bookings...</td></tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Fixed footer with pagination -->
+        <div class="card__footer">
+          <div class="page-indicator" id="pageIndicator">Page 1 of 1</div>
+          <div class="pagination">
+            <button class="btn" id="btnPrev"><i class="fa-solid fa-angle-left"></i> Prev</button>
+            <button class="btn" id="btnNext">Next <i class="fa-solid fa-angle-right"></i></button>
+          </div>
         </div>
       </div>
     </main>
@@ -319,7 +390,7 @@
   <div class="hz-loader" id="loader"><div class="box"><div class="spin"></div><span>Loading…</span></div></div>
 
   <script>
-    // Sidebar & Topbar (exact behavior)
+    /* ===== Sidebar / Topbar (exact behavior) ===== */
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
     const menuToggle = document.getElementById('menuToggle');
@@ -330,15 +401,16 @@
     overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
     bookingMenu.onclick = (e) => { e.preventDefault(); bookingItem.classList.toggle('open'); };
 
-    // Toast + Loader (same visuals as Create New)
+    /* ===== Toast + Loader (same visuals as Create New) ===== */
     const toast = document.getElementById('toast');
     const loader = document.getElementById('loader');
     function showToast(msg){ toast.textContent = msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), 2200); }
     function showLoader(){ loader.classList.add('active'); }
     function hideLoader(){ loader.classList.remove('active'); }
 
-    // API (same base as your current working page)
-    const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbw5ow-O54uxNdLZ4GFSk2HmJSPXwTyJYc0DRfJWCz_duubHrTwXAjpwit1NhONQvq_G/exec");
+    /* ===== API base (your latest endpoint via corsproxy) ===== */
+    const scriptBaseURL =
+      "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbw5ow-O54uxNdLZ4GFSk2HmJSPXwTyJYc0DRfJWCz_duubHrTwXAjpwit1NhONQvq_G/exec");
 
     async function fetchJSON(url) {
       const res = await fetch(url, { cache: 'no-store' });
@@ -347,44 +419,30 @@
       return JSON.parse(text);
     }
 
-    // State
-    let ALL_ROWS = []; // combined rows (airbnb + office)
-    let CURRENT_ROWS = []; // filtered
+    /* ===== State ===== */
+    let ALL_ROWS = [];       // all bookings
+    let FILTERED = [];       // after filters
+    const PAGE_SIZE = 25;
+    let page = 1;
+    let totalPages = 1;
 
-    // Load both sources (graceful fallback)
-    async function loadBookingsCombined() {
+    /* ===== Load bookings (combined) ===== */
+    async function loadBookings() {
       showLoader();
-      const urls = [
-        `${scriptBaseURL}?type=bookings&category=airbnb`,
-        `${scriptBaseURL}?type=bookings&category=office`
-      ];
-      let combined = [];
-      for (const u of urls) {
-        try {
-          const part = await fetchJSON(u);
-          if (Array.isArray(part)) combined = combined.concat(part);
-        } catch (e) {
-          console.warn('Load part failed:', u, e);
-        }
+      try {
+        // Expect your API to return combined rows for ?type=bookings
+        const rows = await fetchJSON(`${scriptBaseURL}?type=bookings`);
+        ALL_ROWS = hydrateTypes(rows).sort(sortByMostRecent);
+        applyFilters(); // will also render + paginate
+      } catch (e) {
+        console.error(e);
+        showToast('Error loading bookings');
+        renderTable([]);
+      } finally {
+        hideLoader();
       }
-
-      // Fallback: if API doesn't support category, try plain ?type=bookings once
-      if (combined.length === 0) {
-        try {
-          const fallback = await fetchJSON(`${scriptBaseURL}?type=bookings`);
-          if (Array.isArray(fallback)) combined = fallback;
-        } catch (e) {
-          console.error('Fallback load failed:', e);
-        }
-      }
-
-      ALL_ROWS = hydrateTypes(combined);
-      CURRENT_ROWS = [...ALL_ROWS];
-      renderTable(CURRENT_ROWS);
-      hideLoader();
     }
 
-    // Infer Type if not present
     function hydrateTypes(rows) {
       return rows.map(r => {
         let type = r["Type"];
@@ -393,7 +451,98 @@
       });
     }
 
-    // Render table
+    function sortByMostRecent(a, b) {
+      const da = a["Cleaning Date"] ? new Date(a["Cleaning Date"]).getTime() : 0;
+      const db = b["Cleaning Date"] ? new Date(b["Cleaning Date"]).getTime() : 0;
+      if (db !== da) return db - da;
+      // fallback to timestamp or booking id ordering (desc)
+      const ta = a["Timestamp"] ? new Date(a["Timestamp"]).getTime() : 0;
+      const tb = b["Timestamp"] ? new Date(b["Timestamp"]).getTime() : 0;
+      if (tb !== ta) return tb - ta;
+      const ia = (a["Booking ID"] || "").toString();
+      const ib = (b["Booking ID"] || "").toString();
+      return ib.localeCompare(ia);
+    }
+
+    /* ===== Filters ===== */
+    const fSearch = document.getElementById('fSearch');
+    const fType = document.getElementById('fType');
+    const fStatus = document.getElementById('fStatus');
+    const fDate = document.getElementById('fDate');
+    const fClear = document.getElementById('fClear');
+
+    function applyFilters() {
+      const q = (fSearch.value || '').toLowerCase().trim();
+      const t = fType.value;      // all, airbnb, office
+      const s = fStatus.value;    // all or specific
+      const exactDate = fDate.value ? new Date(fDate.value) : null;
+
+      FILTERED = ALL_ROWS.filter(r => {
+        // text search
+        const hay = [
+          r["Booking ID"], r["Property Name"], r["Cleaners"], r["Address"], r["Notes"], r["Note"]
+        ].map(x => (x || '').toString().toLowerCase()).join(' ');
+        if (q && !hay.includes(q)) return false;
+
+        // type
+        const type = (r["Type"] || '').toLowerCase();
+        if (t === 'airbnb' && !type.includes('airbnb')) return false;
+        if (t === 'office' && type.includes('airbnb')) return false;
+
+        // status
+        if (s !== 'all' && r["Status"] !== s) return false;
+
+        // exact date match (same day)
+        if (exactDate) {
+          const d = r["Cleaning Date"] ? new Date(r["Cleaning Date"]) : null;
+          if (!d) return false;
+          if (!isSameDay(d, exactDate)) return false;
+        }
+
+        return true;
+      });
+
+      page = 1;
+      paginateAndRender();
+    }
+
+    [fSearch, fType, fStatus, fDate].forEach(el => el.addEventListener('input', applyFilters));
+    fClear.addEventListener('click', () => {
+      fSearch.value = ''; fType.value = 'all'; fStatus.value = 'all'; fDate.value = '';
+      applyFilters();
+    });
+
+    function isSameDay(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth() &&
+             a.getDate() === b.getDate();
+    }
+
+    /* ===== Pagination ===== */
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    const pageIndicator = document.getElementById('pageIndicator');
+
+    btnPrev.addEventListener('click', () => { if (page > 1) { page--; paginateAndRender(); } });
+    btnNext.addEventListener('click', () => { if (page < totalPages) { page++; paginateAndRender(); } });
+
+    function paginateAndRender() {
+      const total = FILTERED.length;
+      totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+      if (page > totalPages) page = totalPages;
+
+      const start = (page - 1) * PAGE_SIZE;
+      const end = start + PAGE_SIZE;
+      const slice = FILTERED.slice(start, end);
+
+      renderTable(slice);
+
+      pageIndicator.textContent = `Page ${page} of ${totalPages}`;
+      btnPrev.disabled = (page <= 1);
+      btnNext.disabled = (page >= totalPages);
+    }
+
+    /* ===== Table Render ===== */
     function renderTable(rows) {
       const tbody = document.querySelector('#bookingsTable tbody');
       if (!rows || rows.length === 0) {
@@ -403,7 +552,8 @@
 
       tbody.innerHTML = rows.map(r => {
         const id = r["Booking ID"] || "";
-        const prop = r["Property Name"] || "";
+        const propFull = r["Property Name"] || "";
+        const propTrunc = truncateWords(propFull, 3);
         const cleaner = r["Cleaners"] || "";
         const date = r["Cleaning Date"] ? formatDateCell(r["Cleaning Date"]) : "";
         const b2b = r["B2B"] || "";
@@ -413,16 +563,16 @@
         return `
           <tr data-id="${escapeHtml(id)}" data-type="${escapeHtml(type)}">
             <td>${escapeHtml(id)}</td>
-            <td>${escapeHtml(prop)}</td>
-            <td>${escapeHtml(cleaner)}</td>
-            <td>${escapeHtml(date)}</td>
-            <td>${escapeHtml(b2b)}</td>
-            <td>${escapeHtml(type)}</td>
             <td class="cell-actions" onclick="event.stopPropagation();">
               <select class="status-select" data-id="${escapeHtml(id)}">
                 ${["Pending", "Clean Underway", "Completed"].map(s => `<option value="${s}" ${status===s?"selected":""}>${s}</option>`).join("")}
               </select>
             </td>
+            <td title="${escapeHtml(propFull)}"><span class="prop-trunc">${escapeHtml(propTrunc)}</span></td>
+            <td>${escapeHtml(cleaner)}</td>
+            <td>${escapeHtml(date)}</td>
+            <td>${escapeHtml(b2b)}</td>
+            <td>${escapeHtml(type)}</td>
           </tr>
         `;
       }).join("");
@@ -443,6 +593,13 @@
       });
     }
 
+    function truncateWords(str, count) {
+      if (!str) return '';
+      const parts = str.trim().split(/\s+/);
+      if (parts.length <= count) return str;
+      return parts.slice(0, count).join(' ') + '…';
+    }
+
     function formatDateCell(v) {
       try {
         const d = (typeof v === 'string' || typeof v === 'number') ? new Date(v) : v;
@@ -454,57 +611,7 @@
       return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
     }
 
-    // Filters
-    const fSearch = document.getElementById('fSearch');
-    const fType = document.getElementById('fType');
-    const fStatus = document.getElementById('fStatus');
-    const fFrom = document.getElementById('fFrom');
-    const fTo = document.getElementById('fTo');
-    const fClear = document.getElementById('fClear');
-
-    function applyFilters() {
-      const q = (fSearch.value || '').toLowerCase().trim();
-      const t = fType.value; // all, airbnb, office
-      const s = fStatus.value; // all or status
-      const from = fFrom.value ? new Date(fFrom.value) : null;
-      const to = fTo.value ? new Date(fTo.value) : null;
-
-      CURRENT_ROWS = ALL_ROWS.filter(r => {
-        const hay = [
-          r["Booking ID"], r["Property Name"], r["Cleaners"], r["Address"], r["Notes"]
-        ].map(x => (x || '').toString().toLowerCase()).join(' ');
-        if (q && !hay.includes(q)) return false;
-
-        const type = (r["Type"] || '').toLowerCase();
-        if (t === 'airbnb' && !type.includes('airbnb')) return false;
-        if (t === 'office' && type.includes('airbnb')) return false;
-
-        if (s !== 'all' && r["Status"] !== s) return false;
-
-        if (from || to) {
-          const d = r["Cleaning Date"] ? new Date(r["Cleaning Date"]) : null;
-          if (d) {
-            if (from && d < from) return false;
-            if (to && d > to) return false;
-          }
-        }
-        return true;
-      });
-
-      renderTable(CURRENT_ROWS);
-    }
-
-    [fSearch, fType, fStatus, fFrom, fTo].forEach(el => el.addEventListener('input', applyFilters));
-    fClear.addEventListener('click', () => {
-      fSearch.value = '';
-      fType.value = 'all';
-      fStatus.value = 'all';
-      fFrom.value = '';
-      fTo.value = '';
-      applyFilters();
-    });
-
-    // Inline status update
+    /* ===== Inline Status Update ===== */
     async function updateStatus(bookingId, status, rowEl) {
       try {
         showLoader();
@@ -524,7 +631,7 @@
       }
     }
 
-    // Drawer
+    /* ===== Drawer (view/edit) ===== */
     const drawer = document.getElementById('drawer');
     const drawerOverlay = document.getElementById('drawerOverlay');
     const dwClose = document.getElementById('dwClose');
@@ -551,7 +658,7 @@
       const row = ALL_ROWS.find(r => (r["Booking ID"] || '') === bookingId);
       if (!row) return;
 
-      CURRENT_EDIT = JSON.parse(JSON.stringify(row)); // deep-ish copy
+      CURRENT_EDIT = JSON.parse(JSON.stringify(row));
       const type = row["Type"] || (row["Flat Sheets King"] ? "Airbnb Cleaning" : "Home / Office Cleaning");
 
       dwTitle.textContent = `Booking Details — ${bookingId}`;
@@ -566,7 +673,6 @@
       if (b2b === 'yes') { dwB2BYes.classList.add('active'); dwB2BNo.classList.remove('active'); } else { dwB2BNo.classList.add('active'); dwB2BYes.classList.remove('active'); }
       dwNotes.value = row["Notes"] || row["Note"] || '';
 
-      // Airbnb packing list
       if (type.toLowerCase().includes('airbnb')) {
         dwAirbnbSection.style.display = 'block';
         renderLinenInputs(row);
@@ -598,7 +704,10 @@
         "King Fitted","Queen Fitted","Single Fitted"
       ].filter(k => keys.includes(k));
 
-      if (linenKeys.length === 0) { dwLinenGrid.innerHTML = `<div style="grid-column:1/-1;color:var(--muted);">No packing list on this booking.</div>`; return; }
+      if (linenKeys.length === 0) {
+        dwLinenGrid.innerHTML = `<div style="grid-column:1/-1;color:var(--muted);">No packing list on this booking.</div>`;
+        return;
+      }
 
       dwLinenGrid.innerHTML = linenKeys.map(k => `
         <div class="group">
@@ -618,7 +727,7 @@
     dwCancel.onclick = closeDrawer;
     drawerOverlay.onclick = closeDrawer;
 
-    // B2B toggles in drawer
+    // B2B toggles
     dwB2BYes.onclick = () => { dwB2BYes.classList.add('active'); dwB2BNo.classList.remove('active'); };
     dwB2BNo.onclick = () => { dwB2BNo.classList.add('active'); dwB2BYes.classList.remove('active'); };
 
@@ -633,7 +742,6 @@
         status: dwStatus.value,
         b2b: dwB2BYes.classList.contains('active') ? 'Yes' : 'No',
         notes: dwNotes.value,
-        // If airbnb, include linen map
         linen: {}
       };
 
@@ -652,8 +760,7 @@
           body: JSON.stringify(payload)
         });
         showToast('Saved changes');
-        // Refresh table quickly
-        await loadBookingsCombined();
+        await loadBookings(); // refresh list, preserves current filters by reapplying after load
         closeDrawer();
       } catch (e) {
         console.error(e);
@@ -663,8 +770,8 @@
       }
     };
 
-    // Boot
-    loadBookingsCombined();
+    /* ===== Boot ===== */
+    loadBookings();
   </script>
 </body>
 </html>
