@@ -126,6 +126,34 @@
       .form__row, .form__row-inline { grid-template-columns: 1fr; }
       .b2b-group { background: #f8fbff; border-radius: var(--radius); border: 1px solid var(--border); padding: 14px 18px; }
     }
+
+    /* Toast + loader (non-intrusive, no layout shifts) */
+.hz-toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: #0F72B4; color: #fff; padding: 12px 16px;
+  border-radius: 10px; font-weight: 600; box-shadow: 0 10px 24px rgba(15,114,180,.25);
+  opacity: 0; transform: translateY(16px); transition: .3s ease; z-index: 5000;
+}
+.hz-toast.show { opacity: 1; transform: translateY(0); }
+
+.hz-loader {
+  position: fixed; inset: 0; background: rgba(0,0,0,.25);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden; transition: .3s ease; z-index: 4000;
+}
+.hz-loader.active { opacity: 1; visibility: visible; }
+.hz-loader .box {
+  background: #fff; border: 1px solid #e4e9ef; box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  padding: 18px 22px; border-radius: 12px; color: #222; font-weight: 600;
+  display: flex; align-items: center; gap: 12px;
+}
+.hz-loader .spin {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid rgba(15,114,180,.2); border-top-color: #0F72B4;
+  animation: hzspin 1s linear infinite;
+}
+@keyframes hzspin { to { transform: rotate(360deg); } }
+
   </style>
 </head>
 <body>
@@ -218,84 +246,235 @@
   </div>
 
   <script>
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-    const menuToggle = document.getElementById('menuToggle');
-    const bookingMenu = document.getElementById('bookingMenu');
-    const bookingItem = bookingMenu.parentElement;
+  // ===== Sidebar / Nav (unchanged behaviour) =====
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  const menuToggle = document.getElementById('menuToggle');
+  const bookingMenu = document.getElementById('bookingMenu');
+  const bookingItem = bookingMenu.parentElement;
 
-    menuToggle.onclick = () => {
-      sidebar.classList.toggle('open');
-      overlay.classList.toggle('active');
-    };
+  menuToggle.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
+  overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
+  bookingMenu.onclick = (e) => { e.preventDefault(); bookingItem.classList.toggle('open'); };
 
-    overlay.onclick = () => {
-      sidebar.classList.remove('open');
-      overlay.classList.remove('active');
-    };
+  // ===== API base (use your current deployed Web App URL via corsproxy) =====
+  const scriptBaseURL =
+    "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbwGjcHGPAHRyrenw3HmIpkT8U3Zw7RE2j1rhj8bZMyIc59tnI4Vj8bjY3evvq_X0ls/exec");
 
-    bookingMenu.onclick = (e) => {
-      e.preventDefault();
-      bookingItem.classList.toggle('open');
-    };
+  // ===== Slim toast + loader (UI-neutral) =====
+  const toast = document.createElement('div');
+  toast.className = 'hz-toast';
+  document.body.appendChild(toast);
 
-    const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbyYlv6ctfvkYZxKzeGy_S1LXl2rI-SG5pH8EChv567LRX3uhvGHCtamlnmBYlArAJPs/exec");
+  const loader = document.createElement('div');
+  loader.className = 'hz-loader';
+  loader.innerHTML = `<div class="box"><div class="spin"></div><span id="hzLoaderText">Processing…</span></div>`;
+  document.body.appendChild(loader);
+  const loaderText = document.getElementById('hzLoaderText');
 
-    async function loadDropdowns() {
-      try {
-        const propSel = document.getElementById('property');
-        const cleanSel = document.getElementById('cleaners');
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+  function showLoader(msg = 'Processing…') {
+    loaderText.textContent = msg;
+    loader.classList.add('active');
+  }
+  function hideLoader() {
+    loader.classList.remove('active');
+  }
 
-        const propRes = await fetch(`${scriptBaseURL}?type=properties`, { cache: "no-store" });
-        const propData = await propRes.json();
+  // ===== Elements =====
+  const propertyTypeEl = document.getElementById('propertyType');
+  const propertyEl = document.getElementById('property');
+  const cleanersEl = document.getElementById('cleaners');
+  const infoBox = document.getElementById('propertyInfo');
+  const yesBtn = document.getElementById('b2bYes');
+  const noBtn = document.getElementById('b2bNo');
+  const formEl = document.getElementById('bookingForm');
 
-        propSel.innerHTML = `<option value=''>Select property...</option>`;
-        propData.forEach(p => propSel.innerHTML += `<option value='${p.name}'>${p.name}</option>`);
+  // ===== Helpers =====
+  async function fetchJSON(url) {
+    const res = await fetch(url, { cache: 'no-store' });
+    const text = await res.text();
+    // Apps Script can sometimes return HTML if unauthorized or wrong deployment is hit
+    if (text.trim().startsWith('<')) throw new Error('Non-JSON response (HTML). Check deployment / access.');
+    return JSON.parse(text);
+  }
 
-        const cleanerRes = await fetch(`${scriptBaseURL}?type=cleaners`, { cache: "no-store" });
-        const cleanerData = await cleanerRes.json();
+  function setB2BDefaultNo() {
+    noBtn.classList.add('active');
+    yesBtn.classList.remove('active');
+  }
 
-        cleanSel.innerHTML = `<option value=''>Select cleaner...</option>`;
-        cleanerData.forEach(c => cleanSel.innerHTML += `<option value='${c.name}'>${c.name}</option>`);
-      } catch (err) {
-        console.error('Error loading data:', err);
+  function renderAirbnbInfo(p) {
+    // For Airbnb Properties: show address + a compact packing line
+    const address = p['Address'] || '';
+    // Collect packing items between first linen column and Property ID
+    const keys = Object.keys(p);
+    const start = keys.indexOf('Flat Sheets King'); // first linen column name
+    const end = keys.indexOf('Property ID');       // stop before this
+    let packs = [];
+    if (start >= 0 && end > start) {
+      for (let i = start; i < end; i++) {
+        const k = keys[i]; const v = p[k];
+        if (v && Number(v) > 0) packs.push(`${k.replaceAll('Doona ', 'Doona ').replaceAll('Flat Sheets ', 'FS ')}: ${v}`);
       }
     }
+    const packLine = packs.length ? `<br/><small>${packs.join(' • ')}</small>` : '';
+    return `<strong>${address}</strong>${packLine}`;
+  }
 
-    loadDropdowns();
+  function renderOfficeInfo(p) {
+    const parts = [];
+    if (p['Address']) parts.push(`<strong>${p['Address']}</strong>`);
+    const extra = [];
+    if (p['Type']) extra.push(p['Type']);
+    if (p['Frequency']) extra.push(`Frequency: ${p['Frequency']}`);
+    if (p['Special Notes']) extra.push(`Notes: ${p['Special Notes']}`);
+    if (extra.length) parts.push(`<small>${extra.join(' • ')}</small>`);
+    return parts.join('<br/>');
+  }
 
-    // === Form Handling ===
-    const yesBtn = document.getElementById('b2bYes');
-    const noBtn = document.getElementById('b2bNo');
-    yesBtn.onclick = () => { yesBtn.classList.add('active'); noBtn.classList.remove('active'); };
-    noBtn.onclick = () => { noBtn.classList.add('active'); yesBtn.classList.remove('active'); };
+  function clearPropertyInfo() {
+    infoBox.innerHTML = '';
+  }
 
-    document.getElementById('resetBtn').onclick = () => {
-      document.getElementById('bookingForm').reset();
-      noBtn.classList.add('active'); yesBtn.classList.remove('active');
+  // ===== Load Cleaners (independent) =====
+  async function loadCleaners() {
+    const data = await fetchJSON(`${scriptBaseURL}?type=cleaners`);
+    cleanersEl.innerHTML = `<option value=''>Select cleaner...</option>`;
+    data.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.name;
+      opt.textContent = c.name;
+      cleanersEl.appendChild(opt);
+    });
+  }
+
+  // ===== Load Properties by category =====
+  async function loadProperties(category) {
+    const data = await fetchJSON(`${scriptBaseURL}?type=properties&category=${encodeURIComponent(category)}`);
+    propertyEl.innerHTML = `<option value=''>Select property...</option>`;
+    data.forEach(p => {
+      const name = p['Property Name'] || p.name || '';
+      if (!name) return;
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      // stash the whole object for later detail rendering
+      opt._record = p;
+      propertyEl.appendChild(opt);
+    });
+    clearPropertyInfo();
+  }
+
+  // ===== Initialize dropdowns =====
+  async function init() {
+    try {
+      showLoader('Loading data…');
+      await loadCleaners();
+      // If a type is already selected, load properties for it; else wait for change
+      const type = propertyTypeEl.value || 'airbnb';
+      await loadProperties(type === 'office' ? 'office' : 'airbnb');
+      showToast('Data loaded');
+    } catch (e) {
+      console.error(e);
+      showToast('Error loading data');
+    } finally {
+      hideLoader();
+    }
+  }
+
+  // Change: Property Type -> reload properties list
+  propertyTypeEl.addEventListener('change', async () => {
+    const category = propertyTypeEl.value === 'office' ? 'office' : 'airbnb';
+    try {
+      showLoader('Loading properties…');
+      await loadProperties(category);
+    } catch (e) {
+      console.error(e);
+      showToast('Error loading properties');
+    } finally {
+      hideLoader();
+    }
+  });
+
+  // Change: Property -> show info depending on category
+  propertyEl.addEventListener('change', () => {
+    clearPropertyInfo();
+    const sel = propertyEl.selectedOptions[0];
+    if (!sel || !sel._record) return;
+    const record = sel._record;
+    const category = propertyTypeEl.value === 'office' ? 'office' : 'airbnb';
+    infoBox.innerHTML = category === 'office' ? renderOfficeInfo(record) : renderAirbnbInfo(record);
+  });
+
+  // B2B toggle
+  yesBtn.onclick = () => { yesBtn.classList.add('active'); noBtn.classList.remove('active'); };
+  noBtn.onclick  = () => { noBtn.classList.add('active'); yesBtn.classList.remove('active'); };
+
+  // Reset
+  document.getElementById('resetBtn').onclick = () => {
+    formEl.reset();
+    setB2BDefaultNo();
+    clearPropertyInfo();
+    showToast('Form reset');
+  };
+
+  // Submit
+  formEl.onsubmit = async (e) => {
+    e.preventDefault();
+
+    // Basic guard
+    if (!propertyTypeEl.value || !propertyEl.value || !date.value || !cleanersEl.value) {
+      showToast('Please complete all required fields');
+      return;
+    }
+
+    const payload = {
+      propertyType: propertyTypeEl.value,              // "airbnb" | "office"
+      property: propertyEl.value,                      // Property Name
+      date: date.value,                                // Cleaning Date
+      cleaner: cleanersEl.value,                       // Cleaner Name
+      b2b: document.querySelector('.linen-badge.active').textContent, // "Yes"/"No"
+      notes: notes.value
     };
 
-    document.getElementById('bookingForm').onsubmit = async (e) => {
-      e.preventDefault();
-      const data = {
-        propertyType: propertyType.value,
-        property: property.value,
-        date: date.value,
-        cleaner: cleaners.value,
-        b2b: document.querySelector('.linen-badge.active').textContent,
-        notes: notes.value
-      };
-      try {
-        const res = await fetch(scriptBaseURL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-        const result = await res.json();
-        alert('Booking saved successfully!');
-        document.getElementById('bookingForm').reset();
-        noBtn.classList.add('active'); yesBtn.classList.remove('active');
-      } catch (err) {
-        alert('Error saving booking');
-        console.error(err);
+    try {
+      showLoader('Saving booking…');
+      const res = await fetch(scriptBaseURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const text = await res.text();
+      const result = JSON.parse(text);
+
+      if (result.result === 'success') {
+        showToast('Booking saved');
+        formEl.reset();
+        setB2BDefaultNo();
+        clearPropertyInfo();
+        // Light refresh feel without page reload (keeps UX steady)
+        // If you prefer a full refresh, uncomment next line:
+        // location.reload();
+      } else {
+        throw new Error(result.message || 'Save failed');
       }
-    };
-  </script>
+    } catch (err) {
+      console.error(err);
+      showToast('Error saving booking');
+    } finally {
+      hideLoader();
+    }
+  };
+
+  // Boot
+  setB2BDefaultNo();
+  init();
+</script>
+
 </body>
 </html>
