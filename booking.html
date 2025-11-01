@@ -83,6 +83,19 @@
   .form__row { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
   .form__row-inline { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
+  /* === Desktop Layout Adjustments === */
+@media (min-width: 901px) {
+  .form__row-inline {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* equal width */
+    gap: 20px;
+  }
+  .form__row {
+    display: block; /* single field row (for Property only) */
+  }
+}
+
+
   .form__group { display: flex; flex-direction: column; gap: 8px; }
 
   label { font-weight: 600; color: var(--primary); font-size: 15px; display: flex; align-items: center; gap: 8px; }
@@ -300,56 +313,71 @@
     <main>
       <div class="card">
         <h2 class="card__title"><i class="fa-solid fa-broom"></i> Create New Booking</h2>
+<form id="bookingForm" autocomplete="off">
+  <!-- Row 1: Property Type + Cleaning Date -->
+  <div class="form__row-inline">
+    <div class="form__group">
+      <label><i class="fa-solid fa-layer-group"></i> Property Type</label>
+      <select id="propertyType" required>
+        <option value="">Select type...</option>
+        <option value="airbnb">Airbnb Cleaning</option>
+        <option value="office">Home / Office Cleaning</option>
+      </select>
+    </div>
 
-        <form id="bookingForm" autocomplete="off">
-          <div class="form__row">
-            <div class="form__group">
-              <label><i class="fa-solid fa-layer-group"></i> Property Type</label>
-              <select id="propertyType" required>
-                <option value="">Select type...</option>
-                <option value="airbnb">Airbnb Cleaning</option>
-                <option value="office">Home / Office Cleaning</option>
-              </select>
-            </div>
+    <div class="form__group">
+      <label><i class="fa-regular fa-calendar"></i> Cleaning Date</label>
+      <input id="date" type="date" required />
+    </div>
+  </div>
 
-            <div class="form__group">
-              <label><i class="fa-solid fa-house-chimney"></i> Property</label>
-              <select id="property" required>
-                <option value="">Select property...</option>
-              </select>
-              <div class="property-info" id="propertyInfo"></div>
-            </div>
-          </div>
+  <!-- Row 2: Property alone -->
+  <div class="form__row">
+    <div class="form__group">
+      <label><i class="fa-solid fa-house-chimney"></i> Property</label>
+      <select id="property" required>
+        <option value="">Select property...</option>
+      </select>
+      <div class="property-info" id="propertyInfo"></div>
+    </div>
+  </div>
 
-          <div class="form__row-inline">
-            <div class="form__group">
-              <label><i class="fa-regular fa-calendar"></i> Cleaning Date</label>
-              <input id="date" type="date" required />
-            </div>
-            <div class="form__group b2b-group">
-              <label><i class="fa-solid fa-briefcase"></i> B2B</label>
-              <div class="linen-badge-group">
-                <div class="linen-badge" id="b2bYes">Yes</div>
-                <div class="linen-badge active" id="b2bNo">No</div>
-              </div>
-            </div>
-          </div>
+  <!-- Row 3: Cleaner + B2B -->
+  <div class="form__row-inline">
+    <div class="form__group">
+      <label><i class="fa-solid fa-user"></i> Cleaner</label>
+      <select id="cleaners">
+        <option value="">Select cleaner...</option>
+      </select>
+    </div>
 
-          <div class="form__group">
-            <label><i class="fa-solid fa-user"></i> Cleaner</label>
-            <select id="cleaners"><option value="">Select cleaner...</option></select>
-          </div>
+    <div class="form__group b2b-group">
+      <label><i class="fa-solid fa-briefcase"></i> B2B</label>
+      <div class="linen-badge-group">
+        <div class="linen-badge" id="b2bYes">Yes</div>
+        <div class="linen-badge active" id="b2bNo">No</div>
+      </div>
+    </div>
+  </div>
 
-          <div class="form__group">
-            <label><i class="fa-regular fa-note-sticky"></i> Notes</label>
-            <textarea id="notes" rows="3" placeholder="Door code, supplies, or special requests..."></textarea>
-          </div>
+  <!-- Row 4: Notes -->
+  <div class="form__group">
+    <label><i class="fa-regular fa-note-sticky"></i> Notes</label>
+    <textarea id="notes" rows="3" placeholder="Door code, supplies, or special requests..."></textarea>
+  </div>
 
-          <div class="toolbar">
-            <button id="submitBtn" type="submit" class="btn btn-save"><i class="fa-solid fa-check"></i> Save Booking</button>
-            <button id="resetBtn" type="button" class="btn btn-reset"><i class="fa-solid fa-rotate-left"></i> Reset</button>
-          </div>
-        </form>
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <button id="submitBtn" type="submit" class="btn btn-save">
+      <i class="fa-solid fa-check"></i> Save Booking
+    </button>
+    <button id="resetBtn" type="button" class="btn btn-reset">
+      <i class="fa-solid fa-rotate-left"></i> Reset
+    </button>
+  </div>
+</form>
+
+              
       </div>
     </main>
   </div>
