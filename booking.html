@@ -348,21 +348,17 @@ function showLoader(msg = 'Processing…') {
   }
 
   // ===== Initialize dropdowns =====
-  async function init() {
-    try {
-      showLoader('Loading data…');
-      await loadCleaners();
-      // If a type is already selected, load properties for it; else wait for change
-      const type = propertyTypeEl.value || 'airbnb';
-      await loadProperties(type === 'office' ? 'office' : 'airbnb');
-      showToast('Data loaded');
-    } catch (e) {
-      console.error(e);
-      showToast('Error loading data');
-    } finally {
-      hideLoader();
-    }
+async function init() {
+  try {
+    // 🔹 No loader or toast on initial load
+    await loadCleaners();
+    const type = propertyTypeEl.value || 'airbnb';
+    await loadProperties(type === 'office' ? 'office' : 'airbnb');
+  } catch (e) {
+    console.error(e);
   }
+}
+
 
   // Change: Property Type -> reload properties list
   propertyTypeEl.addEventListener('change', async () => {
