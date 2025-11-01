@@ -179,7 +179,74 @@
 
     <!-- Main content, table, footer untouched -->
     <!-- (Keep everything you provided — filters, table, pagination, JS for bookings) -->
+<main>
+      <div class="card">
+        <!-- Header (title + inline filters) -->
+        <div class="card__header">
+          <h2 class="card__title"><i class="fa-solid fa-list"></i> All Bookings</h2>
+          <div class="filters" id="filtersBar">
+            <div class="field" title="Search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input id="fSearch" type="text" placeholder="Search cleaner, property…"/>
+            </div>
+            <div class="field" title="Type">
+              <i class="fa-solid fa-layer-group"></i>
+              <select id="fType">
+                <option value="all">All Types</option>
+                <option value="airbnb">Airbnb Cleaning</option>
+                <option value="office">Home / Office Cleaning</option>
+              </select>
+            </div>
+            <div class="field" title="Status">
+              <i class="fa-solid fa-flag"></i>
+              <select id="fStatus">
+                <option value="all">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Clean Underway">Clean Underway</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+            <div class="field" title="Date">
+              <i class="fa-regular fa-calendar"></i>
+              <input id="fDate" type="date"/>
+            </div>
+            <button class="btn-clear" id="fClear" title="Clear filters"><i class="fa-solid fa-rotate-left"></i></button>
+          </div>
+        </div>
 
+        <!-- Table -->
+        <div class="table-wrap">
+          <table id="bookingsTable">
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Status</th>
+                <th>Property Name</th>
+                <th>Cleaner</th>                
+                <th>Cleaning Date</th>
+                <th>B2B</th>
+                <th>Type</th>                
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px;">Loading bookings...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Fixed footer with pagination -->
+        <div class="card__footer">
+          <div class="page-indicator" id="pageIndicator">Page 1 of 1</div>
+          <div class="pagination">
+            <button class="btn" id="btnPrev"><i class="fa-solid fa-angle-left"></i> Prev</button>
+            <button class="btn" id="btnNext">Next <i class="fa-solid fa-angle-right"></i></button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  
     <!-- Updated Drawer -->
     <div class="drawer-overlay" id="drawerOverlay"></div>
     <aside class="drawer" id="drawer">
