@@ -63,7 +63,12 @@
     form { display: flex; flex-direction: column; gap: 24px; }
 
     .form__row { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
-    .form__row-inline { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+/* 🧭 Align Cleaning Date width with Property Type */
+.form__row-inline {
+  display: grid;
+  grid-template-columns: 1fr 2fr; /* same proportion as Property Type vs Property */
+  gap: 20px;
+}
 
     .form__group { display: flex; flex-direction: column; gap: 8px; }
 
