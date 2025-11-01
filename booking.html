@@ -64,10 +64,10 @@
 
     .form__row { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
 /* 🧭 Align Cleaning Date width with Property Type */
-.form__row-inline {
-  display: grid;
-  grid-template-columns: 1fr 2fr; /* same proportion as Property Type vs Property */
-  gap: 20px;
+.form__row-inline { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 20px; 
 }
 
     .form__group { display: flex; flex-direction: column; gap: 8px; }
@@ -108,6 +108,9 @@
     width: 100%;
     max-width: 100%; /* prevent overflow */
     box-sizing: border-box;
+  }
+        .form__row-inline {
+    grid-template-columns: 1fr 1fr;
   }
       .form__row, .form__row-inline { grid-template-columns: 1fr; }
       .b2b-group { background: #f8fbff; border-radius: var(--radius); border: 1px solid var(--border); padding: 14px 18px; }
