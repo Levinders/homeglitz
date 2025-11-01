@@ -31,7 +31,6 @@
       padding-top: 70px;
     }
 
-    /* ===== NAVBAR ===== */
     .navbar {
       position: fixed; top: 0; left: 0; right: 0;
       height: 60px; background: var(--panel);
@@ -41,9 +40,7 @@
       box-shadow: var(--shadow);
     }
 
-    .brand__logo img {
-      height: 48px; width: auto;
-    }
+    .brand__logo img { height: 48px; width: auto; }
 
     .nav-toggle { display: none; font-size: 22px; color: var(--primary); border: none; background: none; cursor: pointer; }
     .nav-links { display: flex; gap: 24px; list-style: none; margin: 0; padding: 0; }
@@ -61,7 +58,6 @@
       .nav-links.open { left: 0; }
     }
 
-    /* ===== MAIN FORM ===== */
     main {
       max-width: 800px; margin: 100px auto; background: var(--panel);
       border-radius: var(--radius); padding: 45px 55px;
@@ -102,24 +98,29 @@
       box-shadow: 0 0 0 3px rgba(15,114,180,0.1);
     }
 
-    .form__row { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px; }
-
-    /* ===== B2B TOGGLE ===== */
-    .b2b-toggle {
-      display: flex; gap: 10px;
-    }
-    .b2b-option {
-      flex: 1; text-align: center; padding: 10px;
-      border-radius: 8px; border: 1px solid var(--border);
-      cursor: pointer; font-weight: 600; color: var(--muted);
-      transition: all var(--transition);
-    }
-    .b2b-option.active {
-      background: var(--primary); color: #fff; border-color: var(--primary);
-      box-shadow: 0 0 6px rgba(15,114,180,0.3);
+    .form__row-inline {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 18px;
     }
 
-    /* Buttons */
+    .linen-badge-group {
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .linen-badge {
+      padding: 10px 18px; border-radius: 20px; font-weight: 600;
+      border: 1px solid rgba(91,124,255,0.25);
+      background: rgba(91,124,255,0.15);
+      color: var(--text); cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .linen-badge.active {
+      background: var(--primary); color: #fff;
+      box-shadow: 0 0 8px rgba(91,124,255,0.5);
+    }
+
     .toolbar { display: flex; justify-content: flex-end; gap: 14px; margin-top: 25px; flex-wrap: wrap; }
     .btn {
       border: none; border-radius: 8px; padding: 12px 26px;
@@ -130,60 +131,29 @@
     .btn-save:hover { background: #0d5f95; }
     .btn-reset { background: #f1f3f5; color: var(--muted); }
     .btn-reset:hover { background: #e9ecef; }
-
-    /* Toast + Loader */
-    .toast {
-      position: fixed; bottom: 30px; right: 30px;
-      background: var(--primary); color: #fff; padding: 12px 20px;
-      border-radius: 8px; font-weight: 500;
-      opacity: 0; transform: translateY(40px);
-      transition: all 0.4s ease; z-index: 5000;
-    }
-    .toast.show { opacity: 1; transform: translateY(0); }
-
-    .loader-overlay {
-      position: fixed; inset: 0; background: rgba(255,255,255,0.6);
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; visibility: hidden; transition: all 0.4s ease; z-index: 4000;
-    }
-    .loader-overlay.active { opacity: 1; visibility: visible; }
-    .spinner { width: 38px; height: 38px; border: 3px solid #cfe2f3; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 
 <body>
-  <nav class="navbar">
-    <div class="brand__logo">
-      <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png" alt="HomeGlitz Logo">
-    </div>
-    <button class="nav-toggle" id="navToggle"><i class="fa-solid fa-bars"></i></button>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="booking.html" class="active">Booking</a></li>
-      <li><a href="properties.html">Properties</a></li>
-      <li><a href="cleaners.html">Cleaners</a></li>
-      <li><a href="reports.html">Reports</a></li>
-    </ul>
-  </nav>
-
   <main>
     <h2 class="card__title"><i class="fa-solid fa-broom"></i> Create New Booking</h2>
 
     <form id="bookingForm" class="form" autocomplete="off">
-      <div class="form__group">
-        <label><i class="fa-solid fa-layer-group"></i> Property Type</label>
-        <select id="propertyType" required>
-          <option value="">Select property type...</option>
-          <option value="airbnb">Airbnb Property</option>
-          <option value="office">Home / Office Property</option>
-        </select>
-      </div>
+      <div class="form__row-inline">
+        <div class="form__group">
+          <label><i class="fa-solid fa-layer-group"></i> Property Type</label>
+          <select id="propertyType" required>
+            <option value="">Select property type...</option>
+            <option value="airbnb">Airbnb Property</option>
+            <option value="office">Home / Office Property</option>
+          </select>
+        </div>
 
-      <div class="form__group">
-        <label><i class="fa-solid fa-house-chimney"></i> Property</label>
-        <select id="property" required><option value="">Select property...</option></select>
-        <div class="property-info" id="propertyInfo"></div>
+        <div class="form__group">
+          <label><i class="fa-solid fa-house-chimney"></i> Property</label>
+          <select id="property" required><option value="">Select property...</option></select>
+          <div class="property-info" id="propertyInfo"></div>
+        </div>
       </div>
 
       <div class="form__group">
@@ -198,9 +168,9 @@
 
       <div class="form__group">
         <label><i class="fa-solid fa-briefcase"></i> B2B</label>
-        <div class="b2b-toggle">
-          <div class="b2b-option active" id="b2bYes">Yes</div>
-          <div class="b2b-option" id="b2bNo">No</div>
+        <div class="linen-badge-group">
+          <div class="linen-badge" id="b2bYes">Yes</div>
+          <div class="linen-badge active" id="b2bNo">No</div>
         </div>
       </div>
 
@@ -215,133 +185,5 @@
       </div>
     </form>
   </main>
-
-  <footer class="app__footer" style="text-align:center; padding:20px; color:#6c757d;">
-    © HomeGlitz — Home & BnB Cleaning
-  </footer>
-
-<script>
-  const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbwGjcHGPAHRyrenw3HmIpkT8U3Zw7RE2j1rhj8bZMyIc59tnI4Vj8bjY3evvq_X0ls/exec");
-
-  const navToggle = document.getElementById('navToggle');
-  const navLinks = document.getElementById('navLinks');
-  navToggle.onclick = () => navLinks.classList.toggle('open');
-
-  // Toast + Loader
-  const toast = document.createElement("div");
-  toast.className = "toast";
-  document.body.appendChild(toast);
-  const loader = document.createElement("div");
-  loader.className = "loader-overlay";
-  loader.innerHTML = `<div class='spinner'></div>`;
-  document.body.appendChild(loader);
-
-  function showToast(msg) {
-    toast.textContent = msg;
-    toast.classList.add("show");
-    setTimeout(() => toast.classList.remove("show"), 3000);
-  }
-
-  // B2B Toggle
-  const yesBtn = document.getElementById('b2bYes');
-  const noBtn = document.getElementById('b2bNo');
-  yesBtn.onclick = () => { yesBtn.classList.add('active'); noBtn.classList.remove('active'); };
-  noBtn.onclick = () => { noBtn.classList.add('active'); yesBtn.classList.remove('active'); };
-
-  // Property type & data
-  const propertyTypeSelect = document.getElementById('propertyType');
-  const propertySelect = document.getElementById('property');
-  const propertyInfo = document.getElementById('propertyInfo');
-
-  async function safeJSON(res) {
-    const text = await res.text();
-    if (text.startsWith("<")) throw new Error("Invalid JSON: HTML received");
-    return JSON.parse(text);
-  }
-
-  async function loadCleaners() {
-    const res = await fetch(`${scriptBaseURL}?type=cleaners`);
-    const data = await safeJSON(res);
-    const cleanerSel = document.getElementById('cleaners');
-    cleanerSel.innerHTML = `<option value="">Select cleaner...</option>`;
-    data.forEach(c => {
-      cleanerSel.innerHTML += `<option value="${c.name}">${c.name}</option>`;
-    });
-  }
-
-  async function loadProperties(category) {
-    propertySelect.innerHTML = `<option value="">Select property...</option>`;
-    propertyInfo.innerHTML = "";
-    if (!category) return;
-
-    loader.classList.add("active");
-    try {
-      const res = await fetch(`${scriptBaseURL}?type=properties&category=${category}`);
-      const data = await safeJSON(res);
-
-      data.forEach(p => {
-        propertySelect.innerHTML += `<option value="${p['Property Name']}">${p['Property Name']}</option>`;
-      });
-
-      propertySelect.onchange = () => {
-        const selected = data.find(x => x['Property Name'] === propertySelect.value);
-        if (selected) {
-          propertyInfo.innerHTML = `<div style="margin-top:8px;font-size:14px;color:#555;">
-            <strong>${selected['Address'] || ''}</strong><br>
-            ${selected['Type'] ? `🏢 ${selected['Type']}` : ''}
-            ${selected['Frequency'] ? ` • ${selected['Frequency']}` : ''}
-          </div>`;
-        } else propertyInfo.innerHTML = "";
-      };
-    } catch (err) {
-      showToast("⚠️ Error loading properties");
-    } finally {
-      loader.classList.remove("active");
-    }
-  }
-
-  propertyTypeSelect.onchange = () => loadProperties(propertyTypeSelect.value);
-  loadCleaners();
-
-  // Booking submission
-  document.getElementById("bookingForm").onsubmit = async (e) => {
-    e.preventDefault();
-    loader.classList.add("active");
-
-    const data = {
-      propertyType: propertyTypeSelect.value,
-      property: propertySelect.value,
-      date: document.getElementById('date').value,
-      cleaner: document.getElementById('cleaners').value,
-      b2b: document.querySelector('.b2b-option.active').textContent,
-      notes: document.getElementById('notes').value
-    };
-
-    try {
-      const res = await fetch(scriptBaseURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      const result = await res.json();
-      if (result.result === "success") {
-        showToast("✅ Booking saved successfully!");
-        e.target.reset();
-        yesBtn.classList.add('active'); noBtn.classList.remove('active');
-      } else showToast("⚠️ Error saving booking");
-    } catch {
-      showToast("❌ Failed to connect");
-    } finally {
-      loader.classList.remove("active");
-    }
-  };
-
-  document.getElementById("resetBtn").onclick = () => {
-    bookingForm.reset();
-    propertyInfo.innerHTML = "";
-    yesBtn.classList.add('active'); noBtn.classList.remove('active');
-    showToast("🧼 Form reset successfully");
-  };
-</script>
 </body>
 </html>
