@@ -5,245 +5,157 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>HomeGlitz — Booking</title>
 
-  <!-- ✅ Favicon -->
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/64%C3%9764pxlogo.png" />
-
-  <!-- ✅ Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg: #0e1024;
-      --panel: #161a2b;
-      --text: #e8ebff;
-      --muted: #aab2d6;
-      --ring: #5b7cff;
-      --accent: #7b92ff;
-      --danger: #ff6b6b;
-      --neutral: #34384d;
-      --radius: 14px;
-      --transition: 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      --primary: #0F72B4;
+      --primary-light: #EDF5FB;
+      --text: #1b1b1b;
+      --muted: #6c757d;
+      --panel: #ffffff;
+      --border: #dee2e6;
+      --radius: 12px;
+      --shadow: 0 6px 25px rgba(15,114,180,0.08);
+      --transition: 0.25s ease;
     }
 
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
 
     body {
       margin: 0;
-      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      background: var(--bg);
+      background: var(--primary-light);
       color: var(--text);
-      overflow-x: hidden;
       padding-top: 70px;
     }
 
-    /* ======== NAVBAR ======== */
+    /* ===== NAVBAR ===== */
     .navbar {
-      position: fixed; top: 0; left: 0; right: 0; height: 60px;
-      background: rgba(22,26,43,0.95);
-      border-bottom: 1px solid rgba(91,124,255,0.15);
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 60px; background: var(--panel);
+      border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 40px; z-index: 3000;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.35);
-    }
-
-    .nav-brand {
-      display: flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow);
     }
 
     .brand__logo img {
-      height: 52px;
-      width: auto;
-      display: block;
-      filter: drop-shadow(0 2px 5px rgba(0,0,0,0.4));
+      height: 48px; width: auto;
     }
 
-    .nav-toggle {
-      display: none;
-      background: none; border: none; color: var(--text);
-      font-size: 24px; cursor: pointer;
-      transition: transform 0.25s ease;
-    }
+    .nav-toggle { display: none; font-size: 22px; color: var(--primary); border: none; background: none; cursor: pointer; }
+    .nav-links { display: flex; gap: 24px; list-style: none; margin: 0; padding: 0; }
+    .nav-links a { text-decoration: none; color: var(--muted); font-weight: 500; transition: color var(--transition); }
+    .nav-links a:hover, .nav-links a.active { color: var(--primary); }
 
-    .nav-links {
-      display: flex; gap: 24px; list-style: none;
-      margin: 0; padding: 0;
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      color: var(--muted);
-      transition: color var(--transition);
-    }
-
-    .nav-links a:hover, .nav-links a.active {
-      color: var(--accent);
-    }
-
-    /* ======== SIDEBAR (MOBILE) ======== */
     @media (max-width: 768px) {
       .nav-toggle { display: block; }
-
       .nav-links {
-        position: fixed; top: 0; left: -270px;
-        width: 250px; height: 100vh;
-        background: rgba(22,26,43,0.98);
-        backdrop-filter: blur(12px);
-        flex-direction: column;
-        padding: 80px 24px;
-        gap: 18px;
-        border-right: 1px solid rgba(91,124,255,0.15);
-        box-shadow: 5px 0 20px rgba(0,0,0,0.5);
-        transition: left 0.35s ease, opacity 0.35s ease;
-        opacity: 0;
-        z-index: 3200;
+        position: fixed; top: 0; left: -270px; width: 250px; height: 100vh;
+        background: #fff; flex-direction: column; padding: 80px 24px;
+        gap: 18px; box-shadow: 3px 0 15px rgba(0,0,0,0.1);
+        transition: left var(--transition);
       }
-
-      .nav-links.open {
-        left: 0;
-        opacity: 1;
-      }
-
-      .nav-links a {
-        color: var(--text);
-        font-size: 17px;
-        font-weight: 500;
-        padding: 10px 0;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-      }
-
-      .overlay {
-        position: fixed; inset: 0;
-        background: rgba(0,0,0,0.25);
-        backdrop-filter: blur(3px);
-        opacity: 0; visibility: hidden;
-        transition: all var(--transition);
-        z-index: 2500;
-      }
-
-      .overlay.active {
-        opacity: 1; visibility: visible;
-      }
+      .nav-links.open { left: 0; }
     }
 
-    /* ======== FORM STYLING (your original version) ======== */
+    /* ===== MAIN FORM ===== */
     main {
-      max-width: 850px; margin: 80px auto; background: var(--panel);
-      border-radius: 20px; padding: 50px 60px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-      position: relative; overflow: hidden;
-    }
-
-    main::before {
-      content: ""; position: absolute; inset: 0; pointer-events: none;
-      background: radial-gradient(circle at 70% 20%, rgba(91,124,255,0.08), transparent 60%);
+      max-width: 800px; margin: 100px auto; background: var(--panel);
+      border-radius: var(--radius); padding: 45px 55px;
+      box-shadow: var(--shadow);
     }
 
     h2.card__title {
-      font-size: 24px; font-weight: 700; margin-bottom: 35px;
-      display: flex; align-items: center; gap: 10px;
-      color: var(--accent);
+      font-size: 22px; font-weight: 700; color: var(--primary);
+      margin-bottom: 30px; display: flex; align-items: center; gap: 10px;
     }
 
     .form { display: flex; flex-direction: column; gap: 24px; }
 
     .form__group {
-      display: flex; flex-direction: column;
-      background: rgba(14,18,36,0.75);
+      background: #f8f9fa;
       border-radius: var(--radius);
-      padding: 16px 20px;
-      border: 1px solid rgba(91,124,255,0.15);
-      transition: all 0.3s ease;
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      transition: all var(--transition);
+    }
+    .form__group:hover { border-color: var(--primary); background: #fff; }
+
+    label {
+      font-weight: 600; color: var(--primary);
+      font-size: 15px; display: flex; align-items: center; gap: 8px;
+      margin-bottom: 8px;
     }
 
-    .form__group:hover { border-color: var(--accent); background: rgba(18,22,46,0.85); }
-
-    .form__group label {
-      font-weight: 600; font-size: 15.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
-      color: var(--accent);
+    select, input, textarea {
+      width: 100%; border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 12px;
+      font-size: 15px; color: var(--text);
+      background: #fff;
+      transition: all var(--transition);
+    }
+    select:focus, input:focus, textarea:focus {
+      outline: none; border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(15,114,180,0.1);
     }
 
-    input, select, textarea {
-      width: 100%; border-radius: 10px; border: 1px solid rgba(91,124,255,0.15);
-      background: rgba(10,14,32,0.9); color: var(--text);
-      padding: 12px 14px; font-size: 16px;
-      transition: all 0.3s ease;
+    .form__row { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px; }
+
+    /* ===== B2B TOGGLE ===== */
+    .b2b-toggle {
+      display: flex; gap: 10px;
     }
-
-    .form__row-inline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-    .form__row-pair { display: grid; grid-template-columns: 2fr 1fr; gap: 22px; }
-
-    .linen-badge-group {
-      display: flex; align-items: center; gap: 10px;
+    .b2b-option {
+      flex: 1; text-align: center; padding: 10px;
+      border-radius: 8px; border: 1px solid var(--border);
+      cursor: pointer; font-weight: 600; color: var(--muted);
+      transition: all var(--transition);
     }
-
-    .linen-badge {
-      padding: 10px 18px; border-radius: 20px; font-weight: 600;
-      border: 1px solid rgba(91,124,255,0.25);
-      background: rgba(91,124,255,0.15);
-      color: var(--text); cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .linen-badge.active {
-      background: var(--ring); color: #fff;
-      box-shadow: 0 0 8px rgba(91,124,255,0.5);
-    }
-
-    .property-info {
-      background: rgba(91,124,255,0.05);
-      border-radius: 10px;
-      padding: 12px;
-      font-size: 14px;
-      color: var(--muted);
-      margin-top: 10px;
+    .b2b-option.active {
+      background: var(--primary); color: #fff; border-color: var(--primary);
+      box-shadow: 0 0 6px rgba(15,114,180,0.3);
     }
 
     /* Buttons */
-    .toolbar { display: flex; justify-content: flex-end; gap: 14px; margin-top: 30px; flex-wrap: wrap; }
-    .btn { border: none; border-radius: 10px; padding: 14px 28px; font-weight: 600; font-size: 16px; cursor: pointer; transition: all 0.25s ease; }
-    .btn-save { background: linear-gradient(180deg, var(--ring), #2f4cff); color: #fff; box-shadow: 0 6px 18px rgba(91,124,255,0.25); }
-    .btn-reset { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid rgba(255,255,255,0.1); }
-    .btn-reset:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+    .toolbar { display: flex; justify-content: flex-end; gap: 14px; margin-top: 25px; flex-wrap: wrap; }
+    .btn {
+      border: none; border-radius: 8px; padding: 12px 26px;
+      font-weight: 600; cursor: pointer; font-size: 15px;
+      transition: all var(--transition);
+    }
+    .btn-save { background: var(--primary); color: #fff; }
+    .btn-save:hover { background: #0d5f95; }
+    .btn-reset { background: #f1f3f5; color: var(--muted); }
+    .btn-reset:hover { background: #e9ecef; }
 
     /* Toast + Loader */
     .toast {
       position: fixed; bottom: 30px; right: 30px;
-      background: rgba(30,33,54,0.95);
-      color: var(--text); padding: 14px 22px;
-      border-radius: 12px; font-weight: 500;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      background: var(--primary); color: #fff; padding: 12px 20px;
+      border-radius: 8px; font-weight: 500;
       opacity: 0; transform: translateY(40px);
-      transition: all 0.4s ease;
-      z-index: 5000;
+      transition: all 0.4s ease; z-index: 5000;
     }
     .toast.show { opacity: 1; transform: translateY(0); }
-    .toast.success { border-left: 4px solid #4ade80; }
-    .toast.error { border-left: 4px solid #f87171; }
 
-    .loader-overlay { position: fixed; inset: 0; background: rgba(14,16,30,0.75); display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.4s ease; z-index: 4000; }
-    .loader-overlay.active { opacity: 1; visibility: visible; }
-    .loader-box { text-align: center; color: var(--text); background: rgba(22,26,43,0.9); padding: 30px 40px; border-radius: 18px; }
-    .spinner { width: 38px; height: 38px; border: 3px solid rgba(123,146,255,0.25); border-top-color: var(--accent); border-radius: 50%; margin: 0 auto 14px; animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    @media (max-width: 700px) {
-      main { padding: 30px 20px; margin: 60px 10px; }
-      .form__row-inline, .form__row-pair { grid-template-columns: 1fr; }
-      .toolbar { justify-content: space-between; }
-      .toolbar .btn { flex: 1; }
-      .toolbar .btn + .btn { margin-left: 10px; }
-      .btn-save span.text-full { display: none; }
-      .btn-save span.text-short { display: inline; }
+    .loader-overlay {
+      position: fixed; inset: 0; background: rgba(255,255,255,0.6);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden; transition: all 0.4s ease; z-index: 4000;
     }
+    .loader-overlay.active { opacity: 1; visibility: visible; }
+    .spinner { width: 38px; height: 38px; border: 3px solid #cfe2f3; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 
 <body>
   <nav class="navbar">
-    <div class="nav-brand">
-      <div class="brand__logo">
-        <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png" alt="HomeGlitz Logo">
-      </div>
+    <div class="brand__logo">
+      <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png" alt="HomeGlitz Logo">
     </div>
     <button class="nav-toggle" id="navToggle"><i class="fa-solid fa-bars"></i></button>
     <ul class="nav-links" id="navLinks">
@@ -255,225 +167,181 @@
     </ul>
   </nav>
 
-  <div class="overlay" id="overlay"></div>
-
   <main>
-    <h2 class="card__title"><i class="fa-solid fa-broom"></i> Create Cleaning Booking</h2>
+    <h2 class="card__title"><i class="fa-solid fa-broom"></i> Create New Booking</h2>
 
     <form id="bookingForm" class="form" autocomplete="off">
+      <div class="form__group">
+        <label><i class="fa-solid fa-layer-group"></i> Property Type</label>
+        <select id="propertyType" required>
+          <option value="">Select property type...</option>
+          <option value="airbnb">Airbnb Property</option>
+          <option value="office">Home / Office Property</option>
+        </select>
+      </div>
+
       <div class="form__group">
         <label><i class="fa-solid fa-house-chimney"></i> Property</label>
         <select id="property" required><option value="">Select property...</option></select>
         <div class="property-info" id="propertyInfo"></div>
       </div>
 
-      <div class="form__row-inline">
-        <div class="form__group"><label><i class="fa-regular fa-calendar"></i> Cleaning Date</label><input id="date" type="date" required /></div>
-        <div class="form__group"><label><i class="fa-regular fa-clock"></i> Start</label><input id="start" type="time" required /></div>
-        <div class="form__group"><label><i class="fa-solid fa-hourglass-end"></i> End</label><input id="end" type="time" required /></div>
+      <div class="form__group">
+        <label><i class="fa-regular fa-calendar"></i> Cleaning Date</label>
+        <input id="date" type="date" required />
       </div>
 
-      <div class="form__row-pair">
-        <div class="form__group">
-          <label><i class="fa-solid fa-user"></i> Cleaner(s)</label>
-          <select id="cleaners"><option value="">Select a cleaner...</option></select>
-        </div>
+      <div class="form__group">
+        <label><i class="fa-solid fa-user"></i> Cleaner</label>
+        <select id="cleaners"><option value="">Select a cleaner...</option></select>
+      </div>
 
-        <div class="form__group">
-          <label><i class="fa-solid fa-bed"></i> Linen Required</label>
-          <div class="linen-badge-group">
-            <div class="linen-badge active" id="linenYes">Yes</div>
-            <div class="linen-badge" id="linenNo">No</div>
-          </div>
+      <div class="form__group">
+        <label><i class="fa-solid fa-briefcase"></i> B2B</label>
+        <div class="b2b-toggle">
+          <div class="b2b-option active" id="b2bYes">Yes</div>
+          <div class="b2b-option" id="b2bNo">No</div>
         </div>
       </div>
 
       <div class="form__group">
         <label><i class="fa-regular fa-note-sticky"></i> Notes</label>
-        <textarea id="notes" rows="3" placeholder="Door code, supplies, special requests..."></textarea>
+        <textarea id="notes" rows="3" placeholder="Door code, supplies, or special requests..."></textarea>
       </div>
 
       <div class="toolbar">
-        <button id="submitBtn" type="submit" class="btn btn-save">
-          <i class="fa-solid fa-check"></i>
-          <span class="text-short">Save</span>
-          <span class="text-full"> Booking</span>
-        </button>
+        <button id="submitBtn" type="submit" class="btn btn-save"><i class="fa-solid fa-check"></i> Save Booking</button>
         <button id="resetBtn" type="button" class="btn btn-reset"><i class="fa-solid fa-rotate-left"></i> Reset</button>
       </div>
     </form>
   </main>
 
-  <footer class="app__footer"><span class="muted">© HomeGlitz — Home & BnB Cleaning</span></footer>
+  <footer class="app__footer" style="text-align:center; padding:20px; color:#6c757d;">
+    © HomeGlitz — Home & BnB Cleaning
+  </footer>
 
 <script>
-  const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbzOLzzSPkjzpVRjESXDMnQnTDcmWvD_9ecvQ7VAoOkHkyccGtthbOchP7N1Pza7G40X/exec");
-  // --- 🧭 Sidebar toggle ---
+  const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbwGjcHGPAHRyrenw3HmIpkT8U3Zw7RE2j1rhj8bZMyIc59tnI4Vj8bjY3evvq_X0ls/exec");
+
   const navToggle = document.getElementById('navToggle');
   const navLinks = document.getElementById('navLinks');
-  const overlay = document.getElementById('overlay');
-  navToggle.onclick = () => {
-    navLinks.classList.toggle('open');
-    overlay.classList.toggle('active');
-  };
-  overlay.onclick = () => {
-    navLinks.classList.remove('open');
-    overlay.classList.remove('active');
-  };
+  navToggle.onclick = () => navLinks.classList.toggle('open');
 
-  // --- 🧺 Linen toggle ---
-  const yesBtn = document.getElementById('linenYes');
-  const noBtn = document.getElementById('linenNo');
-  yesBtn.onclick = () => { yesBtn.classList.add('active'); noBtn.classList.remove('active'); };
-  noBtn.onclick = () => { noBtn.classList.add('active'); yesBtn.classList.remove('active'); };
-
-  // --- 🔔 Toast & Loader setup ---
+  // Toast + Loader
   const toast = document.createElement("div");
   toast.className = "toast";
   document.body.appendChild(toast);
   const loader = document.createElement("div");
   loader.className = "loader-overlay";
-  loader.innerHTML = `<div class='loader-box'><div class='spinner'></div><p>Loading data...</p></div>`;
+  loader.innerHTML = `<div class='spinner'></div>`;
   document.body.appendChild(loader);
 
-  function showToast(msg, type="success") {
+  function showToast(msg) {
     toast.textContent = msg;
-    toast.className = `toast show ${type}`;
-    setTimeout(() => toast.className = "toast", 3500);
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 3000);
   }
 
-  // --- 🧠 Safe JSON parser (for Apps Script quirks) ---
+  // B2B Toggle
+  const yesBtn = document.getElementById('b2bYes');
+  const noBtn = document.getElementById('b2bNo');
+  yesBtn.onclick = () => { yesBtn.classList.add('active'); noBtn.classList.remove('active'); };
+  noBtn.onclick = () => { noBtn.classList.add('active'); yesBtn.classList.remove('active'); };
+
+  // Property type & data
+  const propertyTypeSelect = document.getElementById('propertyType');
+  const propertySelect = document.getElementById('property');
+  const propertyInfo = document.getElementById('propertyInfo');
+
   async function safeJSON(res) {
     const text = await res.text();
-    if (text.startsWith("<")) {
-      console.warn("⚠️ Received HTML instead of JSON:", text.slice(0, 100));
-      throw new Error("Invalid JSON: HTML received");
-    }
-    try { return JSON.parse(text); }
-    catch (err) {
-      console.error("JSON parse failed:", err, "Raw text:", text.slice(0, 100));
-      throw new Error("Invalid JSON format");
-    }
+    if (text.startsWith("<")) throw new Error("Invalid JSON: HTML received");
+    return JSON.parse(text);
   }
 
-  // --- 🚀 Load dropdowns ---
-  async function loadDropdowns() {
+  async function loadCleaners() {
+    const res = await fetch(`${scriptBaseURL}?type=cleaners`);
+    const data = await safeJSON(res);
+    const cleanerSel = document.getElementById('cleaners');
+    cleanerSel.innerHTML = `<option value="">Select cleaner...</option>`;
+    data.forEach(c => {
+      cleanerSel.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+    });
+  }
+
+  async function loadProperties(category) {
+    propertySelect.innerHTML = `<option value="">Select property...</option>`;
+    propertyInfo.innerHTML = "";
+    if (!category) return;
+
     loader.classList.add("active");
-    const propSel = document.getElementById('property');
-    const cleanSel = document.getElementById('cleaners');
-    let propData = [], cleanerData = [];
-
     try {
-      console.log("🔹 Fetching properties...");
-      const propRes = await fetch(`${scriptBaseURL}?type=properties`, { cache: "no-store" });
-      propData = await safeJSON(propRes);
-      console.log("✅ Properties loaded:", propData.length);
+      const res = await fetch(`${scriptBaseURL}?type=properties&category=${category}`);
+      const data = await safeJSON(res);
 
-      console.log("🔹 Fetching cleaners...");
-      const cleanerRes = await fetch(`${scriptBaseURL}?type=cleaners`, { cache: "no-store" });
-      cleanerData = await safeJSON(cleanerRes);
-      console.log("✅ Cleaners loaded:", cleanerData.length);
-
-      // Populate property dropdown
-      propSel.innerHTML = `<option value="">Select property...</option>`;
-      propData.forEach(p => {
-        propSel.innerHTML += `<option value="${p.name}">${p.name}</option>`;
+      data.forEach(p => {
+        propertySelect.innerHTML += `<option value="${p['Property Name']}">${p['Property Name']}</option>`;
       });
 
-      // Populate cleaner dropdown
-      cleanSel.innerHTML = `<option value="">Select a cleaner...</option>`;
-      cleanerData.forEach(c => {
-        cleanSel.innerHTML += `<option value="${c.name}">${c.name}</option>`;
-      });
-
-      // Property info display
-      const infoBox = document.createElement("div");
-      infoBox.id = "propertyInfo";
-      infoBox.style.marginTop = "8px";
-      infoBox.style.fontSize = "14px";
-      infoBox.style.color = "var(--muted)";
-      propSel.parentNode.appendChild(infoBox);
-
-      propSel.onchange = () => {
-        const p = propData.find(x => x.name === propSel.value);
-        if (p) {
-          infoBox.innerHTML = `
-            <div style="line-height:1.5;">
-              <strong>${p.address}</strong><br>
-              🛏️ ${p.bedrooms} Beds • 🛁 ${p.bathrooms} Baths<br>
-              👑 ${p.kingBeds}K • 👸 ${p.queenBeds}Q • 🛋️ ${p.sofaBeds}Sofa<br>
-              Total: ${p.totalBeds} | Max: ${p.maxOccupants}<br>
-              Linen: ${p.linenSupplied} | Code: ${p.bedCode}
-            </div>`;
-        } else infoBox.innerHTML = "";
+      propertySelect.onchange = () => {
+        const selected = data.find(x => x['Property Name'] === propertySelect.value);
+        if (selected) {
+          propertyInfo.innerHTML = `<div style="margin-top:8px;font-size:14px;color:#555;">
+            <strong>${selected['Address'] || ''}</strong><br>
+            ${selected['Type'] ? `🏢 ${selected['Type']}` : ''}
+            ${selected['Frequency'] ? ` • ${selected['Frequency']}` : ''}
+          </div>`;
+        } else propertyInfo.innerHTML = "";
       };
-
-      showToast("✅ Data loaded successfully");
     } catch (err) {
-      console.error("❌ Dropdown load error:", err);
-      showToast("⚠️ Error loading data", "error");
+      showToast("⚠️ Error loading properties");
     } finally {
       loader.classList.remove("active");
     }
   }
 
-  loadDropdowns();
+  propertyTypeSelect.onchange = () => loadProperties(propertyTypeSelect.value);
+  loadCleaners();
 
-  // --- 💾 Booking submission ---
+  // Booking submission
   document.getElementById("bookingForm").onsubmit = async (e) => {
     e.preventDefault();
     loader.classList.add("active");
-    loader.querySelector("p").textContent = "Saving booking...";
 
     const data = {
-      property: property.value,
-      date: date.value,
-      start: start.value,
-      end: end.value,
-      cleaner: cleaners.value,
-      linen: document.querySelector(".linen-badge.active").textContent,
-      notes: notes.value
+      propertyType: propertyTypeSelect.value,
+      property: propertySelect.value,
+      date: document.getElementById('date').value,
+      cleaner: document.getElementById('cleaners').value,
+      b2b: document.querySelector('.b2b-option.active').textContent,
+      notes: document.getElementById('notes').value
     };
 
     try {
-      console.log("📤 Sending booking:", data);
       const res = await fetch(scriptBaseURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-
-      const text = await res.text();
-      console.log("📥 Raw booking response:", text.slice(0, 100));
-      const result = JSON.parse(text.startsWith("<") ? "{}" : text);
-
+      const result = await res.json();
       if (result.result === "success") {
         showToast("✅ Booking saved successfully!");
         e.target.reset();
-        yesBtn.classList.add("active");
-        noBtn.classList.remove("active");
-        document.getElementById("propertyInfo").innerHTML = "";
-      } else {
-        throw new Error(result.message || "Unknown error");
-      }
-    } catch (err) {
-      console.error("❌ Booking save error:", err);
-      showToast("❌ Failed to connect. Please try later.", "error");
+        yesBtn.classList.add('active'); noBtn.classList.remove('active');
+      } else showToast("⚠️ Error saving booking");
+    } catch {
+      showToast("❌ Failed to connect");
     } finally {
       loader.classList.remove("active");
     }
   };
 
-  // --- 🧹 Reset form ---
   document.getElementById("resetBtn").onclick = () => {
     bookingForm.reset();
-    yesBtn.classList.add("active");
-    noBtn.classList.remove("active");
-    document.getElementById("propertyInfo")?.remove();
-    showToast("🧼 Form reset successfully", "success");
+    propertyInfo.innerHTML = "";
+    yesBtn.classList.add('active'); noBtn.classList.remove('active');
+    showToast("🧼 Form reset successfully");
   };
 </script>
-
-
 </body>
 </html>
