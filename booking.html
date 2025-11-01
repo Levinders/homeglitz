@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HomeGlitz — Booking</title>
+  <title>HomeGlitz — Admin Booking</title>
 
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/64%C3%9764pxlogo.png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
@@ -19,43 +19,85 @@
       --border: #e4e9ef;
       --radius: 12px;
       --shadow: 0 6px 20px rgba(15,114,180,0.1);
-      --transition: 0.25s ease;
+      --transition: 0.3s ease;
     }
 
     * { box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
 
     body {
-      margin: 0;
-      background: var(--primary-light);
+      margin: 0; display: flex; min-height: 100vh; background: var(--primary-light);
       color: var(--text);
-      padding-top: 80px;
     }
 
+    /* === SIDEBAR === */
+    .sidebar {
+      width: 250px; background: var(--panel); border-right: 1px solid var(--border);
+      box-shadow: var(--shadow); display: flex; flex-direction: column;
+      padding: 20px 0; transition: width var(--transition);
+    }
+
+    .sidebar.collapsed { width: 80px; }
+
+    .sidebar .brand {
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .sidebar .brand img { height: 48px; transition: all var(--transition); }
+
+    .nav-links { list-style: none; padding: 0; margin: 0; }
+
+    .nav-links li a {
+      display: flex; align-items: center; gap: 12px; padding: 14px 22px;
+      color: var(--muted); font-weight: 500; text-decoration: none;
+      transition: all var(--transition);
+    }
+
+    .nav-links li a:hover, .nav-links li a.active {
+      background: var(--primary-light); color: var(--primary);
+      border-left: 4px solid var(--primary);
+    }
+
+    .nav-links i { font-size: 18px; }
+
+    .sidebar.collapsed .nav-links span { display: none; }
+
+    /* === TOPBAR === */
+    .topbar {
+      height: 60px; background: var(--panel); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 25px; box-shadow: var(--shadow);
+      position: sticky; top: 0; z-index: 1000;
+    }
+
+    .menu-toggle { background: none; border: none; font-size: 20px; color: var(--primary); cursor: pointer; }
+
+    .topbar-right { display: flex; align-items: center; gap: 20px; color: var(--muted); }
+
+    /* === MAIN CONTENT === */
     main {
-      max-width: 900px; margin: 80px auto; background: var(--panel);
-      border-radius: var(--radius); padding: 50px 60px;
-      box-shadow: var(--shadow); border: 1px solid var(--border);
+      flex: 1; padding: 40px; background: var(--primary-light);
       display: flex; flex-direction: column; gap: 30px;
     }
 
+    .card {
+      background: var(--panel); border-radius: var(--radius);
+      box-shadow: var(--shadow); border: 1px solid var(--border);
+      padding: 40px 50px;
+    }
+
     h2.card__title {
-      font-size: 24px; font-weight: 700; color: var(--primary);
-      display: flex; align-items: center; gap: 12px;
-      border-bottom: 2px solid rgba(15,114,180,0.1);
+      font-size: 22px; font-weight: 700; color: var(--primary);
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 25px; border-bottom: 2px solid rgba(15,114,180,0.1);
       padding-bottom: 10px;
     }
 
     form { display: flex; flex-direction: column; gap: 24px; }
 
-    .form__row {
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 20px;
-    }
+    .form__row { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
 
-    .form__group {
-      display: flex; flex-direction: column; gap: 8px;
-    }
+    .form__group { display: flex; flex-direction: column; gap: 8px; }
 
     label {
       font-weight: 600; color: var(--primary);
@@ -63,11 +105,9 @@
     }
 
     select, input, textarea {
-      border: 1px solid var(--border);
-      border-radius: 10px; padding: 12px 14px;
-      font-size: 15px; color: var(--text);
+      border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px;
+      font-size: 15px; color: var(--text); background: #fdfdfd;
       transition: all var(--transition);
-      background: #fdfdfd;
     }
 
     select:focus, input:focus, textarea:focus {
@@ -83,13 +123,10 @@
 
     .b2b-group {
       background: #f8fbff; border-radius: var(--radius);
-      border: 1px solid var(--border);
-      padding: 14px 18px;
+      border: 1px solid var(--border); padding: 14px 18px;
     }
 
-    .linen-badge-group {
-      display: flex; align-items: center; gap: 12px;
-    }
+    .linen-badge-group { display: flex; align-items: center; gap: 12px; }
 
     .linen-badge {
       flex: 1; text-align: center;
@@ -105,9 +142,7 @@
       box-shadow: 0 0 8px rgba(15,114,180,0.3);
     }
 
-    .toolbar {
-      display: flex; justify-content: flex-end; gap: 16px; margin-top: 10px;
-    }
+    .toolbar { display: flex; justify-content: flex-end; gap: 16px; margin-top: 10px; }
 
     .btn {
       border: none; border-radius: 8px; padding: 13px 30px;
@@ -120,64 +155,100 @@
     .btn-reset { background: #f1f3f5; color: var(--muted); }
     .btn-reset:hover { background: #e9ecef; }
 
-    @media (max-width: 768px) {
-      main { padding: 30px 20px; }
+    @media (max-width: 900px) {
+      .sidebar { position: fixed; z-index: 2000; height: 100vh; left: -260px; }
+      .sidebar.open { left: 0; }
       .form__row { grid-template-columns: 1fr; }
+      main { padding: 25px; }
     }
   </style>
 </head>
 <body>
-  <main>
-    <h2 class="card__title"><i class="fa-solid fa-broom"></i> Create New Booking</h2>
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png" alt="HomeGlitz Logo">
+    </div>
+    <ul class="nav-links">
+      <li><a href="dashboard.html"><i class="fa-solid fa-chart-line"></i><span> Dashboard</span></a></li>
+      <li><a href="booking.html" class="active"><i class="fa-solid fa-broom"></i><span> Bookings</span></a></li>
+      <li><a href="properties.html"><i class="fa-solid fa-house"></i><span> Properties</span></a></li>
+      <li><a href="cleaners.html"><i class="fa-solid fa-users"></i><span> Cleaners</span></a></li>
+      <li><a href="reports.html"><i class="fa-solid fa-chart-pie"></i><span> Reports</span></a></li>
+      <li><a href="settings.html"><i class="fa-solid fa-gear"></i><span> Settings</span></a></li>
+    </ul>
+  </aside>
 
-    <form id="bookingForm" autocomplete="off">
-      <div class="form__row">
-        <div class="form__group">
-          <label><i class="fa-solid fa-layer-group"></i> Property Type</label>
-          <select id="propertyType" required>
-            <option value="">Select type...</option>
-            <option value="airbnb">Airbnb Property</option>
-            <option value="office">Home / Office Property</option>
-          </select>
-        </div>
-
-        <div class="form__group">
-          <label><i class="fa-solid fa-house-chimney"></i> Property</label>
-          <select id="property" required>
-            <option value="">Select property...</option>
-          </select>
-          <div class="property-info" id="propertyInfo"></div>
-        </div>
+  <div style="flex:1; display:flex; flex-direction:column;">
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+      <div class="topbar-right">
+        <i class="fa-regular fa-bell"></i>
+        <i class="fa-regular fa-user"></i>
       </div>
+    </header>
 
-      <div class="form__group">
-        <label><i class="fa-regular fa-calendar"></i> Cleaning Date</label>
-        <input id="date" type="date" required />
-      </div>
+    <main>
+      <div class="card">
+        <h2 class="card__title"><i class="fa-solid fa-broom"></i> Create New Booking</h2>
 
-      <div class="form__group">
-        <label><i class="fa-solid fa-user"></i> Cleaner</label>
-        <select id="cleaners"><option value="">Select cleaner...</option></select>
-      </div>
+        <form id="bookingForm" autocomplete="off">
+          <div class="form__row">
+            <div class="form__group">
+              <label><i class="fa-solid fa-layer-group"></i> Property Type</label>
+              <select id="propertyType" required>
+                <option value="">Select type...</option>
+                <option value="airbnb">Airbnb Property</option>
+                <option value="office">Home / Office Property</option>
+              </select>
+            </div>
 
-      <div class="form__group b2b-group">
-        <label><i class="fa-solid fa-briefcase"></i> B2B</label>
-        <div class="linen-badge-group">
-          <div class="linen-badge" id="b2bYes">Yes</div>
-          <div class="linen-badge active" id="b2bNo">No</div>
-        </div>
-      </div>
+            <div class="form__group">
+              <label><i class="fa-solid fa-house-chimney"></i> Property</label>
+              <select id="property" required>
+                <option value="">Select property...</option>
+              </select>
+              <div class="property-info" id="propertyInfo"></div>
+            </div>
+          </div>
 
-      <div class="form__group">
-        <label><i class="fa-regular fa-note-sticky"></i> Notes</label>
-        <textarea id="notes" rows="3" placeholder="Door code, supplies, or special requests..."></textarea>
-      </div>
+          <div class="form__group">
+            <label><i class="fa-regular fa-calendar"></i> Cleaning Date</label>
+            <input id="date" type="date" required />
+          </div>
 
-      <div class="toolbar">
-        <button id="submitBtn" type="submit" class="btn btn-save"><i class="fa-solid fa-check"></i> Save Booking</button>
-        <button id="resetBtn" type="button" class="btn btn-reset"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+          <div class="form__group">
+            <label><i class="fa-solid fa-user"></i> Cleaner</label>
+            <select id="cleaners"><option value="">Select cleaner...</option></select>
+          </div>
+
+          <div class="form__group b2b-group">
+            <label><i class="fa-solid fa-briefcase"></i> B2B</label>
+            <div class="linen-badge-group">
+              <div class="linen-badge" id="b2bYes">Yes</div>
+              <div class="linen-badge active" id="b2bNo">No</div>
+            </div>
+          </div>
+
+          <div class="form__group">
+            <label><i class="fa-regular fa-note-sticky"></i> Notes</label>
+            <textarea id="notes" rows="3" placeholder="Door code, supplies, or special requests..."></textarea>
+          </div>
+
+          <div class="toolbar">
+            <button id="submitBtn" type="submit" class="btn btn-save"><i class="fa-solid fa-check"></i> Save Booking</button>
+            <button id="resetBtn" type="button" class="btn btn-reset"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+          </div>
+        </form>
       </div>
-    </form>
-  </main>
+    </main>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.getElementById('menuToggle');
+    menuToggle.onclick = () => {
+      sidebar.classList.toggle('open');
+    };
+  </script>
 </body>
 </html>
