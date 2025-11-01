@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HomeGlitz — All Bookings</title>
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/64%C3%9764pxlogo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0F72B4;
+      --primary-light: #f5faff;
+      --text: #222;
+      --muted: #6c757d;
+      --panel: #fff;
+      --border: #e4e9ef;
+      --radius: 12px;
+      --shadow: 0 6px 20px rgba(15,114,180,0.1);
+      --transition: 0.3s ease;
+    }
+
+    * { box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+    html, body { margin: 0; padding: 0; overflow-x: hidden; }
+    body { display: flex; min-height: 100vh; background: var(--primary-light); color: var(--text); }
+
+    /* === SIDEBAR === */
+    .sidebar {
+      position: fixed; left: 0; top: 0; bottom: 0;
+      width: 250px; background: var(--panel); border-right: 1px solid var(--border);
+      box-shadow: var(--shadow); display: flex; flex-direction: column;
+      padding: 20px 0; overflow-y: auto; z-index: 2000;
+    }
+
+    .sidebar .brand { display: flex; align-items: center; justify-content: center; margin-bottom: 30px; }
+    .sidebar .brand img { height: 48px; transition: all var(--transition); }
+
+    .nav-links { list-style: none; padding: 0; margin: 0; }
+
+    .nav-item { position: relative; }
+    .nav-links li a {
+      display: flex; align-items: center; gap: 12px; padding: 14px 22px;
+      color: var(--muted); font-weight: 500; text-decoration: none; transition: all var(--transition);
+    }
+    .nav-links li a:hover, .nav-links li a.active {
+      background: var(--primary-light); color: var(--primary);
+      border-left: 4px solid var(--primary);
+    }
+
+    .sub-menu { display: none; flex-direction: column; margin-left: 40px; }
+    .sub-menu a { font-size: 14px; color: var(--muted); padding: 8px 0; transition: 0.2s; }
+    .sub-menu a:hover { color: var(--primary); }
+    .nav-item.open .sub-menu { display: flex; }
+
+    /* === TOPBAR === */
+    .topbar {
+      height: 60px; background: var(--panel); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 25px; box-shadow: var(--shadow);
+      position: fixed; top: 0; left: 250px; right: 0; z-index: 1000;
+    }
+
+    .menu-toggle { background: none; border: none; font-size: 20px; color: var(--primary); cursor: pointer; }
+
+    .topbar-right { display: flex; align-items: center; gap: 20px; color: var(--muted); }
+
+    /* === MAIN === */
+    main { flex: 1; margin-left: 250px; padding: 100px 40px 40px; background: var(--primary-light); }
+
+    .card {
+      background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow);
+      border: 1px solid var(--border); padding: 30px 40px;
+    }
+
+    h2.card__title {
+      font-size: 22px; font-weight: 700; color: var(--primary);
+      display: flex; align-items: center; gap: 10px; margin-bottom: 25px;
+      border-bottom: 2px solid rgba(15,114,180,0.1); padding-bottom: 10px;
+    }
+
+    /* === TABLE === */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+    }
+
+    thead {
+      background: var(--primary);
+      color: #fff;
+      font-size: 14px;
+    }
+
+    thead th {
+      padding: 14px 12px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s ease;
+    }
+
+    tbody tr:hover {
+      background: var(--primary-light);
+    }
+
+    td {
+      padding: 12px 10px;
+      font-size: 14px;
+      color: var(--text);
+      vertical-align: middle;
+    }
+
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+      text-transform: capitalize;
+      font-size: 13px;
+    }
+    .status-pending { background: #fff4d6; color: #b38300; }
+    .status-completed { background: #d4f8e8; color: #10793f; }
+    .status-cancelled { background: #fde2e2; color: #c92a2a; }
+
+    @media (max-width: 900px) {
+      .sidebar { left: -250px; }
+      .sidebar.open { left: 0; }
+      .topbar { left: 0; right: 0; }
+      main { margin-left: 0; padding: 100px 10px 40px; }
+      table { font-size: 13px; min-width: 600px; }
+    }
+
+    /* Toast + Loader */
+    .hz-toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #0F72B4; color: #fff; padding: 12px 16px;
+      border-radius: 10px; font-weight: 600;
+      box-shadow: 0 10px 24px rgba(15,114,180,.25);
+      opacity: 0; transform: translateY(16px);
+      transition: .3s ease; z-index: 5000;
+    }
+    .hz-toast.show { opacity: 1; transform: translateY(0); }
+
+    .hz-loader {
+      position: fixed; inset: 0; background: rgba(0,0,0,.25);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden;
+      transition: opacity .15s ease; z-index: 4000;
+    }
+    .hz-loader.active { opacity: 1; visibility: visible; }
+    .hz-loader .box {
+      background: #fff; border: 1px solid #e4e9ef;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+      padding: 18px 22px; border-radius: 12px;
+      color: #222; font-weight: 600;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .hz-loader .spin {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 2px solid rgba(15,114,180,.2); border-top-color: #0F72B4;
+      animation: hzspin 1s linear infinite;
+    }
+    @keyframes hzspin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png" alt="HomeGlitz Logo">
+    </div>
+    <ul class="nav-links">
+      <li><a href="dashboard.html"><i class="fa-solid fa-chart-line"></i><span> Dashboard</span></a></li>
+      <li class="nav-item open">
+        <a href="#" id="bookingMenu"><i class="fa-solid fa-broom"></i><span> Bookings</span><i class="fa-solid fa-chevron-down" style="margin-left:auto;"></i></a>
+        <div class="sub-menu" style="display:flex;">
+          <a href="booking.html">Create New</a>
+          <a href="all-bookings.html" class="active">All Bookings</a>
+        </div>
+      </li>
+      <li><a href="properties.html"><i class="fa-solid fa-house"></i><span> Properties</span></a></li>
+      <li><a href="cleaners.html"><i class="fa-solid fa-users"></i><span> Cleaners</span></a></li>
+      <li><a href="reports.html"><i class="fa-solid fa-chart-pie"></i><span> Reports</span></a></li>
+      <li><a href="settings.html"><i class="fa-solid fa-gear"></i><span> Settings</span></a></li>
+    </ul>
+  </aside>
+
+  <div class="overlay" id="overlay"></div>
+
+  <div style="flex:1; display:flex; flex-direction:column;">
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+      <div class="topbar-right">
+        <i class="fa-regular fa-bell"></i>
+        <i class="fa-regular fa-user"></i>
+      </div>
+    </header>
+
+    <main>
+      <div class="card">
+        <h2 class="card__title"><i class="fa-solid fa-list"></i> All Bookings</h2>
+        <div class="table-container">
+          <table id="bookingsTable">
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Property Name</th>
+                <th>Address</th>
+                <th>Cleaning Date</th>
+                <th>Cleaner</th>
+                <th>Status</th>
+                <th>B2B</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:20px;">Loading bookings...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ===== Sidebar Behaviour =====
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const menuToggle = document.getElementById('menuToggle');
+    const bookingMenu = document.getElementById('bookingMenu');
+    const bookingItem = bookingMenu.parentElement;
+
+    menuToggle.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
+    overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
+    bookingMenu.onclick = (e) => { e.preventDefault(); bookingItem.classList.toggle('open'); };
+
+    // ===== Toast + Loader =====
+    const toast = document.createElement('div');
+    toast.className = 'hz-toast';
+    document.body.appendChild(toast);
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    const loader = document.createElement('div');
+    loader.className = 'hz-loader';
+    loader.innerHTML = `<div class="box"><div class="spin"></div><span>Loading bookings…</span></div>`;
+    document.body.appendChild(loader);
+
+    function showLoader() { loader.classList.add('active'); }
+    function hideLoader() { loader.classList.remove('active'); }
+
+    // ===== Fetch Bookings =====
+    const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbwSxJh9hlbw1eF_dg4PgWj0jR9TExYTOGQZVgmtMBiICKPkYHxuq6NbVy9CSorNtwJd/exec");
+
+    async function loadBookings() {
+      showLoader();
+      try {
+        const res = await fetch(`${scriptBaseURL}?type=bookings`, { cache: "no-store" });
+        const data = await res.json();
+        renderTable(data);
+      } catch (err) {
+        console.error(err);
+        showToast("Error loading bookings");
+      } finally {
+        hideLoader();
+      }
+    }
+
+    function renderTable(rows) {
+      const tbody = document.querySelector("#bookingsTable tbody");
+      if (!rows || rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:20px;">No bookings found</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = rows.map(r => `
+        <tr>
+          <td>${r["Booking ID"] || ""}</td>
+          <td>${r["Property Name"] || ""}</td>
+          <td>${r["Address"] || ""}</td>
+          <td>${r["Cleaning Date"] ? new Date(r["Cleaning Date"]).toLocaleDateString() : ""}</td>
+          <td>${r["Cleaners"] || ""}</td>
+          <td><span class="status-badge status-${(r["Status"] || "pending").toLowerCase()}">${r["Status"] || "Pending"}</span></td>
+          <td>${r["B2B"] || ""}</td>
+          <td>${r["Type"] || (r["Flat Sheets King"] ? "Airbnb" : "Office/Home")}</td>
+        </tr>
+      `).join("");
+    }
+
+    // Boot
+    loadBookings();
+  </script>
+</body>
+</html>
