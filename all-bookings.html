@@ -99,24 +99,59 @@
     .drawer__footer { border-top: 1px solid var(--border); padding: 14px 20px; display: flex; justify-content: flex-end; gap: 10px; background: var(--panel); position: sticky; bottom: 0; }
 
     /* ===== 📱 MOBILE ONLY ===== */
-    @media (max-width: 900px) {
-      .sidebar { left: -250px; }
-      .sidebar.open { left: 0; }
-      .overlay.active { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.25); z-index: 1500; }
-      .topbar { left: 0; right: 0; padding: 0 15px; }
-      main { margin-left: 0; padding: 80px 10px 40px; }
-      .filters { grid-template-columns: 1fr 1fr; gap: 8px; }
-      .filters .field { padding: 6px 10px; font-size: 13px; }
-      table { min-width: 800px; }
-      .table-wrap { overflow-x: auto; border-radius: 10px; }
-      .drawer { width: 100%; top: 60px; border-radius: 12px 12px 0 0; }
-      .drawer__body { padding: 14px; }
-      .drawer__grid { grid-template-columns: 1fr; gap: 10px; }
-      .btn { padding: 10px 18px; font-size: 13px; }
-      .card__footer { flex-direction: column; align-items: center; gap: 8px; padding: 12px; }
-      .pagination { justify-content: center; }
-      .page-indicator { font-size: 13px; }
-    }
+@media (max-width: 900px) {
+  /* Sidebar + Overlay */
+  .sidebar { left: -250px; }
+  .sidebar.open { left: 0; }
+  .overlay.active {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.25);
+    z-index: 1500;
+  }
+
+  /* Layout adjustments */
+  .topbar { left: 0; right: 0; padding: 0 15px; }
+  main { margin-left: 0; padding: 80px 10px 40px; }
+  .filters { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .filters .field { padding: 6px 10px; font-size: 13px; }
+  table { min-width: 800px; }
+  .table-wrap { overflow-x: auto; border-radius: 10px; }
+  .btn { padding: 10px 18px; font-size: 13px; }
+  .card__footer { flex-direction: column; align-items: center; gap: 8px; padding: 12px; }
+  .pagination { justify-content: center; }
+  .page-indicator { font-size: 13px; }
+
+  /* Drawer as bottom sheet */
+  .drawer {
+    width: 100%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    border-radius: 16px 16px 0 0;
+    border-left: none;
+    border-top: 1px solid var(--border);
+    transform: translateY(100%);
+    transition: transform var(--transition);
+  }
+  .drawer.active {
+    transform: translateY(0);
+  }
+
+  /* Drawer contents */
+  .drawer__body { padding: 14px; max-height: 70vh; overflow-y: auto; }
+  .drawer__grid { grid-template-columns: 1fr; gap: 10px; }
+  .drawer__footer {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px;
+    border-top: 1px solid var(--border);
+  }
+}
+
   </style>
 </head>
 
