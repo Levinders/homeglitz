@@ -242,13 +242,17 @@
     </div>
     <ul class="nav-links">
       <li><a href="dashboard.html"><i class="fa-solid fa-chart-line"></i><span> Dashboard</span></a></li>
-      <li class="nav-item open">
-        <a href="#" id="bookingMenu"><i class="fa-solid fa-broom"></i><span> Bookings</span><i class="fa-solid fa-chevron-down" style="margin-left:auto;"></i></a>
-        <div class="sub-menu" style="display:flex;">
-          <a href="booking.html">Create New</a>
-          <a href="all-bookings.html" class="active">All Bookings</a>
-        </div>
-      </li>
+<li class="nav-item">
+  <a href="#" id="bookingMenu">
+    <i class="fa-solid fa-broom"></i><span> Bookings</span>
+    <i class="fa-solid fa-chevron-down" style="margin-left:auto; transition:transform .3s;"></i>
+  </a>
+  <div class="sub-menu">
+    <a href="booking.html">Create New</a>
+    <a href="all-bookings.html" class="active">All Bookings</a>
+  </div>
+</li>
+
       <li><a href="properties.html"><i class="fa-solid fa-house"></i><span> Properties</span></a></li>
       <li><a href="cleaners.html"><i class="fa-solid fa-users"></i><span> Cleaners</span></a></li>
       <li><a href="reports.html"><i class="fa-solid fa-chart-pie"></i><span> Reports</span></a></li>
@@ -336,55 +340,62 @@
   </div>
 
   <!-- Drawer -->
-  <div class="drawer-overlay" id="drawerOverlay"></div>
-  <aside class="drawer" id="drawer">
-    <div class="drawer__head">
-      <div class="drawer__title"><i class="fa-solid fa-clipboard-list"></i><span id="dwTitle">Booking Details</span></div>
-      <button class="btn btn-light" id="dwClose"><i class="fa-solid fa-xmark"></i> Close</button>
-    </div>
-    <div class="drawer__body">
-      <div class="section-title"><i class="fa-solid fa-house"></i> Property</div>
-      <div class="drawer__grid">
-        <div class="group"><label><i class="fa-solid fa-hashtag"></i> Booking ID</label><input id="dwId" type="text" disabled></div>
-        <div class="group"><label><i class="fa-solid fa-layer-group"></i> Type</label><input id="dwType" type="text" disabled></div>
-        <div class="group"><label><i class="fa-solid fa-house-chimney"></i> Property Name</label><input id="dwProp" type="text" disabled></div>
-        <div class="group"><label><i class="fa-solid fa-location-dot"></i> Address</label><input id="dwAddr" type="text" disabled></div>
-      </div>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer__head">
+    <h3 class="drawer__title" id="dwTitle">Booking Details</h3>
+    <button class="btn btn-light" id="dwClose"><i class="fa-solid fa-xmark"></i></button>
+  </div>
 
-      <div class="section-title"><i class="fa-solid fa-user"></i> Cleaning</div>
-      <div class="drawer__grid">
-        <div class="group"><label><i class="fa-solid fa-user"></i> Cleaner</label><input id="dwCleaner" type="text"></div>
-        <div class="group"><label><i class="fa-regular fa-calendar"></i> Cleaning Date</label><input id="dwDate" type="date"></div>
-        <div class="group"><label><i class="fa-solid fa-flag"></i> Status</label>
-          <select id="dwStatus">
-            <option>Pending</option>
-            <option>Clean Underway</option>
-            <option>Completed</option>
-          </select>
+  <div class="drawer__body">
+    <div class="section-title">Booking Info</div>
+    <div class="drawer__grid">
+      <div class="group"><label>Booking ID</label><input id="dwId" type="text" disabled></div>
+      <div class="group"><label>Type</label><input id="dwType" type="text" disabled></div>
+      <div class="group"><label>Property Name</label><input id="dwProp" type="text" disabled></div>
+      <div class="group"><label>Address</label><input id="dwAddr" type="text" disabled></div>
+    </div>
+
+    <div class="section-title">Cleaning Details</div>
+    <div class="drawer__grid">
+      <div class="group">
+        <label>Cleaner</label>
+        <select id="dwCleaner"></select>
+      </div>
+      <div class="group"><label>Cleaning Date</label><input id="dwDate" type="date"></div>
+      <div class="group"><label>Status</label>
+        <select id="dwStatus">
+          <option>Pending</option>
+          <option>Clean Underway</option>
+          <option>Completed</option>
+        </select>
+      </div>
+      <div class="group">
+        <label>B2B</label>
+        <div class="b2b-badges">
+          <div class="badge" id="dwB2BYes">Yes</div>
+          <div class="badge active" id="dwB2BNo">No</div>
         </div>
-        <div class="group"><label><i class="fa-solid fa-briefcase"></i> B2B</label>
-          <div class="b2b-badges">
-            <div class="badge" id="dwB2BYes">Yes</div>
-            <div class="badge active" id="dwB2BNo">No</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="group" style="margin-top:10px;">
-        <label><i class="fa-regular fa-note-sticky"></i> Notes</label>
-        <textarea id="dwNotes" rows="3" placeholder="Door code, supplies, special requests…"></textarea>
-      </div>
-
-      <div id="dwAirbnbSection" style="margin-top:16px; display:none;">
-        <div class="section-title"><i class="fa-solid fa-bed"></i> Packing List (Airbnb)</div>
-        <div id="dwLinenGrid" class="drawer__grid"></div>
       </div>
     </div>
-    <div class="drawer__footer">
-      <button class="btn btn-light" id="dwCancel">Cancel</button>
-      <button class="btn btn-primary" id="dwSave"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+
+    <div class="group" style="margin-top:10px;">
+      <label>Notes</label>
+      <textarea id="dwNotes" rows="3" placeholder="Door code, supplies, special requests…"></textarea>
     </div>
-  </aside>
+
+    <div id="dwAirbnbSection" style="margin-top:16px; display:none;">
+      <div class="section-title">Packing List (Airbnb)</div>
+      <div id="dwLinenGrid" class="drawer__grid"></div>
+    </div>
+  </div>
+
+  <div class="drawer__footer">
+    <button class="btn btn-light" id="dwCancel">Cancel</button>
+    <button class="btn btn-primary" id="dwSave"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+    <button class="btn btn-light" id="dwDelete" style="color:#d9534f; border:1px solid #f5b7b1;">Delete Booking</button>
+  </div>
+</aside>
 
   <!-- Toast + Loader -->
   <div class="hz-toast" id="toast"></div>
@@ -400,7 +411,12 @@
 
     menuToggle.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
     overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
-    bookingMenu.onclick = (e) => { e.preventDefault(); bookingItem.classList.toggle('open'); };
+bookingMenu.onclick = (e) => {
+  e.preventDefault();
+  bookingItem.classList.toggle('open');
+  bookingMenu.querySelector('.fa-chevron-down').style.transform =
+    bookingItem.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0)';
+};
 
     /* ===== Toast + Loader (same visuals as Create New) ===== */
     const toast = document.getElementById('toast');
@@ -770,6 +786,47 @@
         hideLoader();
       }
     };
+
+    /* ===== Populate Cleaners dropdown when drawer opens ===== */
+async function loadCleaners() {
+  try {
+    const res = await fetchJSON(`${scriptBaseURL}?type=cleaners`);
+    const list = Array.isArray(res) ? res : [];
+    dwCleaner.innerHTML = list.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+  } catch {
+    dwCleaner.innerHTML = '<option value="">(Error loading cleaners)</option>';
+  }
+}
+
+/* ===== Delete booking ===== */
+const dwDelete = document.getElementById('dwDelete');
+dwDelete.onclick = async () => {
+  if (!CURRENT_EDIT) return;
+  if (!confirm('Are you sure you want to delete this booking?')) return;
+
+  try {
+    showLoader();
+    await fetch(scriptBaseURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'deleteBooking', bookingId: dwId.value })
+    });
+    showToast('Booking deleted');
+    await loadBookings();
+    closeDrawer();
+  } catch (e) {
+    console.error(e);
+    showToast('Error deleting booking');
+  } finally {
+    hideLoader();
+  }
+};
+
+/* ===== When opening drawer, also load cleaners ===== */
+function openDrawerWith(bookingId) {
+  loadCleaners(); // populate dropdown
+  ...
+}
 
     /* ===== Boot ===== */
     loadBookings();
