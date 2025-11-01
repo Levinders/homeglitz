@@ -7,6 +7,7 @@
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/64%C3%9764pxlogo.png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --primary: #0F72B4;
@@ -19,103 +20,166 @@
       --shadow: 0 6px 20px rgba(15,114,180,0.1);
       --transition: 0.3s ease;
     }
+
     * { box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
     html, body { margin: 0; padding: 0; overflow-x: hidden; }
     body { display: flex; min-height: 100vh; background: var(--primary-light); color: var(--text); }
 
-    /* == Sidebar (copy of Create New) == */
-    .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 250px; background: var(--panel); border-right: 1px solid var(--border); box-shadow: var(--shadow); display: flex; flex-direction: column; padding: 20px 0; overflow-y: auto; z-index: 2000; }
+    /* === SIDEBAR (identical to Create New) === */
+    .sidebar {
+      position: fixed; left: 0; top: 0; bottom: 0;
+      width: 250px; background: var(--panel); border-right: 1px solid var(--border);
+      box-shadow: var(--shadow); display: flex; flex-direction: column;
+      padding: 20px 0; overflow-y: auto; z-index: 2000;
+    }
     .sidebar .brand { display: flex; align-items: center; justify-content: center; margin-bottom: 30px; }
-    .sidebar .brand img { height: 48px; }
+    .sidebar .brand img { height: 48px; transition: all var(--transition); }
     .nav-links { list-style: none; padding: 0; margin: 0; }
     .nav-item { position: relative; }
     .nav-links li a { display: flex; align-items: center; gap: 12px; padding: 14px 22px; color: var(--muted); font-weight: 500; text-decoration: none; transition: all var(--transition); }
     .nav-links li a:hover, .nav-links li a.active { background: var(--primary-light); color: var(--primary); border-left: 4px solid var(--primary); }
     .sub-menu { display: none; flex-direction: column; margin-left: 40px; }
-    .sub-menu a { font-size: 14px; color: var(--muted); padding: 8px 0; }
+    .sub-menu a { font-size: 14px; color: var(--muted); padding: 8px 0; transition: 0.2s; }
+    .sub-menu a:hover { color: var(--primary); }
     .nav-item.open .sub-menu { display: flex; }
 
-    /* == Topbar == */
+    /* === TOPBAR (identical) === */
     .topbar { height: 60px; background: var(--panel); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; box-shadow: var(--shadow); position: fixed; top: 0; left: 250px; right: 0; z-index: 1000; }
     .menu-toggle { background: none; border: none; font-size: 20px; color: var(--primary); cursor: pointer; }
     .topbar-right { display: flex; align-items: center; gap: 20px; color: var(--muted); }
 
-    /* == Main Layout == */
-    main { flex: 1; margin-left: 250px; padding: 84px 40px 40px; background: var(--primary-light); }
+    /* === MAIN === */
+    main { flex: 1; margin-left: 250px; padding: 100px 40px 40px; background: var(--primary-light); }
 
-    .card { position: relative; background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); padding: 0; overflow: hidden; }
+    .card { background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); padding: 0; overflow: hidden; }
 
-    /* Sticky header (title + filters) */
-    .card-header { position: sticky; top: 60px; z-index: 5; background: #fff; border-bottom: 1px solid var(--border); padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-    h2.card__title { margin: 0; font-size: 22px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+    /* Sticky header area inside card */
+    .card__header {
+      position: sticky; top: 60px; /* below topbar */
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      z-index: 5;
+      padding: 18px 24px;
+    }
 
-    /* Filters row */
-    .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-    .filters .input, .filters select { border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 14px; background: #fdfdfd; }
-    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 999px; background: #fff; cursor: pointer; font-weight: 600; color: var(--muted); transition: .2s; }
-    .pill.active { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+    h2.card__title { font-size: 22px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; margin: 0 0 12px 0; }
 
-    /* Scroll area with sticky thead */
-    .table-wrap { height: calc(100vh - 60px - 76px - 24px); /* viewport minus topbar, header, margin */ overflow: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 980px; }
-    thead { position: sticky; top: 0; z-index: 4; background: var(--primary); color: #fff; }
-    th, td { padding: 12px 12px; font-size: 14px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    /* Filters row (compact inline with title area) */
+    .filters {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr 1fr 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+    .filters .field { display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; background: #fdfdfd; }
+    .filters .field input, .filters .field select { border: none; outline: none; background: transparent; font-size: 14px; flex: 1; }
+    .filters .btn-clear {
+      border: none; border-radius: 10px; padding: 10px 16px; background: #f1f3f5; color: var(--muted); font-weight: 600; cursor: pointer; transition: var(--transition);
+    }
+    .filters .btn-clear:hover { background: #e9ecef; }
+
+    /* Table wrapper: scrollable body, sticky thead */
+    .table-wrap {
+      max-height: calc(100vh - 60px - 120px - 32px - 40px); /* viewport - topbar - header/filters - padding - bottom gap */
+      overflow: auto;
+      border-top: 1px solid var(--border);
+    }
+
+    table { width: 100%; border-collapse: collapse; min-width: 900px; }
+    thead th {
+      position: sticky; top: 0;
+      background: var(--primary); color: #fff; z-index: 2; font-size: 14px;
+    }
+    th, td { padding: 12px 10px; font-size: 14px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
     tbody tr:hover { background: var(--primary-light); cursor: pointer; }
-    .status-select { border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; font-size: 13px; background: #f9fbfd; color: var(--text); cursor: pointer; }
-    tr.flash { background: #e9f7ff !important; transition: background .5s ease; }
+    tbody tr .cell-actions { cursor: default; } /* prevent drawer open from clicks inside controls */
 
-    /* Drawer (details page feel) */
-    .drawer { position: fixed; top: 60px; right: -560px; width: 560px; max-width: 100vw; height: calc(100vh - 60px); background: #fff; box-shadow: -12px 0 30px rgba(0,0,0,.08); border-left: 1px solid var(--border); transition: right .35s ease; z-index: 1200; display: flex; flex-direction: column; }
-    .drawer.open { right: 0; }
-    .drawer-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .drawer-title { font-weight: 700; color: var(--primary); display: flex; gap: 10px; align-items: center; }
-    .drawer-body { padding: 16px 20px 24px; overflow: auto; }
-    .section { border: 1px solid var(--border); border-radius: 12px; padding: 14px 14px; margin-bottom: 14px; background: #fff; box-shadow: 0 6px 14px rgba(0,0,0,.04); }
-    .section h4 { margin: 0 0 10px; font-size: 14px; color: var(--muted); font-weight: 700; letter-spacing: .3px; text-transform: uppercase; }
-    .kv { display: grid; grid-template-columns: 150px 1fr; gap: 8px 12px; font-size: 14px; }
-    .kv .k { color: var(--muted); font-weight: 600; }
-    .kv .v { color: var(--text); }
+    select.status-select {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 13px;
+      background: #f9fbfd;
+      color: var(--text);
+      cursor: pointer;
+    }
+    tr.flash { background: #e9f7ff !important; transition: background 0.5s ease; }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .grid-2 .form__group { display: flex; flex-direction: column; gap: 6px; }
-    label { font-weight: 600; color: var(--primary); font-size: 13px; }
-    input, select, textarea { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 14px; background: #fdfdfd; }
+    /* Drawer (slide-in details panel) */
+    .drawer-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.25);
+      opacity: 0; visibility: hidden; transition: var(--transition); z-index: 3000;
+    }
+    .drawer-overlay.active { opacity: 1; visibility: visible; }
 
+    .drawer {
+      position: fixed; top: 60px; right: 0; bottom: 0; width: min(560px, 100%);
+      background: var(--panel); border-left: 1px solid var(--border); box-shadow: -10px 0 30px rgba(0,0,0,.08);
+      transform: translateX(100%); transition: var(--transition); z-index: 3100; display: flex; flex-direction: column;
+    }
+    .drawer.active { transform: translateX(0); }
+    .drawer__head {
+      padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; background: var(--panel); z-index: 1;
+    }
+    .drawer__title { font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+    .drawer__body { padding: 20px; overflow: auto; }
+    .drawer__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .group { display: flex; flex-direction: column; gap: 8px; }
+    .group label { font-weight: 600; font-size: 14px; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+    .group input, .group select, .group textarea {
+      border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 14px; background: #fdfdfd; outline: none;
+    }
+    .section-title { font-weight: 700; color: var(--text); margin: 8px 0; border-bottom: 1px solid #eef2f6; padding-bottom: 6px; }
     .b2b-badges { display: flex; gap: 10px; }
-    .badge { flex: 1; text-align: center; padding: 8px 10px; border-radius: 20px; font-weight: 700; border: 1px solid rgba(15,114,180,.25); background: rgba(15,114,180,.06); color: var(--primary); cursor: pointer; }
-    .badge.active { background: var(--primary); color: #fff; }
+    .badge { flex: 1; text-align: center; padding: 8px 10px; border-radius: 18px; border: 1px solid rgba(15,114,180,0.25); background: rgba(15,114,180,0.08); color: var(--primary); font-weight: 600; cursor: pointer; }
+    .badge.active { background: var(--primary); color: #fff; box-shadow: 0 0 8px rgba(15,114,180,0.3); }
 
-    .drawer-actions { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
-    .btn { border: none; border-radius: 8px; padding: 12px 18px; font-weight: 700; cursor: pointer; font-size: 14px; transition: var(--transition); }
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { background: #0d5f95; }
-    .btn-ghost { background: #f1f3f5; color: var(--muted); }
+    .drawer__footer {
+      border-top: 1px solid var(--border); padding: 14px 20px; display: flex; justify-content: flex-end; gap: 10px;
+      position: sticky; bottom: 0; background: var(--panel);
+    }
+    .btn { border: none; border-radius: 8px; padding: 12px 22px; font-weight: 600; cursor: pointer; font-size: 14px; transition: var(--transition); }
+    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(15,114,180,0.2); }
+    .btn-primary:hover { background: #0d5f95; transform: translateY(-1px); }
+    .btn-light { background: #f1f3f5; color: var(--muted); }
+    .btn-light:hover { background: #e9ecef; }
 
-    /* Overlay for drawer */
-    .drawer-mask { position: fixed; inset: 60px 0 0 0; background: rgba(0,0,0,.25); opacity: 0; visibility: hidden; transition: .3s ease; z-index: 1100; }
-    .drawer-mask.active { opacity: 1; visibility: visible; }
+    /* Toast + Loader (same as Create New) */
+    .hz-toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #0F72B4; color: #fff; padding: 12px 16px;
+      border-radius: 10px; font-weight: 600; box-shadow: 0 10px 24px rgba(15,114,180,.25);
+      opacity: 0; transform: translateY(16px); transition: .3s ease; z-index: 5000;
+    }
+    .hz-toast.show { opacity: 1; transform: translateY(0); }
 
+    .hz-loader {
+      position: fixed; inset: 0; background: rgba(0,0,0,.25);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden; transition: opacity .15s ease; z-index: 4000;
+    }
+    .hz-loader.active { opacity: 1; visibility: visible; }
+    .hz-loader .box {
+      background: #fff; border: 1px solid #e4e9ef; box-shadow: 0 10px 30px rgba(0,0,0,.08);
+      padding: 18px 22px; border-radius: 12px; color: #222; font-weight: 600; display: flex; align-items: center; gap: 12px;
+    }
+    .hz-loader .spin { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(15,114,180,.2); border-top-color: #0F72B4; animation: hzspin 1s linear infinite; }
+    @keyframes hzspin { to { transform: rotate(360deg); } }
+
+    /* Mobile */
     @media (max-width: 900px) {
       .sidebar { left: -250px; }
       .sidebar.open { left: 0; }
       .topbar { left: 0; right: 0; }
-      main { margin-left: 0; padding: 84px 10px 10px; }
-      .card-header { flex-direction: column; align-items: flex-start; gap: 12px; top: 60px; }
-      .table-wrap { height: calc(100vh - 60px - 120px); }
-      table { min-width: 720px; }
-      .drawer { width: 100%; }
+      main { margin-left: 0; padding: 100px 10px 40px; }
+      .filters { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .drawer { top: 60px; width: 100%; }
+      table { min-width: 700px; }
     }
-
-    /* Toast + Loader */
-    .hz-toast { position: fixed; bottom: 24px; right: 24px; background: #0F72B4; color: #fff; padding: 12px 16px; border-radius: 10px; font-weight: 600; box-shadow: 0 10px 24px rgba(15,114,180,.25); opacity: 0; transform: translateY(16px); transition: .3s ease; z-index: 5000; }
-    .hz-toast.show { opacity: 1; transform: translateY(0); }
-    .hz-loader { position: fixed; inset: 0; background: rgba(0,0,0,.25); display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity .15s ease; z-index: 4000; }
-    .hz-loader.active { opacity: 1; visibility: visible; }
-    .hz-loader .box { background: #fff; border: 1px solid #e4e9ef; box-shadow: 0 10px 30px rgba(0,0,0,.08); padding: 18px 22px; border-radius: 12px; color: #222; font-weight: 600; display: flex; align-items: center; gap: 12px; }
-    .hz-loader .spin { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(15,114,180,.2); border-top-color: #0F72B4; animation: hzspin 1s linear infinite; }
-    @keyframes hzspin { to { transform: rotate(360deg); } }
   </style>
 </head>
+
 <body>
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
@@ -140,6 +204,7 @@
 
   <div class="overlay" id="overlay"></div>
 
+  <!-- Content -->
   <div style="flex:1; display:flex; flex-direction:column;">
     <header class="topbar">
       <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
@@ -151,23 +216,28 @@
 
     <main>
       <div class="card">
-        <div class="card-header">
+        <div class="card__header">
           <h2 class="card__title"><i class="fa-solid fa-list"></i> All Bookings</h2>
-          <div class="filters">
-            <div class="pill-group">
-              <span class="pill active" data-type="all"><i class="fa-solid fa-layer-group"></i> All</span>
-              <span class="pill" data-type="airbnb"><i class="fa-solid fa-building"></i> Airbnb Cleaning</span>
-              <span class="pill" data-type="office"><i class="fa-solid fa-briefcase"></i> Home / Office Cleaning</span>
+          <div class="filters" id="filtersBar">
+            <div class="field"><i class="fa-solid fa-magnifying-glass"></i><input id="fSearch" type="text" placeholder="Search booking, property, cleaner…" /></div>
+            <div class="field"><i class="fa-solid fa-layer-group"></i>
+              <select id="fType">
+                <option value="all">All Types</option>
+                <option value="airbnb">Airbnb Cleaning</option>
+                <option value="office">Home / Office Cleaning</option>
+              </select>
             </div>
-            <input class="input" id="search" placeholder="Search booking/property/cleaner" />
-            <select id="statusFilter">
-              <option value="">All Statuses</option>
-              <option>Pending</option>
-              <option>Clean Underway</option>
-              <option>Completed</option>
-            </select>
-            <input type="date" id="fromDate" class="input" />
-            <input type="date" id="toDate" class="input" />
+            <div class="field"><i class="fa-solid fa-flag"></i>
+              <select id="fStatus">
+                <option value="all">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Clean Underway">Clean Underway</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+            <div class="field"><i class="fa-regular fa-calendar"></i><input id="fFrom" type="date" /></div>
+            <div class="field"><i class="fa-regular fa-calendar"></i><input id="fTo" type="date" /></div>
+            <button class="btn-clear" id="fClear"><i class="fa-solid fa-rotate-left"></i> Clear</button>
           </div>
         </div>
 
@@ -175,13 +245,13 @@
           <table id="bookingsTable">
             <thead>
               <tr>
-                <th style="width:142px">Booking ID</th>
+                <th>Booking ID</th>
                 <th>Property Name</th>
                 <th>Cleaner</th>
-                <th style="width:130px">Cleaning Date</th>
-                <th style="width:90px">B2B</th>
-                <th style="width:140px">Type</th>
-                <th style="width:160px">Status</th>
+                <th>Cleaning Date</th>
+                <th>B2B</th>
+                <th>Type</th>
+                <th class="cell-actions">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -193,293 +263,408 @@
     </main>
   </div>
 
-  <!-- Drawer (Details Page) -->
-  <div class="drawer-mask" id="drawerMask"></div>
+  <!-- Drawer -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
   <aside class="drawer" id="drawer">
-    <div class="drawer-header">
-      <div class="drawer-title"><i class="fa-solid fa-receipt"></i> <span id="dTitle">Booking</span></div>
-      <button class="btn btn-ghost" id="dClose"><i class="fa-solid fa-xmark"></i></button>
+    <div class="drawer__head">
+      <div class="drawer__title"><i class="fa-solid fa-clipboard-list"></i><span id="dwTitle">Booking Details</span></div>
+      <button class="btn btn-light" id="dwClose"><i class="fa-solid fa-xmark"></i> Close</button>
     </div>
-    <div class="drawer-body" id="dBody">
-      <!-- Filled by JS -->
+    <div class="drawer__body">
+      <div class="section-title"><i class="fa-solid fa-house"></i> Property</div>
+      <div class="drawer__grid">
+        <div class="group"><label><i class="fa-solid fa-hashtag"></i> Booking ID</label><input id="dwId" type="text" disabled></div>
+        <div class="group"><label><i class="fa-solid fa-layer-group"></i> Type</label><input id="dwType" type="text" disabled></div>
+        <div class="group"><label><i class="fa-solid fa-house-chimney"></i> Property Name</label><input id="dwProp" type="text" disabled></div>
+        <div class="group"><label><i class="fa-solid fa-location-dot"></i> Address</label><input id="dwAddr" type="text" disabled></div>
+      </div>
+
+      <div class="section-title"><i class="fa-solid fa-user"></i> Cleaning</div>
+      <div class="drawer__grid">
+        <div class="group"><label><i class="fa-solid fa-user"></i> Cleaner</label><input id="dwCleaner" type="text"></div>
+        <div class="group"><label><i class="fa-regular fa-calendar"></i> Cleaning Date</label><input id="dwDate" type="date"></div>
+        <div class="group"><label><i class="fa-solid fa-flag"></i> Status</label>
+          <select id="dwStatus">
+            <option>Pending</option>
+            <option>Clean Underway</option>
+            <option>Completed</option>
+          </select>
+        </div>
+        <div class="group"><label><i class="fa-solid fa-briefcase"></i> B2B</label>
+          <div class="b2b-badges">
+            <div class="badge" id="dwB2BYes">Yes</div>
+            <div class="badge active" id="dwB2BNo">No</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="group" style="margin-top:10px;">
+        <label><i class="fa-regular fa-note-sticky"></i> Notes</label>
+        <textarea id="dwNotes" rows="3" placeholder="Door code, supplies, special requests…"></textarea>
+      </div>
+
+      <div id="dwAirbnbSection" style="margin-top:16px; display:none;">
+        <div class="section-title"><i class="fa-solid fa-bed"></i> Packing List (Airbnb)</div>
+        <div id="dwLinenGrid" class="drawer__grid"></div>
+      </div>
     </div>
-    <div class="drawer-actions">
-      <button class="btn btn-ghost" id="dCancel">Close</button>
-      <button class="btn btn-primary" id="dSave"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+    <div class="drawer__footer">
+      <button class="btn btn-light" id="dwCancel">Cancel</button>
+      <button class="btn btn-primary" id="dwSave"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
     </div>
   </aside>
 
+  <!-- Toast + Loader -->
+  <div class="hz-toast" id="toast"></div>
+  <div class="hz-loader" id="loader"><div class="box"><div class="spin"></div><span>Loading…</span></div></div>
+
   <script>
-    // == Sidebar interactions ==
+    // Sidebar & Topbar (exact behavior)
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
     const menuToggle = document.getElementById('menuToggle');
     const bookingMenu = document.getElementById('bookingMenu');
     const bookingItem = bookingMenu.parentElement;
+
     menuToggle.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
     overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
     bookingMenu.onclick = (e) => { e.preventDefault(); bookingItem.classList.toggle('open'); };
 
-    // == Toast + Loader ==
-    const toast = document.createElement('div');
-    toast.className = 'hz-toast';
-    document.body.appendChild(toast);
-    const loader = document.createElement('div');
-    loader.className = 'hz-loader';
-    loader.innerHTML = `<div class="box"><div class="spin"></div><span>Loading…</span></div>`;
-    document.body.appendChild(loader);
-    function showToast(msg){toast.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2000);} 
-    function showLoader(){loader.classList.add('active');}
-    function hideLoader(){loader.classList.remove('active');}
+    // Toast + Loader (same visuals as Create New)
+    const toast = document.getElementById('toast');
+    const loader = document.getElementById('loader');
+    function showToast(msg){ toast.textContent = msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), 2200); }
+    function showLoader(){ loader.classList.add('active'); }
+    function hideLoader(){ loader.classList.remove('active'); }
 
-    // == API base (same pattern; swap to your live URL when wiring) ==
+    // API (same base as your current working page)
     const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbwSxJh9hlbw1eF_dg4PgWj0jR9TExYTOGQZVgmtMBiICKPkYHxuq6NbVy9CSorNtwJd/exec");
 
-    // == State ==
-    let RAW_ROWS = []; // original from API
-    let VIEW_ROWS = []; // filtered
-    let CURRENT_DETAIL = null; // object for drawer edit
-
-    function typeOfRow(r){
-      // Infer type if not explicitly present
-      if (r["Type"]) return r["Type"]; // optional future field
-      return (r["Flat Sheets King"] !== undefined) ? "Airbnb Cleaning" : "Home / Office Cleaning";
+    async function fetchJSON(url) {
+      const res = await fetch(url, { cache: 'no-store' });
+      const text = await res.text();
+      if (text.trim().startsWith('<')) throw new Error('Non-JSON response (HTML) – check deployment permissions.');
+      return JSON.parse(text);
     }
 
-    // == Fetch and render ==
-    async function loadBookings(){
+    // State
+    let ALL_ROWS = []; // combined rows (airbnb + office)
+    let CURRENT_ROWS = []; // filtered
+
+    // Load both sources (graceful fallback)
+    async function loadBookingsCombined() {
       showLoader();
-      try{
-        const res = await fetch(`${scriptBaseURL}?type=bookings`, {cache:'no-store'});
-        const data = await res.json();
-        RAW_ROWS = Array.isArray(data) ? data : [];
-        applyFilters();
-      }catch(e){
-        console.error(e); showToast('Error loading bookings');
-      }finally{ hideLoader(); }
+      const urls = [
+        `${scriptBaseURL}?type=bookings&category=airbnb`,
+        `${scriptBaseURL}?type=bookings&category=office`
+      ];
+      let combined = [];
+      for (const u of urls) {
+        try {
+          const part = await fetchJSON(u);
+          if (Array.isArray(part)) combined = combined.concat(part);
+        } catch (e) {
+          console.warn('Load part failed:', u, e);
+        }
+      }
+
+      // Fallback: if API doesn't support category, try plain ?type=bookings once
+      if (combined.length === 0) {
+        try {
+          const fallback = await fetchJSON(`${scriptBaseURL}?type=bookings`);
+          if (Array.isArray(fallback)) combined = fallback;
+        } catch (e) {
+          console.error('Fallback load failed:', e);
+        }
+      }
+
+      ALL_ROWS = hydrateTypes(combined);
+      CURRENT_ROWS = [...ALL_ROWS];
+      renderTable(CURRENT_ROWS);
+      hideLoader();
     }
 
-    function applyFilters(){
-      const activePill = document.querySelector('.pill.active')?.dataset.type || 'all';
-      const q = document.getElementById('search').value.trim().toLowerCase();
-      const st = document.getElementById('statusFilter').value;
-      const from = document.getElementById('fromDate').value ? new Date(document.getElementById('fromDate').value) : null;
-      const to   = document.getElementById('toDate').value   ? new Date(document.getElementById('toDate').value)   : null;
-
-      VIEW_ROWS = RAW_ROWS.filter(r => {
-        const t = typeOfRow(r);
-        if (activePill==='airbnb' && t!=='Airbnb Cleaning') return false;
-        if (activePill==='office' && t!=='Home / Office Cleaning') return false;
-        if (st && r["Status"]!==st) return false;
-        if (q){
-          const blob = `${r["Booking ID"]||''} ${r["Property Name"]||''} ${r["Cleaners"]||''} ${t}`.toLowerCase();
-          if (!blob.includes(q)) return false;
-        }
-        if (from || to){
-          const d = r["Cleaning Date"] ? new Date(r["Cleaning Date"]) : null;
-          if (!d) return false;
-          if (from && d < from) return false;
-          if (to && d > to) return false;
-        }
-        return true;
+    // Infer Type if not present
+    function hydrateTypes(rows) {
+      return rows.map(r => {
+        let type = r["Type"];
+        if (!type) type = (typeof r["Flat Sheets King"] !== 'undefined') ? "Airbnb Cleaning" : "Home / Office Cleaning";
+        return { ...r, Type: type };
       });
-      renderTable(VIEW_ROWS);
     }
 
-    function renderTable(rows){
+    // Render table
+    function renderTable(rows) {
       const tbody = document.querySelector('#bookingsTable tbody');
-      if (!rows || rows.length===0){
+      if (!rows || rows.length === 0) {
         tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px;">No bookings found</td></tr>`;
         return;
       }
+
       tbody.innerHTML = rows.map(r => {
-        const t = typeOfRow(r);
-        const dateStr = r["Cleaning Date"] ? new Date(r["Cleaning Date"]).toLocaleDateString() : "";
         const id = r["Booking ID"] || "";
-        const st = r["Status"] || "Pending";
+        const prop = r["Property Name"] || "";
+        const cleaner = r["Cleaners"] || "";
+        const date = r["Cleaning Date"] ? formatDateCell(r["Cleaning Date"]) : "";
+        const b2b = r["B2B"] || "";
+        const type = r["Type"] || (r["Flat Sheets King"] ? "Airbnb Cleaning" : "Home / Office Cleaning");
+        const status = r["Status"] || "Pending";
+
         return `
-        <tr data-id="${id}">
-          <td>${id}</td>
-          <td>${r["Property Name"]||""}</td>
-          <td>${r["Cleaners"]||""}</td>
-          <td>${dateStr}</td>
-          <td>${r["B2B"]||""}</td>
-          <td>${t}</td>
-          <td>
-            <select class="status-select" data-id="${id}">
-              ${["Pending","Clean Underway","Completed"].map(s=>`<option value="${s}" ${st===s?"selected":""}>${s}</option>`).join("")}
-            </select>
-          </td>
-        </tr>`;
+          <tr data-id="${escapeHtml(id)}" data-type="${escapeHtml(type)}">
+            <td>${escapeHtml(id)}</td>
+            <td>${escapeHtml(prop)}</td>
+            <td>${escapeHtml(cleaner)}</td>
+            <td>${escapeHtml(date)}</td>
+            <td>${escapeHtml(b2b)}</td>
+            <td>${escapeHtml(type)}</td>
+            <td class="cell-actions" onclick="event.stopPropagation();">
+              <select class="status-select" data-id="${escapeHtml(id)}">
+                ${["Pending", "Clean Underway", "Completed"].map(s => `<option value="${s}" ${status===s?"selected":""}>${s}</option>`).join("")}
+              </select>
+            </td>
+          </tr>
+        `;
       }).join("");
 
       // Row click -> open drawer
       document.querySelectorAll('#bookingsTable tbody tr').forEach(tr => {
-        tr.addEventListener('click', (e) => {
-          if (e.target.closest('select')) return; // ignore clicks on status select
-          const id = tr.dataset.id;
-          const row = RAW_ROWS.find(r => (r["Booking ID"]||"")===id);
-          if (row) openDrawer(row);
-        });
+        tr.addEventListener('click', () => openDrawerWith(tr.dataset.id));
       });
 
-      // Inline status updates
+      // Inline status change
       document.querySelectorAll('.status-select').forEach(sel => {
         sel.addEventListener('change', async (e) => {
-          const id = e.target.dataset.id;
+          const bookingId = e.target.getAttribute('data-id');
           const newStatus = e.target.value;
-          await updateStatus(id, newStatus, e.target.closest('tr'));
+          const row = e.target.closest('tr');
+          await updateStatus(bookingId, newStatus, row);
         });
       });
     }
 
-    async function updateStatus(bookingId, status, rowEl){
-      try{ showLoader();
-        // Hook for backend wiring
-        await fetch(scriptBaseURL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'updateStatus', bookingId, status }) });
-        showToast('Status updated');
-        if (rowEl){ rowEl.classList.add('flash'); setTimeout(()=>rowEl.classList.remove('flash'), 800); }
-      }catch(err){ console.error(err); showToast('Error updating status'); }
-      finally{ hideLoader(); }
+    function formatDateCell(v) {
+      try {
+        const d = (typeof v === 'string' || typeof v === 'number') ? new Date(v) : v;
+        return new Date(d).toLocaleDateString();
+      } catch { return ''; }
     }
 
-    // == Drawer (Details) ==
-    const drawer = document.getElementById('drawer');
-    const drawerMask = document.getElementById('drawerMask');
-    const dTitle = document.getElementById('dTitle');
-    const dBody = document.getElementById('dBody');
-    document.getElementById('dClose').onclick = closeDrawer;
-    document.getElementById('dCancel').onclick = closeDrawer;
-    drawerMask.onclick = closeDrawer;
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
 
-    function openDrawer(row){
-      CURRENT_DETAIL = JSON.parse(JSON.stringify(row)); // deep-ish clone
-      dTitle.textContent = `${row["Booking ID"]||''}`;
+    // Filters
+    const fSearch = document.getElementById('fSearch');
+    const fType = document.getElementById('fType');
+    const fStatus = document.getElementById('fStatus');
+    const fFrom = document.getElementById('fFrom');
+    const fTo = document.getElementById('fTo');
+    const fClear = document.getElementById('fClear');
 
-      const isAirbnb = typeOfRow(row)==='Airbnb Cleaning';
-      const packingKeys = [
-        'Flat Sheets King','Flat Sheets Queen','Flat Sheets Double','Flat Sheets Single',
-        'Doona King','Doona Queen','Doona Double','Doona Single',
-        'Pillowcases','Bath Towels','Hand Towels','Face Towels','Bathmats','Tea Towels','King Fitted','Queen Fitted','Single Fitted'
-      ];
+    function applyFilters() {
+      const q = (fSearch.value || '').toLowerCase().trim();
+      const t = fType.value; // all, airbnb, office
+      const s = fStatus.value; // all or status
+      const from = fFrom.value ? new Date(fFrom.value) : null;
+      const to = fTo.value ? new Date(fTo.value) : null;
 
-      // Build sections
-      const summaryHTML = `
-        <div class="section">
-          <h4>Summary</h4>
-          <div class="kv">
-            <div class="k">Booking ID</div><div class="v">${row["Booking ID"]||''}</div>
-            <div class="k">Timestamp</div><div class="v">${row["Timestamp"]? new Date(row["Timestamp"]).toLocaleString():''}</div>
-            <div class="k">Type</div><div class="v">${typeOfRow(row)}</div>
-          </div>
-        </div>`;
+      CURRENT_ROWS = ALL_ROWS.filter(r => {
+        const hay = [
+          r["Booking ID"], r["Property Name"], r["Cleaners"], r["Address"], r["Notes"]
+        ].map(x => (x || '').toString().toLowerCase()).join(' ');
+        if (q && !hay.includes(q)) return false;
 
-      const propertyHTML = `
-        <div class="section">
-          <h4>Property</h4>
-          <div class="kv">
-            <div class="k">Name</div><div class="v">${row["Property Name"]||''}</div>
-            <div class="k">Address</div><div class="v">${row["Address"]||''}</div>
-            <div class="k">B2B</div><div class="v">${row["B2B"]||'No'}</div>
-          </div>
-        </div>`;
+        const type = (r["Type"] || '').toLowerCase();
+        if (t === 'airbnb' && !type.includes('airbnb')) return false;
+        if (t === 'office' && type.includes('airbnb')) return false;
 
-      const editHTML = `
-        <div class="section">
-          <h4>Edit</h4>
-          <div class="grid-2">
-            <div class="form__group">
-              <label>Cleaning Date</label>
-              <input type="date" id="dDate" value="${row["Cleaning Date"] ? toYMD(row["Cleaning Date"]) : ''}">
-            </div>
-            <div class="form__group">
-              <label>Cleaner</label>
-              <input type="text" id="dCleaner" value="${row["Cleaners"]||''}">
-            </div>
-            <div class="form__group">
-              <label>Status</label>
-              <select id="dStatus">
-                ${["Pending","Clean Underway","Completed"].map(s=>`<option ${row["Status"]===s?'selected':''}>${s}</option>`).join('')}
-              </select>
-            </div>
-            <div class="form__group">
-              <label>B2B</label>
-              <div class="b2b-badges">
-                <div class="badge ${row["B2B"]==='Yes'?'active':''}" data-v="Yes">Yes</div>
-                <div class="badge ${row["B2B"]!=='Yes'?'active':''}" data-v="No">No</div>
-              </div>
-            </div>
-          </div>
-          <div class="form__group" style="margin-top:10px;">
-            <label>Notes</label>
-            <textarea id="dNotes" rows="3" placeholder="Internal notes">${row["Note"]||''}</textarea>
-          </div>
-        </div>`;
+        if (s !== 'all' && r["Status"] !== s) return false;
 
-      const packHTML = isAirbnb ? `
-        <div class="section">
-          <h4>Packing List</h4>
-          <div class="grid-2">
-            ${packingKeys.map(k=>{
-              const v = row[k]!==undefined ? row[k] : '';
-              return `<div class="form__group"><label>${k}</label><input type="number" min="0" step="1" data-pack="${k}" value="${v}"></div>`;
-            }).join('')}
-          </div>
-        </div>` : '';
-
-      dBody.innerHTML = summaryHTML + propertyHTML + editHTML + packHTML;
-
-      // B2B toggle in drawer
-      dBody.querySelectorAll('.badge').forEach(b=>{
-        b.addEventListener('click', ()=>{
-          dBody.querySelectorAll('.badge').forEach(x=>x.classList.remove('active'));
-          b.classList.add('active');
-        });
+        if (from || to) {
+          const d = r["Cleaning Date"] ? new Date(r["Cleaning Date"]) : null;
+          if (d) {
+            if (from && d < from) return false;
+            if (to && d > to) return false;
+          }
+        }
+        return true;
       });
 
-      drawer.classList.add('open');
-      drawerMask.classList.add('active');
+      renderTable(CURRENT_ROWS);
     }
 
-    function closeDrawer(){ drawer.classList.remove('open'); drawerMask.classList.remove('active'); CURRENT_DETAIL=null; }
-
-    function toYMD(d){ const dt=new Date(d); const m=('0'+(dt.getMonth()+1)).slice(-2); const day=('0'+dt.getDate()).slice(-2); return `${dt.getFullYear()}-${m}-${day}`; }
-
-    // Save changes from drawer (hooks ready for backend)
-    document.getElementById('dSave').addEventListener('click', async ()=>{
-      if (!CURRENT_DETAIL) return;
-      const id = CURRENT_DETAIL["Booking ID"]; if (!id) return;
-
-      // Collect edits
-      const payload = { action:'updateBooking', bookingId:id };
-      const dDate = document.getElementById('dDate').value; if (dDate) payload.date = dDate;
-      payload.cleaner = document.getElementById('dCleaner').value || '';
-      payload.status = document.getElementById('dStatus').value || 'Pending';
-      payload.notes = document.getElementById('dNotes').value || '';
-      payload.b2b = [...document.querySelectorAll('.badge.active')].pop()?.dataset.v || 'No';
-
-      // Packing edits (Airbnb only)
-      document.querySelectorAll('[data-pack]').forEach(inp=>{ payload[inp.dataset.pack]= inp.value? Number(inp.value): 0; });
-
-      try{
-        showLoader();
-        await fetch(scriptBaseURL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-        showToast('Saved');
-        closeDrawer();
-        await loadBookings(); // refresh table
-      }catch(e){ console.error(e); showToast('Error saving'); }
-      finally{ hideLoader(); }
+    [fSearch, fType, fStatus, fFrom, fTo].forEach(el => el.addEventListener('input', applyFilters));
+    fClear.addEventListener('click', () => {
+      fSearch.value = '';
+      fType.value = 'all';
+      fStatus.value = 'all';
+      fFrom.value = '';
+      fTo.value = '';
+      applyFilters();
     });
 
-    // Filters wire-up
-    document.getElementById('search').addEventListener('input', applyFilters);
-    document.getElementById('statusFilter').addEventListener('change', applyFilters);
-    document.getElementById('fromDate').addEventListener('change', applyFilters);
-    document.getElementById('toDate').addEventListener('change', applyFilters);
-    document.querySelectorAll('.pill').forEach(p => p.addEventListener('click', () => { document.querySelectorAll('.pill').forEach(x=>x.classList.remove('active')); p.classList.add('active'); applyFilters(); }));
+    // Inline status update
+    async function updateStatus(bookingId, status, rowEl) {
+      try {
+        showLoader();
+        await fetch(scriptBaseURL, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ action: 'updateStatus', bookingId, status })
+        });
+        showToast('Status updated');
+        rowEl.classList.add('flash');
+        setTimeout(() => rowEl.classList.remove('flash'), 800);
+      } catch (e) {
+        console.error(e);
+        showToast('Error updating status');
+      } finally {
+        hideLoader();
+      }
+    }
+
+    // Drawer
+    const drawer = document.getElementById('drawer');
+    const drawerOverlay = document.getElementById('drawerOverlay');
+    const dwClose = document.getElementById('dwClose');
+    const dwCancel = document.getElementById('dwCancel');
+    const dwSave = document.getElementById('dwSave');
+
+    const dwTitle = document.getElementById('dwTitle');
+    const dwId = document.getElementById('dwId');
+    const dwType = document.getElementById('dwType');
+    const dwProp = document.getElementById('dwProp');
+    const dwAddr = document.getElementById('dwAddr');
+    const dwCleaner = document.getElementById('dwCleaner');
+    const dwDate = document.getElementById('dwDate');
+    const dwStatus = document.getElementById('dwStatus');
+    const dwB2BYes = document.getElementById('dwB2BYes');
+    const dwB2BNo = document.getElementById('dwB2BNo');
+    const dwNotes = document.getElementById('dwNotes');
+    const dwAirbnbSection = document.getElementById('dwAirbnbSection');
+    const dwLinenGrid = document.getElementById('dwLinenGrid');
+
+    let CURRENT_EDIT = null;
+
+    function openDrawerWith(bookingId) {
+      const row = ALL_ROWS.find(r => (r["Booking ID"] || '') === bookingId);
+      if (!row) return;
+
+      CURRENT_EDIT = JSON.parse(JSON.stringify(row)); // deep-ish copy
+      const type = row["Type"] || (row["Flat Sheets King"] ? "Airbnb Cleaning" : "Home / Office Cleaning");
+
+      dwTitle.textContent = `Booking Details — ${bookingId}`;
+      dwId.value = row["Booking ID"] || '';
+      dwType.value = type;
+      dwProp.value = row["Property Name"] || '';
+      dwAddr.value = row["Address"] || '';
+      dwCleaner.value = row["Cleaners"] || '';
+      dwDate.value = toDateInput(row["Cleaning Date"]);
+      dwStatus.value = row["Status"] || 'Pending';
+      const b2b = (row["B2B"] || 'No').toLowerCase();
+      if (b2b === 'yes') { dwB2BYes.classList.add('active'); dwB2BNo.classList.remove('active'); } else { dwB2BNo.classList.add('active'); dwB2BYes.classList.remove('active'); }
+      dwNotes.value = row["Notes"] || row["Note"] || '';
+
+      // Airbnb packing list
+      if (type.toLowerCase().includes('airbnb')) {
+        dwAirbnbSection.style.display = 'block';
+        renderLinenInputs(row);
+      } else {
+        dwAirbnbSection.style.display = 'none';
+        dwLinenGrid.innerHTML = '';
+      }
+
+      drawer.classList.add('active');
+      drawerOverlay.classList.add('active');
+    }
+
+    function toDateInput(v) {
+      if (!v) return '';
+      const d = new Date(v);
+      if (isNaN(d)) return '';
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const dd = String(d.getDate()).padStart(2,'0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function renderLinenInputs(row) {
+      const keys = Object.keys(row);
+      const linenKeys = [
+        "Flat Sheets King","Flat Sheets Queen","Flat Sheets Double","Flat Sheets Single",
+        "Doona King","Doona Queen","Doona Double","Doona Single",
+        "Pillowcases","Bath Towels","Hand Towels","Face Towels","Bathmats","Tea Towels",
+        "King Fitted","Queen Fitted","Single Fitted"
+      ].filter(k => keys.includes(k));
+
+      if (linenKeys.length === 0) { dwLinenGrid.innerHTML = `<div style="grid-column:1/-1;color:var(--muted);">No packing list on this booking.</div>`; return; }
+
+      dwLinenGrid.innerHTML = linenKeys.map(k => `
+        <div class="group">
+          <label><i class="fa-solid fa-box-open"></i> ${k}</label>
+          <input type="number" min="0" step="1" data-linen="${k}" value="${Number(row[k] || 0)}">
+        </div>
+      `).join("");
+    }
+
+    function closeDrawer() {
+      drawer.classList.remove('active');
+      drawerOverlay.classList.remove('active');
+      CURRENT_EDIT = null;
+    }
+
+    dwClose.onclick = closeDrawer;
+    dwCancel.onclick = closeDrawer;
+    drawerOverlay.onclick = closeDrawer;
+
+    // B2B toggles in drawer
+    dwB2BYes.onclick = () => { dwB2BYes.classList.add('active'); dwB2BNo.classList.remove('active'); };
+    dwB2BNo.onclick = () => { dwB2BNo.classList.add('active'); dwB2BYes.classList.remove('active'); };
+
+    // Save from drawer
+    dwSave.onclick = async () => {
+      if (!CURRENT_EDIT) return;
+      const payload = {
+        action: 'updateBooking',
+        bookingId: dwId.value,
+        cleaner: dwCleaner.value,
+        date: dwDate.value,
+        status: dwStatus.value,
+        b2b: dwB2BYes.classList.contains('active') ? 'Yes' : 'No',
+        notes: dwNotes.value,
+        // If airbnb, include linen map
+        linen: {}
+      };
+
+      if (dwAirbnbSection.style.display !== 'none') {
+        dwLinenGrid.querySelectorAll('input[data-linen]').forEach(inp => {
+          const k = inp.getAttribute('data-linen');
+          payload.linen[k] = Number(inp.value || 0);
+        });
+      }
+
+      try {
+        showLoader();
+        await fetch(scriptBaseURL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        showToast('Saved changes');
+        // Refresh table quickly
+        await loadBookingsCombined();
+        closeDrawer();
+      } catch (e) {
+        console.error(e);
+        showToast('Error saving changes');
+      } finally {
+        hideLoader();
+      }
+    };
 
     // Boot
-    loadBookings();
+    loadBookingsCombined();
   </script>
 </body>
 </html>
