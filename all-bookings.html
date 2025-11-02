@@ -742,19 +742,38 @@ async function renderLinenInputs(row){
       <input type="number" min="0" step="1" data-linen="${k}" value="${Number(row[k]||0)}">
     </div>`).join("");
 
-  function recalcTotal(){
-    let total=0;
-    dwLinenGrid.querySelectorAll("input[data-linen]").forEach(inp=>{
-      const k=inp.getAttribute("data-linen").toLowerCase();
-      const qty=parseFloat(inp.value||0);
-      const price=PRICE_LIST[k]||0;
-      total+=qty*price;
-    });
-    dwPackingTotal.textContent=`Total: $${total.toFixed(2)}`;
-  }
-  dwLinenGrid.querySelectorAll("input[data-linen]").forEach(inp=>inp.addEventListener("input",recalcTotal));
-  recalcTotal();
+function recalcTotal() {
+  let total = 0;
+  
+  dwLinenGrid.querySelectorAll("input[data-linen]").forEach(inp => {
+    const k = inp.getAttribute("data-linen");
+    const qty = parseFloat(inp.value || 0);
+
+    // 🔹 Normalize name for lookup (removes plural, brackets, spaces)
+    const norm = k.toLowerCase()
+      .replace(/\(.*?\)/g, "")      // remove parentheses
+      .replace(/s\b/g, "")          // remove trailing s
+      .replace(/\s+/g, " ")         // collapse spaces
+      .trim();
+
+    // 🔹 Try multiple match fallbacks
+    let price = 0;
+    for (const [item, val] of Object.entries(PRICE_LIST)) {
+      const itemNorm = item
+        .toLowerCase()
+        .replace(/\(.*?\)/g, "")
+        .replace(/s\b/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+      if (itemNorm === norm) { price = val; break; }
+    }
+
+    total += qty * price;
+  });
+
+  dwPackingTotal.textContent = `Total: $${total.toFixed(2)}`;
 }
+
 
 /* ===== Drawer Controls ===== */
 function closeDrawer(){drawer.classList.remove('active');drawerOverlay.classList.remove('active');CURRENT_EDIT=null;}
