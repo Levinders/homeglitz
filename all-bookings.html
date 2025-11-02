@@ -515,17 +515,16 @@ async function loadBookings() {
 
 const btnRefresh = document.getElementById('btnRefresh');
 btnRefresh.addEventListener('click', async () => {
-  showLoader(); // show the loader overlay
+  showToast("🔄 Refreshing bookings...");
   try {
-    await loadBookings(); // re-fetch and re-render table
+    await loadBookings();
     showToast('✅ Bookings updated');
   } catch (err) {
     console.error(err);
     showToast('⚠️ Error refreshing');
-  } finally {
-    hideLoader(); // hide the loader again
   }
 });
+
 
 
     
