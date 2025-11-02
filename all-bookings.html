@@ -477,7 +477,7 @@ function hideLoader(){ loader.classList.remove('active'); }
 
 /* ===== API base ===== */
 const scriptBaseURL =
-  "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbwCd_o-74FLUtDAlLRl8rTtXpIGo4uDXh6khdgRu4GrU7RFo6-DOjG873xfTjJvTYX_/exec");
+  "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbyqntrve2xWkoQLm__g-8o3p80wYM2Jc92X8YsV8K2si3iAcKlveyYIZhMtx6nT8gRK/exec");
 
 async function fetchJSON(url) {
   const sep = url.includes("?") ? "&" : "?";
@@ -883,7 +883,7 @@ setInterval(async () => {
   } catch (err) {
     console.warn("Sync error:", err);
   }
-}, 20000); // every 20s
+}, 1000); // every 20s
 
 
 </script>
