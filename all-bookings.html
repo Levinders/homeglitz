@@ -731,16 +731,57 @@ async function renderLinenInputs(row){
       </div>`;
     section.prepend(dwPackingHeader);
   }
+
   const dwPackingTotal=document.getElementById("dwPackingTotal");
+
   if(linenKeys.length===0){
     dwLinenGrid.innerHTML=`<div style="grid-column:1/-1;color:var(--muted);">No packing list on this booking.</div>`;
-    dwPackingTotal.textContent="Total: $0.00";return;
+    dwPackingTotal.textContent="Total: $0.00";
+    return;
   }
+
   dwLinenGrid.innerHTML=linenKeys.map(k=>`
     <div class="group">
       <label><i class="fa-solid fa-box-open"></i> ${k}</label>
       <input type="number" min="0" step="1" data-linen="${k}" value="${Number(row[k]||0)}">
     </div>`).join("");
+
+  // ✅ Price calculation (matches drawer items with Price List)
+  function recalcTotal() {
+    let total = 0;
+    dwLinenGrid.querySelectorAll("input[data-linen]").forEach(inp => {
+      const k = inp.getAttribute("data-linen");
+      const qty = parseFloat(inp.value || 0);
+
+      const norm = k.toLowerCase()
+        .replace(/\(.*?\)/g, "")
+        .replace(/s\b/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      let price = 0;
+      for (const [item, val] of Object.entries(PRICE_LIST)) {
+        const itemNorm = item
+          .toLowerCase()
+          .replace(/\(.*?\)/g, "")
+          .replace(/s\b/g, "")
+          .replace(/\s+/g, " ")
+          .trim();
+        if (itemNorm === norm) { price = val; break; }
+      }
+      total += qty * price;
+    });
+    dwPackingTotal.textContent = `Total: $${total.toFixed(2)}`;
+  }
+
+  // live update listener
+  dwLinenGrid.querySelectorAll("input[data-linen]").forEach(inp =>
+    inp.addEventListener("input", recalcTotal)
+  );
+
+  recalcTotal();
+}  // ✅ properly closed
+
 
 function recalcTotal() {
   let total = 0;
