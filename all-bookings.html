@@ -458,9 +458,10 @@ const scriptBaseURL =
   "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbz_z8O3-e7_48QrrFaWJvJN4Q6XaR10sNRsdS4AZd9EdqOlmYzotZsRoDQfXEM7gjBg/exec");
 
 async function fetchJSON(url) {
-  const res = await fetch(url, { cache: 'no-store' });
+  const sep = url.includes("?") ? "&" : "?";
+  const res = await fetch(`${url}${sep}_=${Date.now()}`, { cache: "no-store" });
   const text = await res.text();
-  if (text.trim().startsWith('<')) throw new Error('Non-JSON response (HTML) – check deployment permissions.');
+  if (text.trim().startsWith("<")) throw new Error("Non-JSON response (HTML)");
   return JSON.parse(text);
 }
 
