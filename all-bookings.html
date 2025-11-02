@@ -745,7 +745,7 @@
       return `${yyyy}-${mm}-${dd}`;
     }
 
-/* ===== Load Price List ===== */
+/* ===== Load Price List (for Packing Total) ===== */
 let PRICE_LIST = {};
 
 async function loadPriceList() {
@@ -753,9 +753,9 @@ async function loadPriceList() {
     const data = await fetchJSON(`${scriptBaseURL}?type=price-list`);
     PRICE_LIST = {};
     (data || []).forEach(item => {
-      const name = (item["Item"] || "").trim();
+      const name = (item["Item"] || "").trim().toLowerCase();
       const price = parseFloat(item["Pick-Up Price (Ex GST)"]) || 0;
-      if (name) PRICE_LIST[name.toLowerCase()] = price;
+      if (name) PRICE_LIST[name] = price;
     });
   } catch (err) {
     console.error("Error loading price list:", err);
@@ -764,8 +764,8 @@ async function loadPriceList() {
 }
 
 
+    // 🔹 Enhanced renderLinenInputs with total calculation
 async function renderLinenInputs(row) {
-  // Ensure Price List is loaded
   if (Object.keys(PRICE_LIST).length === 0) await loadPriceList();
 
   const keys = Object.keys(row);
@@ -776,18 +776,18 @@ async function renderLinenInputs(row) {
     "King Fitted","Queen Fitted","Single Fitted"
   ].filter(k => keys.includes(k));
 
+  const dwPackingHeader = document.getElementById("dwPackingHeader");
   const section = document.getElementById("dwAirbnbSection");
-  const existingHeader = section.querySelector(".packing-header");
 
-  // Create header only once
-  if (!existingHeader) {
-    const totalBar = document.createElement("div");
-    totalBar.className = "packing-header";
-    totalBar.style.display = "flex";
-    totalBar.style.alignItems = "center";
-    totalBar.style.justifyContent = "space-between";
-    totalBar.style.marginBottom = "10px";
-    totalBar.innerHTML = `
+  // Create header with total only once
+  if (!dwPackingHeader) {
+    const headerDiv = document.createElement("div");
+    headerDiv.id = "dwPackingHeader";
+    headerDiv.style.display = "flex";
+    headerDiv.style.alignItems = "center";
+    headerDiv.style.justifyContent = "space-between";
+    headerDiv.style.marginBottom = "10px";
+    headerDiv.innerHTML = `
       <div class="section-title" style="border-bottom:none;margin:0;">
         <i class="fa-solid fa-bed"></i> Packing List (Airbnb)
       </div>
@@ -795,7 +795,7 @@ async function renderLinenInputs(row) {
         Total: $0.00
       </div>
     `;
-    section.prepend(totalBar);
+    section.prepend(headerDiv);
   }
 
   const dwPackingTotal = document.getElementById("dwPackingTotal");
@@ -815,6 +815,25 @@ async function renderLinenInputs(row) {
     </div>
   `).join("");
 
+  function recalcTotal() {
+    let total = 0;
+    dwLinenGrid.querySelectorAll("input[data-linen]").forEach(inp => {
+      const k = inp.getAttribute("data-linen").toLowerCase();
+      const qty = parseFloat(inp.value || 0);
+      const price = PRICE_LIST[k] || 0;
+      total += qty * price;
+    });
+    dwPackingTotal.textContent = `Total: $${total.toFixed(2)}`;
+  }
+
+  dwLinenGrid.querySelectorAll("input[data-linen]").forEach(inp =>
+    inp.addEventListener("input", recalcTotal)
+  );
+
+  recalcTotal();
+}
+
+    
   function recalcTotal() {
     let total = 0;
     dwLinenGrid.querySelectorAll("input[data-linen]").forEach(inp => {
