@@ -837,6 +837,15 @@ setInterval(async () => {
   }
 }, 20000); // every 20s
 
+    // 👂 Listen for new booking events from other tabs/pages
+window.addEventListener('storage', async (e) => {
+  if (e.key === 'refreshBookings') {
+    showToast("🔄 New booking detected! Refreshing…");
+    await loadBookings();
+  }
+});
+
+
 </script>
 
 </body>
