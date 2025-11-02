@@ -688,41 +688,50 @@ function openDrawerWith(bookingId){
 
 function toDateInput(v){if(!v)return'';const d=new Date(v);if(isNaN(d))return'';const yyyy=d.getFullYear();const mm=String(d.getMonth()+1).padStart(2,'0');const dd=String(d.getDate()).padStart(2,'0');return`${yyyy}-${mm}-${dd}`;}
 
-/* ===== Load Price List ===== */
-let PRICE_LIST={};
-async function loadPriceList(){
-  try{
-    const data=await fetchJSON(`${scriptBaseURL}?type=price-list`);
-    PRICE_LIST={};
-    (data||[]).forEach(item=>{
-      const name=(item["Item"]||"").trim().toLowerCase();
-      const price=parseFloat(item["Pick-Up Price (Ex GST)"])||0;
-      if(name)PRICE_LIST[name]=price;
+/* ===== Load Price List (normalized keys) ===== */
+let PRICE_LIST = {};
+
+async function loadPriceList() {
+  try {
+    const data = await fetchJSON(`${scriptBaseURL}?type=price-list`);
+    PRICE_LIST = {};
+
+    (data || []).forEach(item => {
+      const name = (item["Item"] || "").toString().trim().toLowerCase();
+      const price = parseFloat(item["Pick-Up Price (Ex GST)"]) || 0;
+      if (name) PRICE_LIST[name] = price;
     });
-  }catch(err){console.error("Error loading price list:",err);PRICE_LIST={};}
+
+    console.log("✅ Loaded Price List:", PRICE_LIST);
+  } catch (err) {
+    console.error("❌ Error loading price list:", err);
+    PRICE_LIST = {};
+  }
 }
 
-/* ===== Enhanced renderLinenInputs ===== */
-async function renderLinenInputs(row){
-  if(Object.keys(PRICE_LIST).length===0)await loadPriceList();
-  const keys=Object.keys(row);
-  const linenKeys=[
+/* ===== Airbnb Packing List Renderer (live total calculation) ===== */
+async function renderLinenInputs(row) {
+  if (Object.keys(PRICE_LIST).length === 0) await loadPriceList();
+
+  const keys = Object.keys(row);
+  const linenKeys = [
     "Flat Sheets King","Flat Sheets Queen","Flat Sheets Double","Flat Sheets Single",
     "Doona King","Doona Queen","Doona Double","Doona Single",
     "Pillowcases","Bath Towels","Hand Towels","Face Towels","Bathmats","Tea Towels",
     "King Fitted","Queen Fitted","Single Fitted"
-  ].filter(k=>keys.includes(k));
+  ].filter(k => keys.includes(k));
 
-  const section=document.getElementById("dwAirbnbSection");
-  let dwPackingHeader=document.getElementById("dwPackingHeader");
-  if(!dwPackingHeader){
-    dwPackingHeader=document.createElement("div");
-    dwPackingHeader.id="dwPackingHeader";
-    dwPackingHeader.style.display="flex";
-    dwPackingHeader.style.alignItems="center";
-    dwPackingHeader.style.justifyContent="space-between";
-    dwPackingHeader.style.marginBottom="10px";
-    dwPackingHeader.innerHTML=`
+  const section = document.getElementById("dwAirbnbSection");
+  let dwPackingHeader = document.getElementById("dwPackingHeader");
+
+  if (!dwPackingHeader) {
+    dwPackingHeader = document.createElement("div");
+    dwPackingHeader.id = "dwPackingHeader";
+    dwPackingHeader.style.display = "flex";
+    dwPackingHeader.style.alignItems = "center";
+    dwPackingHeader.style.justifyContent = "space-between";
+    dwPackingHeader.style.marginBottom = "10px";
+    dwPackingHeader.innerHTML = `
       <div class="section-title" style="border-bottom:none;margin:0;">
         <i class="fa-solid fa-bed"></i> Packing List (Airbnb)
       </div>
@@ -732,89 +741,46 @@ async function renderLinenInputs(row){
     section.prepend(dwPackingHeader);
   }
 
-  const dwPackingTotal=document.getElementById("dwPackingTotal");
+  const dwPackingTotal = document.getElementById("dwPackingTotal");
 
-  if(linenKeys.length===0){
-    dwLinenGrid.innerHTML=`<div style="grid-column:1/-1;color:var(--muted);">No packing list on this booking.</div>`;
-    dwPackingTotal.textContent="Total: $0.00";
+  if (linenKeys.length === 0) {
+    dwLinenGrid.innerHTML = `<div style="grid-column:1/-1;color:var(--muted);">No packing list on this booking.</div>`;
+    dwPackingTotal.textContent = "Total: $0.00";
     return;
   }
 
-  dwLinenGrid.innerHTML=linenKeys.map(k=>`
+  // Render the input fields
+  dwLinenGrid.innerHTML = linenKeys.map(k => `
     <div class="group">
       <label><i class="fa-solid fa-box-open"></i> ${k}</label>
-      <input type="number" min="0" step="1" data-linen="${k}" value="${Number(row[k]||0)}">
-    </div>`).join("");
+      <input type="number" min="0" step="1" data-linen="${k}" value="${Number(row[k] || 0)}">
+    </div>
+  `).join("");
 
-  // ✅ Price calculation (matches drawer items with Price List)
+  // 🔹 Total calculator
   function recalcTotal() {
     let total = 0;
+
     dwLinenGrid.querySelectorAll("input[data-linen]").forEach(inp => {
-      const k = inp.getAttribute("data-linen");
+      const k = inp.getAttribute("data-linen").toLowerCase().trim();
       const qty = parseFloat(inp.value || 0);
-
-      const norm = k.toLowerCase()
-        .replace(/\(.*?\)/g, "")
-        .replace(/s\b/g, "")
-        .replace(/\s+/g, " ")
-        .trim();
-
-      let price = 0;
-      for (const [item, val] of Object.entries(PRICE_LIST)) {
-        const itemNorm = item
-          .toLowerCase()
-          .replace(/\(.*?\)/g, "")
-          .replace(/s\b/g, "")
-          .replace(/\s+/g, " ")
-          .trim();
-        if (itemNorm === norm) { price = val; break; }
-      }
+      const price = PRICE_LIST[k] || 0;
       total += qty * price;
     });
+
     dwPackingTotal.textContent = `Total: $${total.toFixed(2)}`;
   }
 
-  // live update listener
+  // Trigger recalculation whenever an input changes
   dwLinenGrid.querySelectorAll("input[data-linen]").forEach(inp =>
     inp.addEventListener("input", recalcTotal)
   );
 
+  // Calculate once on load
   recalcTotal();
-}  // ✅ properly closed
-
-
-function recalcTotal() {
-  let total = 0;
-  
-  dwLinenGrid.querySelectorAll("input[data-linen]").forEach(inp => {
-    const k = inp.getAttribute("data-linen");
-    const qty = parseFloat(inp.value || 0);
-
-    // 🔹 Normalize name for lookup (removes plural, brackets, spaces)
-    const norm = k.toLowerCase()
-      .replace(/\(.*?\)/g, "")      // remove parentheses
-      .replace(/s\b/g, "")          // remove trailing s
-      .replace(/\s+/g, " ")         // collapse spaces
-      .trim();
-
-    // 🔹 Try multiple match fallbacks
-    let price = 0;
-    for (const [item, val] of Object.entries(PRICE_LIST)) {
-      const itemNorm = item
-        .toLowerCase()
-        .replace(/\(.*?\)/g, "")
-        .replace(/s\b/g, "")
-        .replace(/\s+/g, " ")
-        .trim();
-      if (itemNorm === norm) { price = val; break; }
-    }
-
-    total += qty * price;
-  });
-
-  dwPackingTotal.textContent = `Total: $${total.toFixed(2)}`;
 }
 
+    
 
 /* ===== Drawer Controls ===== */
 function closeDrawer(){drawer.classList.remove('active');drawerOverlay.classList.remove('active');CURRENT_EDIT=null;}
