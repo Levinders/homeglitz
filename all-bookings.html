@@ -486,6 +486,11 @@
       } finally {
         hideLoader();
       }
+      loadBookings().catch(err => {
+        console.error("Fatal init error:", err);
+        showToast("Error initializing page");
+      });
+
     }
 
     function hydrateTypes(rows) {
