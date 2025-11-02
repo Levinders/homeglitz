@@ -823,6 +823,20 @@ dwSave.onclick=async()=>{
 
 /* ===== INIT ===== */
 (async()=>{await loadPriceList();await loadBookings();})();
+
+    // 🔄 Auto-refresh bookings every 20 seconds (real-time feel)
+setInterval(async () => {
+  try {
+    console.log("🔁 Syncing bookings...");
+    const oldCount = ALL_ROWS.length;
+    await loadBookings();
+    const newCount = ALL_ROWS.length;
+    if (newCount !== oldCount) showToast("🔄 Bookings updated");
+  } catch (err) {
+    console.warn("Sync error:", err);
+  }
+}, 20000); // every 20s
+
 </script>
 
 </body>
