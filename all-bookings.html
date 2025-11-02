@@ -508,6 +508,15 @@ async function loadBookings() {
   }
 }
 
+
+    const btnRefresh = document.getElementById('btnRefresh');
+btnRefresh.addEventListener('click', async () => {
+  showToast('Refreshing bookings...');
+  await loadBookings(); // Re-fetches from Apps Script
+  showToast('✅ Bookings updated');
+});
+
+    
         // 👂 Listen for new booking events from other tabs/pages
 window.addEventListener('storage', async (e) => {
   if (e.key === 'refreshBookings') {
