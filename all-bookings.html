@@ -476,9 +476,8 @@ function showLoader(){ loader.classList.add('active'); }
 function hideLoader(){ loader.classList.remove('active'); }
 
 /* ===== API base ===== */
-const scriptBaseURL =
   const scriptBaseURL =
-  "https://script.google.com/macros/s/AKfycbwuctN4M7yfkq7Em3kpJ3oXiIu7hLsUZxULSSS4NcgkZ0Cg6K1sfgrgmeJ7IAIb21bt/exec";
+    "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbylnoBiDB5Y0gGW4YDJEdtaA4dOS29elNUYtDDV9X4yNgW1PHJ8kgOcRZ5ULuFuE2o6/exec");
 
 
 async function fetchJSON(url) {
