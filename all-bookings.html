@@ -740,14 +740,14 @@
       return `${yyyy}-${mm}-${dd}`;
     }
 
-/* ===== Airbnb Packing List with Live Total ===== */
+/* ===== Load Price List ===== */
 let PRICE_LIST = {};
 
 async function loadPriceList() {
   try {
     const data = await fetchJSON(`${scriptBaseURL}?type=price-list`);
     PRICE_LIST = {};
-    data.forEach(item => {
+    (data || []).forEach(item => {
       const name = (item["Item"] || "").trim();
       const price = parseFloat(item["Pick-Up Price (Ex GST)"]) || 0;
       if (name) PRICE_LIST[name.toLowerCase()] = price;
@@ -757,6 +757,7 @@ async function loadPriceList() {
     PRICE_LIST = {};
   }
 }
+
 
 async function renderLinenInputs(row) {
   // Ensure Price List is loaded
