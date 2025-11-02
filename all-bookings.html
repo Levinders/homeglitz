@@ -487,6 +487,14 @@ async function loadBookings() {
   }
 }
 
+        // 👂 Listen for new booking events from other tabs/pages
+window.addEventListener('storage', async (e) => {
+  if (e.key === 'refreshBookings') {
+    showToast("🔄 New booking detected! Refreshing…");
+    await loadBookings();
+  }
+});
+
 function hydrateTypes(rows) {
   return rows.map(r => {
     let type = r["Type"];
@@ -836,14 +844,6 @@ setInterval(async () => {
     console.warn("Sync error:", err);
   }
 }, 20000); // every 20s
-
-    // 👂 Listen for new booking events from other tabs/pages
-window.addEventListener('storage', async (e) => {
-  if (e.key === 'refreshBookings') {
-    showToast("🔄 New booking detected! Refreshing…");
-    await loadBookings();
-  }
-});
 
 
 </script>
