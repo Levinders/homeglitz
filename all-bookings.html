@@ -455,7 +455,7 @@ function hideLoader(){ loader.classList.remove('active'); }
 
 /* ===== API base ===== */
 const scriptBaseURL =
-  "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbw5ow-O54uxNdLZ4GFSk2HmJSPXwTyJYc0DRfJWCz_duubHrTwXAjpwit1NhONQvq_G/exec");
+  "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbxcj4YKk0GhxPQMUKKewBZ6XKr9qN24jcHFrLbphfx3oGTj-7_4BWNwCCzlMU5y1R0H/exec");
 
 async function fetchJSON(url) {
   const res = await fetch(url, { cache: 'no-store' });
@@ -709,21 +709,18 @@ async function loadPriceList() {
   }
 }
 
-/* ===== Airbnb Packing List Renderer (live total calculation) ===== */
+/* ===== Airbnb Packing List Renderer (fetch live totals from sheet) ===== */
 async function renderLinenInputs(row) {
-  if (Object.keys(PRICE_LIST).length === 0) await loadPriceList();
+  const bookingId = row["Booking ID"];
+  if (!bookingId) return;
 
-  const keys = Object.keys(row);
-  const linenKeys = [
-    "Flat Sheets King","Flat Sheets Queen","Flat Sheets Double","Flat Sheets Single",
-    "Doona King","Doona Queen","Doona Double","Doona Single",
-    "Pillowcases","Bath Towels","Hand Towels","Face Towels","Bathmats","Tea Towels",
-    "King Fitted","Queen Fitted","Single Fitted"
-  ].filter(k => keys.includes(k));
+  // Ensure Price List is loaded
+  if (Object.keys(PRICE_LIST).length === 0) await loadPriceList();
 
   const section = document.getElementById("dwAirbnbSection");
   let dwPackingHeader = document.getElementById("dwPackingHeader");
 
+  // Create header if not existing
   if (!dwPackingHeader) {
     dwPackingHeader = document.createElement("div");
     dwPackingHeader.id = "dwPackingHeader";
@@ -736,51 +733,57 @@ async function renderLinenInputs(row) {
         <i class="fa-solid fa-bed"></i> Packing List (Airbnb)
       </div>
       <div id="dwPackingTotal" style="font-weight:700;color:var(--primary);font-size:14px;">
-        Total: $0.00
+        Total: Loading…
       </div>`;
     section.prepend(dwPackingHeader);
   }
 
   const dwPackingTotal = document.getElementById("dwPackingTotal");
 
-  if (linenKeys.length === 0) {
-    dwLinenGrid.innerHTML = `<div style="grid-column:1/-1;color:var(--muted);">No packing list on this booking.</div>`;
-    dwPackingTotal.textContent = "Total: $0.00";
-    return;
-  }
+  try {
+    // 🔹 Fetch live booking data from your "Airbnb Booking" sheet
+    const bookingData = await fetchJSON(`${scriptBaseURL}?type=booking&id=${encodeURIComponent(bookingId)}`);
 
-  // Render the input fields
-  dwLinenGrid.innerHTML = linenKeys.map(k => `
-    <div class="group">
-      <label><i class="fa-solid fa-box-open"></i> ${k}</label>
-      <input type="number" min="0" step="1" data-linen="${k}" value="${Number(row[k] || 0)}">
-    </div>
-  `).join("");
+    if (!bookingData || !Array.isArray(bookingData) || bookingData.length === 0) {
+      dwPackingTotal.textContent = "Total: $0.00";
+      return;
+    }
 
-  // 🔹 Total calculator
-  function recalcTotal() {
+    // Your backend should return one row for that booking
+    const liveRow = bookingData[0];
+
+    const linenKeys = [
+      "Flat Sheets King","Flat Sheets Queen","Flat Sheets Double","Flat Sheets Single",
+      "Doona King","Doona Queen","Doona Double","Doona Single",
+      "Pillowcases","Bath Towels","Hand Towels","Face Towels","Bathmats","Tea Towels",
+      "King Fitted","Queen Fitted","Single Fitted"
+    ];
+
+    // Calculate total from sheet
     let total = 0;
-
-    dwLinenGrid.querySelectorAll("input[data-linen]").forEach(inp => {
-      const k = inp.getAttribute("data-linen").toLowerCase().trim();
-      const qty = parseFloat(inp.value || 0);
-      const price = PRICE_LIST[k] || 0;
+    linenKeys.forEach(k => {
+      const qty = parseFloat(liveRow[k] || 0);
+      const price = PRICE_LIST[k.toLowerCase()] || 0;
       total += qty * price;
     });
 
+    // Display total
     dwPackingTotal.textContent = `Total: $${total.toFixed(2)}`;
+
+    // Populate the inputs visually (still show the packing list)
+    dwLinenGrid.innerHTML = linenKeys.map(k => `
+      <div class="group">
+        <label><i class="fa-solid fa-box-open"></i> ${k}</label>
+        <input type="number" min="0" step="1" data-linen="${k}" value="${Number(liveRow[k] || 0)}" disabled>
+      </div>
+    `).join("");
+
+  } catch (err) {
+    console.error("Error fetching live booking data:", err);
+    dwPackingTotal.textContent = "Total: Error loading";
   }
-
-  // Trigger recalculation whenever an input changes
-  dwLinenGrid.querySelectorAll("input[data-linen]").forEach(inp =>
-    inp.addEventListener("input", recalcTotal)
-  );
-
-  // Calculate once on load
-  recalcTotal();
 }
 
-    
 
 /* ===== Drawer Controls ===== */
 function closeDrawer(){drawer.classList.remove('active');drawerOverlay.classList.remove('active');CURRENT_EDIT=null;}
