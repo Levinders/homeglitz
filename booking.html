@@ -612,6 +612,12 @@ formEl.onsubmit = async (e) => {
   // Boot
   setB2BDefaultNo();
   init();
+
+    // 🔔 Notify other tabs when a booking is added
+window.addEventListener('beforeunload', () => {
+  localStorage.setItem('refreshBookings', Date.now());
+});
+
 </script>
 
 </body>
