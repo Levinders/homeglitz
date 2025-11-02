@@ -317,6 +317,8 @@
         <!-- Header (title + inline filters) -->
         <div class="card__header">
 <h2 class="card__title">
+
+  <h2 class="card__title">
   <i class="fa-solid fa-list"></i> All Bookings
   <button id="btnRefresh" title="Refresh bookings" style="
     margin-left:auto;
@@ -337,6 +339,7 @@
     <i class="fa-solid fa-rotate-right"></i> Refresh
   </button>
 </h2>
+
 
             <div class="field" title="Search">
               <i class="fa-solid fa-magnifying-glass"></i>
@@ -509,12 +512,20 @@ async function loadBookings() {
 }
 
 
-    const btnRefresh = document.getElementById('btnRefresh');
+const btnRefresh = document.getElementById('btnRefresh');
 btnRefresh.addEventListener('click', async () => {
-  showToast('Refreshing bookings...');
-  await loadBookings(); // Re-fetches from Apps Script
-  showToast('✅ Bookings updated');
+  showLoader(); // show the loader overlay
+  try {
+    await loadBookings(); // re-fetch and re-render table
+    showToast('✅ Bookings updated');
+  } catch (err) {
+    console.error(err);
+    showToast('⚠️ Error refreshing');
+  } finally {
+    hideLoader(); // hide the loader again
+  }
 });
+
 
     
         // 👂 Listen for new booking events from other tabs/pages
