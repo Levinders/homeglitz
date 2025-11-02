@@ -758,8 +758,10 @@ async function loadPriceList() {
   }
 }
 
-// 🔹 modified renderLinenInputs
-function renderLinenInputs(row) {
+async function renderLinenInputs(row) {
+  // 1️⃣ Ensure price list is loaded
+  if (Object.keys(PRICE_LIST).length === 0) await loadPriceList();
+
   const keys = Object.keys(row);
   const linenKeys = [
     "Flat Sheets King","Flat Sheets Queen","Flat Sheets Double","Flat Sheets Single",
@@ -768,30 +770,68 @@ function renderLinenInputs(row) {
     "King Fitted","Queen Fitted","Single Fitted"
   ].filter(k => keys.includes(k));
 
+  const section = document.getElementById("dwAirbnbSection");
+  const existingHeader = section.querySelector(".packing-header");
+
+  // 2️⃣ Create header only once
+  if (!existingHeader) {
+    const totalBar = document.createElement("div");
+    totalBar.className = "packing-header";
+    totalBar.style.display = "flex";
+    totalBar.style.alignItems = "center";
+    totalBar.style.justifyContent = "space-between";
+    totalBar.style.marginBottom = "10px";
+    totalBar.innerHTML = `
+      <div class="section-title" style="border-bottom:none;margin:0;">
+        <i class="fa-solid fa-bed"></i> Packing List (Airbnb)
+      </div>
+      <div id="dwPackingTotal" style="font-weight:700;color:var(--primary);font-size:14px;">
+        Total: $0.00
+      </div>
+    `;
+    section.prepend(totalBar);
+  }
+
+  const dwPackingTotal = document.getElementById("dwPackingTotal");
+
+  // 3️⃣ Handle empty case
   if (linenKeys.length === 0) {
-    dwLinenGrid.innerHTML = `<div style="grid-column:1/-1;color:var(--muted);">No packing list on this booking.</div>`;
+    dwLinenGrid.innerHTML = `<div style="grid-column:1/-1;color:var(--muted);">
+      No packing list on this booking.
+    </div>`;
+    if (dwPackingTotal) dwPackingTotal.textContent = "Total: $0.00";
     return;
   }
 
-  // Create header bar with total on the right
-  const totalBar = document.createElement("div");
-  totalBar.style.display = "flex";
-  totalBar.style.alignItems = "center";
-  totalBar.style.justifyContent = "space-between";
-  totalBar.style.marginBottom = "10px";
-  totalBar.innerHTML = `
-    <div class="section-title" style="border-bottom:none;margin:0;"><i class="fa-solid fa-bed"></i> Packing List (Airbnb)</div>
-    <div id="dwPackingTotal" style="font-weight:700;color:var(--primary);font-size:14px;">Total: $0.00</div>
-  `;
-  const section = document.getElementById("dwAirbnbSection");
-  section.prepend(totalBar);
-
+  // 4️⃣ Render inputs
   dwLinenGrid.innerHTML = linenKeys.map(k => `
     <div class="group">
       <label><i class="fa-solid fa-box-open"></i> ${k}</label>
       <input type="number" min="0" step="1" data-linen="${k}" value="${Number(row[k] || 0)}">
     </div>
   `).join("");
+
+  // 5️⃣ Calculate total
+  function recalcTotal() {
+    let total = 0;
+    dwLinenGrid.querySelectorAll("input[data-linen]").forEach(inp => {
+      const k = inp.getAttribute("data-linen");
+      const qty = parseFloat(inp.value || 0);
+      const price = PRICE_LIST[k.toLowerCase()] || 0;
+      total += qty * price;
+    });
+    if (dwPackingTotal) dwPackingTotal.textContent = `Total: $${total.toFixed(2)}`;
+  }
+
+  // 6️⃣ Attach live updates
+  dwLinenGrid.querySelectorAll("input[data-linen]").forEach(inp =>
+    inp.addEventListener("input", recalcTotal)
+  );
+
+  // 7️⃣ Calculate immediately with current quantities
+  recalcTotal();
+}
+
 
   function recalcTotal() {
     let total = 0;
