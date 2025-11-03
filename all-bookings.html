@@ -659,7 +659,11 @@ async function loadBookings() {
     // ===================================================
 // 🔁 Auto-sync bookings backend (every 5 seconds)
 // ===================================================
+let SYNC_RUNNING = false;
+
 async function syncServerBookings() {
+  if (SYNC_RUNNING) return;
+  SYNC_RUNNING = true;
   try {
     await fetch(scriptBaseURL, {
       method: 'POST',
@@ -670,10 +674,11 @@ async function syncServerBookings() {
   } catch (err) {
     console.error('⚠️ Sync failed:', err);
   } finally {
-    // Re-run sync after 5 seconds
+    SYNC_RUNNING = false;
     setTimeout(syncServerBookings, 5000);
   }
 }
+
 
 
     function openDrawerWith(bookingId) {
