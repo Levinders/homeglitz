@@ -253,10 +253,42 @@
     overflow-x: hidden;
   }
 
-  .drawer__grid {
-    grid-template-columns: 1fr; /* single column for mobile */
-    gap: 12px;
-  }
+.drawer__grid {
+  display: grid;
+  grid-template-columns: 1fr; /* default single column for most sections */
+  gap: 12px;
+}
+
+/* But for the Airbnb Packing List grid */
+#dwLinenGrid.drawer__grid {
+  grid-template-columns: repeat(2, 1fr); /* 2 neat columns only for linens */
+  gap: 10px 14px;
+}
+
+#dwLinenGrid .group {
+  background: #f9fafb;
+  border: 1px solid #e8ecf0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+#dwLinenGrid .group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+#dwLinenGrid .group input {
+  margin-top: 4px;
+  border-radius: 8px;
+  border: 1px solid #dde3ea;
+  padding: 8px 10px;
+  font-size: 14px;
+  width: 100%;
+  text-align: center;
+}
+
 
    .drawer__body {
     padding: 16px;
