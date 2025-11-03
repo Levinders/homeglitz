@@ -411,7 +411,7 @@
 
     /* ===== API base (your latest endpoint via corsproxy) ===== */
     const scriptBaseURL =
-      "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbxnHeWh80IbqtHRwEa_DJ7ux6z7B4GacuaoXWqYZsEdyQx5NJZQcQCBFaWRvfNAURXE/exec");
+      "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbzdwrCBzGxkBL3rFpJ4MpizBaATmaNREgh5wDMHDo-H2Cs4EQ-nhdG4H4pOrRjw8T92/exec");
 
     async function fetchJSON(url) {
       const res = await fetch(url, { cache: 'no-store' });
@@ -428,21 +428,22 @@
     let totalPages = 1;
 
     /* ===== Load bookings (combined) ===== */
-    async function loadBookings() {
-      showLoader();
-      try {
-        // Expect your API to return combined rows for ?type=bookings
-        const rows = await fetchJSON(`${scriptBaseURL}?type=bookings`);
-        ALL_ROWS = hydrateTypes(rows).sort(sortByMostRecent);
-        applyFilters(); // will also render + paginate
-      } catch (e) {
-        console.error(e);
-        showToast('Error loading bookings');
-        renderTable([]);
-      } finally {
-        hideLoader();
-      }
-    }
+async function loadBookings() {
+  showLoader();
+  try {
+    const rows = await fetchJSON(`${scriptBaseURL}?type=bookings`);
+    ALL_ROWS = hydrateTypes(rows).sort(sortByMostRecent);
+    applyFilters();
+  } catch (e) {
+    console.error(e);
+    showToast('Error loading bookings');
+    renderTable([]);
+  } finally {
+    hideLoader();
+    syncServerBookings(); // 👈 starts the continuous backend sync loop
+  }
+}
+
 
     function hydrateTypes(rows) {
       return rows.map(r => {
@@ -654,6 +655,26 @@
     const dwLinenGrid = document.getElementById('dwLinenGrid');
 
     let CURRENT_EDIT = null;
+
+    // ===================================================
+// 🔁 Auto-sync bookings backend (every 5 seconds)
+// ===================================================
+async function syncServerBookings() {
+  try {
+    await fetch(scriptBaseURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'syncAllBookings' })
+    });
+    console.log('✅ Bookings synced successfully');
+  } catch (err) {
+    console.error('⚠️ Sync failed:', err);
+  } finally {
+    // Re-run sync after 5 seconds
+    setTimeout(syncServerBookings, 5000);
+  }
+}
+
 
     function openDrawerWith(bookingId) {
       const row = ALL_ROWS.find(r => (r["Booking ID"] || '') === bookingId);
