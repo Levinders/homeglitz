@@ -318,26 +318,7 @@
         <div class="card__header">
 
   <h2 class="card__title">
-  <i class="fa-solid fa-list"></i> All Bookings
-    <button id="btnRefresh" title="Refresh bookings" style="
-    margin-left:auto;
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    box-shadow: 0 4px 10px rgba(15,114,180,0.2);
-    transition: 0.2s ease;
-  ">
-    <i class="fa-solid fa-rotate-right"></i> Refresh
-  </button>
-  </h2>
+  <i class="fa-solid fa-list"></i> All Bookings </h2>
 
 
             <div class="field" title="Search">
@@ -510,22 +491,7 @@ async function loadBookings() {
   }
 }
 
-
-const btnRefresh = document.getElementById('btnRefresh');
-btnRefresh.addEventListener('click', async () => {
-  showToast("🔄 Refreshing bookings...");
-  try {
-    await loadBookings();
-    showToast('✅ Bookings updated');
-  } catch (err) {
-    console.error(err);
-    showToast('⚠️ Error refreshing');
-  }
-});
-
-
-
-    
+   
         // 👂 Listen for new booking events from other tabs/pages
 window.addEventListener('storage', async (e) => {
   if (e.key === 'refreshBookings') {
