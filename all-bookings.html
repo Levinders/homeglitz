@@ -376,9 +376,14 @@
       </div>
 
       <div id="dwAirbnbSection" style="margin-top:16px; display:none;">
-        <div class="section-title"><i class="fa-solid fa-bed"></i> Packing List (Airbnb)</div>
-        <div id="dwLinenGrid" class="drawer__grid"></div>
-      </div>
+  <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;">
+    <div><i class="fa-solid fa-bed"></i> Packing List (Airbnb)</div>
+    <div id="dwTotal" style="font-weight:700;color:var(--primary);font-size:14px;">Total: 0</div>
+  </div>
+  <div id="dwLinenGrid" class="drawer__grid"></div>
+  </div>
+
+      
     </div>
     <div class="drawer__footer">
       <button class="btn btn-light" id="dwCancel">Cancel</button>
@@ -423,7 +428,7 @@
     /* ===== State ===== */
     let ALL_ROWS = [];       // all bookings
     let FILTERED = [];       // after filters
-    const PAGE_SIZE = 5;
+    const PAGE_SIZE = 20;
     let page = 1;
     let totalPages = 1;
 
@@ -722,27 +727,42 @@ async function syncServerBookings() {
       return `${yyyy}-${mm}-${dd}`;
     }
 
-    function renderLinenInputs(row) {
-      const keys = Object.keys(row);
-      const linenKeys = [
-        "Flat Sheets King","Flat Sheets Queen","Flat Sheets Double","Flat Sheets Single",
-        "Doona King","Doona Queen","Doona Double","Doona Single",
-        "Pillowcases","Bath Towels","Hand Towels","Face Towels","Bathmats","Tea Towels",
-        "King Fitted","Queen Fitted","Single Fitted"
-      ].filter(k => keys.includes(k));
+function renderLinenInputs(row) {
+  const keys = Object.keys(row);
+  const linenKeys = [
+    "Flat Sheets King","Flat Sheets Queen","Flat Sheets Double","Flat Sheets Single",
+    "Doona King","Doona Queen","Doona Double","Doona Single",
+    "Pillowcases","Bath Towels","Hand Towels","Face Towels","Bathmats","Tea Towels",
+    "King Fitted","Queen Fitted","Single Fitted"
+  ].filter(k => keys.includes(k));
 
-      if (linenKeys.length === 0) {
-        dwLinenGrid.innerHTML = `<div style="grid-column:1/-1;color:var(--muted);">No packing list on this booking.</div>`;
-        return;
-      }
+  const totalEl = document.getElementById('dwTotal');
+  if (linenKeys.length === 0) {
+    dwLinenGrid.innerHTML = `<div style="grid-column:1/-1;color:var(--muted);">No packing list on this booking.</div>`;
+    totalEl.textContent = 'Total: 0';
+    return;
+  }
 
-      dwLinenGrid.innerHTML = linenKeys.map(k => `
-        <div class="group">
-          <label><i class="fa-solid fa-box-open"></i> ${k}</label>
-          <input type="number" min="0" step="1" data-linen="${k}" value="${Number(row[k] || 0)}">
-        </div>
-      `).join("");
-    }
+  dwLinenGrid.innerHTML = linenKeys.map(k => `
+    <div class="group">
+      <label><i class="fa-solid fa-box-open"></i> ${k}</label>
+      <input type="number" min="0" step="1" data-linen="${k}" value="${Number(row[k] || 0)}">
+    </div>
+  `).join("");
+
+  // 🔹 Calculate initial total
+  const updateTotal = () => {
+    const inputs = dwLinenGrid.querySelectorAll('input[data-linen]');
+    const total = Array.from(inputs).reduce((sum, inp) => sum + (Number(inp.value) || 0), 0);
+    totalEl.textContent = `Total: ${total}`;
+  };
+
+  updateTotal(); // initial calc
+  dwLinenGrid.querySelectorAll('input[data-linen]').forEach(inp => {
+    inp.addEventListener('input', updateTotal);
+  });
+}
+
 
     function closeDrawer() {
       drawer.classList.remove('active');
