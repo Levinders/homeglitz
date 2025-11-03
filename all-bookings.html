@@ -31,7 +31,6 @@
       width: 250px; background: var(--panel); border-right: 1px solid var(--border);
       box-shadow: var(--shadow); display: flex; flex-direction: column;
       padding: 20px 0; overflow-y: auto; z-index: 2000;
-      transition: left var(--transition); /* added for smooth mobile slide */
     }
     .sidebar .brand { display: flex; align-items: center; justify-content: center; margin-bottom: 30px; }
     .sidebar .brand img { height: 48px; transition: all var(--transition); }
@@ -136,7 +135,7 @@
       padding: 6px 8px;
       font-size: 13px;
       background: #f9fbfd;
-      color: #000;         /* keep readable on all devices */
+      color: var(--text);
       cursor: pointer;
     }
     tr.flash { background: #e9f7ff !important; transition: background 0.5s ease; }
@@ -162,17 +161,15 @@
 
     /* Drawer (details panel) */
     .drawer-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.25);
-      opacity: 0; visibility: hidden; transition: opacity 0.25s ease; z-index: 3000; /* faster */
-      display: none; /* default off */
+      position: fixed; inset: 0; background: rgba(0,0,0,0.25);
+      opacity: 0; visibility: hidden; transition: var(--transition); z-index: 3000;
     }
-    .drawer-overlay.active { opacity: 1; visibility: visible; display: block; }
+    .drawer-overlay.active { opacity: 1; visibility: visible; }
     .drawer {
       position: fixed; top: 60px; right: 0; bottom: 0; width: min(560px, 100%);
       background: var(--panel); border-left: 1px solid var(--border);
       box-shadow: -10px 0 30px rgba(0,0,0,.08);
-      transform: translateX(100%); transition: transform 0.25s ease; z-index: 3100; /* faster */
+      transform: translateX(100%); transition: var(--transition); z-index: 3100;
       display: flex; flex-direction: column;
     }
     .drawer.active { transform: translateX(0); }
@@ -185,9 +182,9 @@
     .drawer__body { padding: 20px; overflow: auto; }
     .drawer__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .group { display: flex; flex-direction: column; gap: 8px; }
-    .group label { font-weight: 600; font-size: 13px; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+    .group label { font-weight: 600; font-size: 14px; color: var(--primary); display: flex; align-items: center; gap: 8px; }
     .group input, .group select, .group textarea {
-      border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 12px; background: #fdfdfd; outline: none;
+      border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 14px; background: #fdfdfd; outline: none;
     }
     .section-title { font-weight: 700; color: var(--text); margin: 8px 0; border-bottom: 1px solid #eef2f6; padding-bottom: 6px; }
     .b2b-badges { display: flex; gap: 10px; }
@@ -224,56 +221,15 @@
     .hz-loader .spin { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(15,114,180,.2); border-top-color: #0F72B4; animation: hzspin 1s linear infinite; }
     @keyframes hzspin { to { transform: rotate(360deg); } }
 
-    /* ===== 📱 MOBILE ONLY ===== */
+    /* Mobile */
     @media (max-width: 900px) {
-      /* Sidebar + Overlay for mobile nav */
       .sidebar { left: -250px; }
       .sidebar.open { left: 0; }
-      .overlay.active {
-        display: block;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.25);
-        z-index: 1500;
-      }
-
-      /* Layout adjustments */
-      .topbar { left: 0; right: 0; padding: 0 15px; }
+      .topbar { left: 0; right: 0; }
       main { margin-left: 0; padding: 100px 10px 40px; }
-      .filters { grid-template-columns: 1fr 1fr; gap: 8px; }
-      .filters .field { padding: 6px 10px; font-size: 13px; }
-      .table-wrap { overflow-x: auto; border-radius: 10px; }
+      .filters { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .drawer { top: 60px; width: 100%; }
       table { min-width: 800px; }
-      .card__footer { flex-direction: column; align-items: center; gap: 8px; padding: 12px; }
-      .pagination { justify-content: center; }
-      .page-indicator { font-size: 13px; }
-
-      /* Drawer as bottom sheet (fast 0.25s) */
-      .drawer {
-        width: 100%;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        top: auto;
-        border-radius: 16px 16px 0 0;
-        border-left: none;
-        border-top: 1px solid var(--border);
-        transform: translateY(100%);
-        transition: transform 0.25s ease; /* fast */
-      }
-      .drawer.active {
-        transform: translateY(0);
-      }
-
-      .drawer__body { padding: 14px; max-height: 70vh; overflow-y: auto; }
-      .drawer__grid { grid-template-columns: 1fr; gap: 10px; }
-      .drawer__footer {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px;
-        padding: 12px;
-        border-top: 1px solid var(--border);
-      }
     }
   </style>
 </head>
@@ -316,11 +272,8 @@
       <div class="card">
         <!-- Header (title + inline filters) -->
         <div class="card__header">
-
-  <h2 class="card__title">
-  <i class="fa-solid fa-list"></i> All Bookings </h2>
-
-
+          <h2 class="card__title"><i class="fa-solid fa-list"></i> All Bookings</h2>
+          <div class="filters" id="filtersBar">
             <div class="field" title="Search">
               <i class="fa-solid fa-magnifying-glass"></i>
               <input id="fSearch" type="text" placeholder="Search cleaner, property…"/>
@@ -387,7 +340,7 @@
   <aside class="drawer" id="drawer">
     <div class="drawer__head">
       <div class="drawer__title"><i class="fa-solid fa-clipboard-list"></i><span id="dwTitle">Booking Details</span></div>
-      <button class="btn btn-light" id="dwClose"><i class="fa-solid fa-xmark"></i></button>
+      <button class="btn btn-light" id="dwClose"><i class="fa-solid fa-xmark"></i> Close</button>
     </div>
     <div class="drawer__body">
       <div class="section-title"><i class="fa-solid fa-house"></i> Property</div>
@@ -423,7 +376,7 @@
       </div>
 
       <div id="dwAirbnbSection" style="margin-top:16px; display:none;">
-        <div class="section-title"><i class=""></i></div>
+        <div class="section-title"><i class="fa-solid fa-bed"></i> Packing List (Airbnb)</div>
         <div id="dwLinenGrid" class="drawer__grid"></div>
       </div>
     </div>
@@ -438,420 +391,388 @@
   <div class="hz-loader" id="loader"><div class="box"><div class="spin"></div><span>Loading…</span></div></div>
 
   <script>
-/* ===== Sidebar / Topbar ===== */
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
-const menuToggle = document.getElementById('menuToggle');
-const bookingMenu = document.getElementById('bookingMenu');
-const bookingItem = bookingMenu.parentElement;
+    /* ===== Sidebar / Topbar (exact behavior) ===== */
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const menuToggle = document.getElementById('menuToggle');
+    const bookingMenu = document.getElementById('bookingMenu');
+    const bookingItem = bookingMenu.parentElement;
 
-menuToggle.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
-overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
-bookingMenu.onclick = (e) => { e.preventDefault(); bookingItem.classList.toggle('open'); };
+    menuToggle.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
+    overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
+    bookingMenu.onclick = (e) => { e.preventDefault(); bookingItem.classList.toggle('open'); };
 
-/* ===== Toast + Loader ===== */
-const toast = document.getElementById('toast');
-const loader = document.getElementById('loader');
-function showToast(msg){ toast.textContent = msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), 2200); }
-function showLoader(){ loader.classList.add('active'); }
-function hideLoader(){ loader.classList.remove('active'); }
+    /* ===== Toast + Loader (same visuals as Create New) ===== */
+    const toast = document.getElementById('toast');
+    const loader = document.getElementById('loader');
+    function showToast(msg){ toast.textContent = msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), 2200); }
+    function showLoader(){ loader.classList.add('active'); }
+    function hideLoader(){ loader.classList.remove('active'); }
 
-/* ===== API base ===== */
-  const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbylnoBiDB5Y0gGW4YDJEdtaA4dOS29elNUYtDDV9X4yNgW1PHJ8kgOcRZ5ULuFuE2o6/exec");
+    /* ===== API base (your latest endpoint via corsproxy) ===== */
+    const scriptBaseURL =
+      "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbylnoBiDB5Y0gGW4YDJEdtaA4dOS29elNUYtDDV9X4yNgW1PHJ8kgOcRZ5ULuFuE2o6/exec");
 
-
-async function fetchJSON(url) {
-  const sep = url.includes("?") ? "&" : "?";
-  const res = await fetch(`${url}${sep}_=${Date.now()}`, { cache: "no-store" });
-  const text = await res.text();
-  if (text.trim().startsWith("<")) throw new Error("Non-JSON response (HTML)");
-  return JSON.parse(text);
-}
-
-/* ===== State ===== */
-let ALL_ROWS = [];
-let FILTERED = [];
-const PAGE_SIZE = 25;
-let page = 1;
-let totalPages = 1;
-
-/* ===== Load bookings ===== */
-async function loadBookings() {
-  showLoader();
-  try {
-    const rows = await fetchJSON(`${scriptBaseURL}?type=bookings`);
-    ALL_ROWS = hydrateTypes(rows).sort(sortByMostRecent);
-    applyFilters();
-  } catch (e) {
-    console.error(e);
-    showToast('Error loading bookings');
-    renderTable([]);
-  } finally {
-    hideLoader();
-  }
-}
-
-   
-        // 👂 Listen for new booking events from other tabs/pages
-window.addEventListener('storage', async (e) => {
-  if (e.key === 'refreshBookings') {
-    showToast("🔄 New booking detected! Refreshing…");
-    await loadBookings();
-  }
-});
-
-function hydrateTypes(rows) {
-  return rows.map(r => {
-    let type = r["Type"];
-    if (!type) type = (typeof r["Flat Sheets King"] !== 'undefined') ? "Airbnb Cleaning" : "Home / Office Cleaning";
-    return { ...r, Type: type };
-  });
-}
-
-function sortByMostRecent(a, b) {
-  const da = a["Cleaning Date"] ? new Date(a["Cleaning Date"]).getTime() : 0;
-  const db = b["Cleaning Date"] ? new Date(b["Cleaning Date"]).getTime() : 0;
-  if (db !== da) return db - da;
-  const ta = a["Timestamp"] ? new Date(a["Timestamp"]).getTime() : 0;
-  const tb = b["Timestamp"] ? new Date(b["Timestamp"]).getTime() : 0;
-  if (tb !== ta) return tb - ta;
-  const ia = (a["Booking ID"] || "").toString();
-  const ib = (b["Booking ID"] || "").toString();
-  return ib.localeCompare(ia);
-}
-
-/* ===== Filters ===== */
-const fSearch = document.getElementById('fSearch');
-const fType = document.getElementById('fType');
-const fStatus = document.getElementById('fStatus');
-const fDate = document.getElementById('fDate');
-const fClear = document.getElementById('fClear');
-
-function applyFilters() {
-  const q = (fSearch.value || '').toLowerCase().trim();
-  const t = fType.value;
-  const s = fStatus.value;
-  const exactDate = fDate.value ? new Date(fDate.value) : null;
-
-  FILTERED = ALL_ROWS.filter(r => {
-    const hay = [
-      r["Booking ID"], r["Property Name"], r["Cleaners"], r["Address"], r["Notes"], r["Note"]
-    ].map(x => (x || '').toString().toLowerCase()).join(' ');
-    if (q && !hay.includes(q)) return false;
-
-    const type = (r["Type"] || '').toLowerCase();
-    if (t === 'airbnb' && !type.includes('airbnb')) return false;
-    if (t === 'office' && type.includes('airbnb')) return false;
-
-    if (s !== 'all' && r["Status"] !== s) return false;
-
-    if (exactDate) {
-      const d = r["Cleaning Date"] ? new Date(r["Cleaning Date"]) : null;
-      if (!d) return false;
-      if (!isSameDay(d, exactDate)) return false;
+    async function fetchJSON(url) {
+      const res = await fetch(url, { cache: 'no-store' });
+      const text = await res.text();
+      if (text.trim().startsWith('<')) throw new Error('Non-JSON response (HTML) – check deployment permissions.');
+      return JSON.parse(text);
     }
 
-    return true;
-  });
+    /* ===== State ===== */
+    let ALL_ROWS = [];       // all bookings
+    let FILTERED = [];       // after filters
+    const PAGE_SIZE = 25;
+    let page = 1;
+    let totalPages = 1;
 
-  page = 1;
-  paginateAndRender();
-}
-
-[fSearch, fType, fStatus, fDate].forEach(el => el.addEventListener('input', applyFilters));
-fClear.addEventListener('click', () => {
-  fSearch.value = ''; fType.value = 'all'; fStatus.value = 'all'; fDate.value = '';
-  applyFilters();
-});
-
-function isSameDay(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
-
-/* ===== Pagination ===== */
-const btnPrev=document.getElementById('btnPrev');
-const btnNext=document.getElementById('btnNext');
-const pageIndicator=document.getElementById('pageIndicator');
-
-btnPrev.onclick=()=>{if(page>1){page--;paginateAndRender();}};
-btnNext.onclick=()=>{if(page<totalPages){page++;paginateAndRender();}};
-
-function paginateAndRender(){
-  const total=FILTERED.length;
-  totalPages=Math.max(1,Math.ceil(total/PAGE_SIZE));
-  if(page>totalPages)page=totalPages;
-  const start=(page-1)*PAGE_SIZE;
-  const slice=FILTERED.slice(start,start+PAGE_SIZE);
-  renderTable(slice);
-  pageIndicator.textContent=`Page ${page} of ${totalPages}`;
-  btnPrev.disabled=(page<=1);
-  btnNext.disabled=(page>=totalPages);
-}
-
-/* ===== Table Render ===== */
-function renderTable(rows){
-  const tbody=document.querySelector('#bookingsTable tbody');
-  if(!rows||rows.length===0){
-    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px;">No bookings found</td></tr>`;
-    return;
-  }
-
-  tbody.innerHTML=rows.map(r=>{
-    const id=r["Booking ID"]||"";
-    const propFull=r["Property Name"]||"";
-    const propTrunc=truncateWords(propFull,3);
-    const cleaner=r["Cleaners"]||"";
-    const date=r["Cleaning Date"]?formatDateCell(r["Cleaning Date"]):"";
-    const b2b=r["B2B"]||"";
-    const type=r["Type"]||(r["Flat Sheets King"]?"Airbnb Cleaning":"Home / Office Cleaning");
-    const status=r["Status"]||"Pending";
-    return`
-      <tr data-id="${escapeHtml(id)}" data-type="${escapeHtml(type)}">
-        <td>${escapeHtml(id)}</td>
-        <td class="cell-actions" onclick="event.stopPropagation();">
-          <select class="status-select" data-id="${escapeHtml(id)}">
-            ${["Pending","Clean Underway","Completed"].map(s=>`<option value="${s}" ${status===s?"selected":""}>${s}</option>`).join("")}
-          </select>
-        </td>
-        <td title="${escapeHtml(propFull)}"><span class="prop-trunc">${escapeHtml(propTrunc)}</span></td>
-        <td>${escapeHtml(cleaner)}</td>
-        <td>${escapeHtml(date)}</td>
-        <td>${escapeHtml(b2b)}</td>
-        <td>${escapeHtml(type)}</td>
-      </tr>`;
-  }).join("");
-
-  document.querySelectorAll('#bookingsTable tbody tr').forEach(tr=>{
-    tr.addEventListener('click',()=>openDrawerWith(tr.dataset.id));
-  });
-
-  document.querySelectorAll('.status-select').forEach(sel=>{
-    sel.addEventListener('change',async(e)=>{
-      const bookingId=e.target.getAttribute('data-id');
-      const newStatus=e.target.value;
-      const row=e.target.closest('tr');
-      await updateStatus(bookingId,newStatus,row);
-    });
-  });
-}
-
-function truncateWords(str,count){if(!str)return'';const parts=str.trim().split(/\s+/);return parts.length<=count?str:parts.slice(0,count).join(' ')+'…';}
-function formatDateCell(v){try{const d=(typeof v==='string'||typeof v==='number')?new Date(v):v;return new Date(d).toLocaleDateString();}catch{return'';}}
-function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-
-/* ===== Inline Status Update ===== */
-async function updateStatus(bookingId,status,rowEl){
-  try{
-    showLoader();
-    await fetch(scriptBaseURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'updateStatus',bookingId,status})});
-    showToast('Status updated');
-    rowEl.classList.add('flash');
-    setTimeout(()=>rowEl.classList.remove('flash'),800);
-  }catch(e){
-    console.error(e);
-    showToast('Error updating status');
-  }finally{hideLoader();}
-}
-
-/* ===== Drawer ===== */
-const drawer=document.getElementById('drawer');
-const drawerOverlay=document.getElementById('drawerOverlay');
-const dwClose=document.getElementById('dwClose');
-const dwCancel=document.getElementById('dwCancel');
-const dwSave=document.getElementById('dwSave');
-
-const dwTitle=document.getElementById('dwTitle');
-const dwId=document.getElementById('dwId');
-const dwType=document.getElementById('dwType');
-const dwProp=document.getElementById('dwProp');
-const dwAddr=document.getElementById('dwAddr');
-const dwCleaner=document.getElementById('dwCleaner');
-const dwDate=document.getElementById('dwDate');
-const dwStatus=document.getElementById('dwStatus');
-const dwB2BYes=document.getElementById('dwB2BYes');
-const dwB2BNo=document.getElementById('dwB2BNo');
-const dwNotes=document.getElementById('dwNotes');
-const dwAirbnbSection=document.getElementById('dwAirbnbSection');
-const dwLinenGrid=document.getElementById('dwLinenGrid');
-
-let CURRENT_EDIT=null;
-
-function openDrawerWith(bookingId){
-  const row=ALL_ROWS.find(r=>(r["Booking ID"]||'')===bookingId);
-  if(!row)return;
-  CURRENT_EDIT=JSON.parse(JSON.stringify(row));
-  const type=row["Type"]||(row["Flat Sheets King"]?"Airbnb Cleaning":"Home / Office Cleaning");
-
-  dwTitle.textContent=`Booking Details — ${bookingId}`;
-  dwId.value=row["Booking ID"]||'';
-  dwType.value=type;
-  dwProp.value=row["Property Name"]||'';
-  dwAddr.value=row["Address"]||'';
-  dwCleaner.value=row["Cleaners"]||'';
-  dwDate.value=toDateInput(row["Cleaning Date"]);
-  dwStatus.value=row["Status"]||'Pending';
-  const b2b=(row["B2B"]||'No').toLowerCase();
-  if(b2b==='yes'){dwB2BYes.classList.add('active');dwB2BNo.classList.remove('active');}else{dwB2BNo.classList.add('active');dwB2BYes.classList.remove('active');}
-  dwNotes.value=row["Notes"]||row["Note"]||'';
-
-  if(type.toLowerCase().includes('airbnb')){dwAirbnbSection.style.display='block';renderLinenInputs(row);}
-  else{dwAirbnbSection.style.display='none';dwLinenGrid.innerHTML='';}
-
-  drawer.classList.add('active');
-  drawerOverlay.classList.add('active');
-}
-
-function toDateInput(v){if(!v)return'';const d=new Date(v);if(isNaN(d))return'';const yyyy=d.getFullYear();const mm=String(d.getMonth()+1).padStart(2,'0');const dd=String(d.getDate()).padStart(2,'0');return`${yyyy}-${mm}-${dd}`;}
-
-/* ===== Load Price List (normalized keys) ===== */
-let PRICE_LIST = {};
-
-async function loadPriceList() {
-  try {
-    const data = await fetchJSON(`${scriptBaseURL}?type=price-list`);
-    PRICE_LIST = {};
-
-    (data || []).forEach(item => {
-      const name = (item["Item"] || "").toString().trim().toLowerCase();
-      const price = parseFloat(item["Pick-Up Price (Ex GST)"]) || 0;
-      if (name) PRICE_LIST[name] = price;
-    });
-
-    console.log("✅ Loaded Price List:", PRICE_LIST);
-  } catch (err) {
-    console.error("❌ Error loading price list:", err);
-    PRICE_LIST = {};
-  }
-}
-
-/* ===== Airbnb Packing List Renderer (fetch live totals from sheet) ===== */
-async function renderLinenInputs(row) {
-  const bookingId = row["Booking ID"];
-  if (!bookingId) return;
-
-  // Ensure Price List is loaded
-  if (Object.keys(PRICE_LIST).length === 0) await loadPriceList();
-
-  const section = document.getElementById("dwAirbnbSection");
-  let dwPackingHeader = document.getElementById("dwPackingHeader");
-
-  // Create header if not existing
-  if (!dwPackingHeader) {
-    dwPackingHeader = document.createElement("div");
-    dwPackingHeader.id = "dwPackingHeader";
-    dwPackingHeader.style.display = "flex";
-    dwPackingHeader.style.alignItems = "center";
-    dwPackingHeader.style.justifyContent = "space-between";
-    dwPackingHeader.style.marginBottom = "10px";
-    dwPackingHeader.innerHTML = `
-      <div class="section-title" style="border-bottom:none;margin:0;">
-        <i class="fa-solid fa-bed"></i> Packing List (Airbnb)
-      </div>
-      <div id="dwPackingTotal" style="font-weight:700;color:var(--primary);font-size:14px;">
-        Total: Loading…
-      </div>`;
-    section.prepend(dwPackingHeader);
-  }
-
-  const dwPackingTotal = document.getElementById("dwPackingTotal");
-
-  try {
-    // 🔹 Fetch live booking data from your "Airbnb Booking" sheet
-    const bookingData = await fetchJSON(`${scriptBaseURL}?type=booking&id=${encodeURIComponent(bookingId)}`);
-
-    if (!bookingData || !Array.isArray(bookingData) || bookingData.length === 0) {
-      dwPackingTotal.textContent = "Total: $0.00";
-      return;
+    /* ===== Load bookings (combined) ===== */
+    async function loadBookings() {
+      showLoader();
+      try {
+        // Expect your API to return combined rows for ?type=bookings
+        const rows = await fetchJSON(`${scriptBaseURL}?type=bookings`);
+        ALL_ROWS = hydrateTypes(rows).sort(sortByMostRecent);
+        applyFilters(); // will also render + paginate
+      } catch (e) {
+        console.error(e);
+        showToast('Error loading bookings');
+        renderTable([]);
+      } finally {
+        hideLoader();
+      }
     }
 
-    // Your backend should return one row for that booking
-    const liveRow = bookingData[0];
+    function hydrateTypes(rows) {
+      return rows.map(r => {
+        let type = r["Type"];
+        if (!type) type = (typeof r["Flat Sheets King"] !== 'undefined') ? "Airbnb Cleaning" : "Home / Office Cleaning";
+        return { ...r, Type: type };
+      });
+    }
 
-    const linenKeys = [
-      "Flat Sheets King","Flat Sheets Queen","Flat Sheets Double","Flat Sheets Single",
-      "Doona King","Doona Queen","Doona Double","Doona Single",
-      "Pillowcases","Bath Towels","Hand Towels","Face Towels","Bathmats","Tea Towels",
-      "King Fitted","Queen Fitted","Single Fitted"
-    ];
+    function sortByMostRecent(a, b) {
+      const da = a["Cleaning Date"] ? new Date(a["Cleaning Date"]).getTime() : 0;
+      const db = b["Cleaning Date"] ? new Date(b["Cleaning Date"]).getTime() : 0;
+      if (db !== da) return db - da;
+      // fallback to timestamp or booking id ordering (desc)
+      const ta = a["Timestamp"] ? new Date(a["Timestamp"]).getTime() : 0;
+      const tb = b["Timestamp"] ? new Date(b["Timestamp"]).getTime() : 0;
+      if (tb !== ta) return tb - ta;
+      const ia = (a["Booking ID"] || "").toString();
+      const ib = (b["Booking ID"] || "").toString();
+      return ib.localeCompare(ia);
+    }
 
-    // Calculate total from sheet
-    let total = 0;
-    linenKeys.forEach(k => {
-      const qty = parseFloat(liveRow[k] || 0);
-      const price = PRICE_LIST[k.toLowerCase()] || 0;
-      total += qty * price;
+    /* ===== Filters ===== */
+    const fSearch = document.getElementById('fSearch');
+    const fType = document.getElementById('fType');
+    const fStatus = document.getElementById('fStatus');
+    const fDate = document.getElementById('fDate');
+    const fClear = document.getElementById('fClear');
+
+    function applyFilters() {
+      const q = (fSearch.value || '').toLowerCase().trim();
+      const t = fType.value;      // all, airbnb, office
+      const s = fStatus.value;    // all or specific
+      const exactDate = fDate.value ? new Date(fDate.value) : null;
+
+      FILTERED = ALL_ROWS.filter(r => {
+        // text search
+        const hay = [
+          r["Booking ID"], r["Property Name"], r["Cleaners"], r["Address"], r["Notes"], r["Note"]
+        ].map(x => (x || '').toString().toLowerCase()).join(' ');
+        if (q && !hay.includes(q)) return false;
+
+        // type
+        const type = (r["Type"] || '').toLowerCase();
+        if (t === 'airbnb' && !type.includes('airbnb')) return false;
+        if (t === 'office' && type.includes('airbnb')) return false;
+
+        // status
+        if (s !== 'all' && r["Status"] !== s) return false;
+
+        // exact date match (same day)
+        if (exactDate) {
+          const d = r["Cleaning Date"] ? new Date(r["Cleaning Date"]) : null;
+          if (!d) return false;
+          if (!isSameDay(d, exactDate)) return false;
+        }
+
+        return true;
+      });
+
+      page = 1;
+      paginateAndRender();
+    }
+
+    [fSearch, fType, fStatus, fDate].forEach(el => el.addEventListener('input', applyFilters));
+    fClear.addEventListener('click', () => {
+      fSearch.value = ''; fType.value = 'all'; fStatus.value = 'all'; fDate.value = '';
+      applyFilters();
     });
 
-    // Display total
-    dwPackingTotal.textContent = `Total: $${total.toFixed(2)}`;
+    function isSameDay(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth() &&
+             a.getDate() === b.getDate();
+    }
 
-    // Populate the inputs visually (still show the packing list)
-    dwLinenGrid.innerHTML = linenKeys.map(k => `
-      <div class="group">
-        <label><i class="fa-solid fa-box-open"></i> ${k}</label>
-        <input type="number" min="0" step="1" data-linen="${k}" value="${Number(liveRow[k] || 0)}" disabled>
-      </div>
-    `).join("");
+    /* ===== Pagination ===== */
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    const pageIndicator = document.getElementById('pageIndicator');
 
-  } catch (err) {
-    console.error("Error fetching live booking data:", err);
-    dwPackingTotal.textContent = "Total: Error loading";
-  }
-}
+    btnPrev.addEventListener('click', () => { if (page > 1) { page--; paginateAndRender(); } });
+    btnNext.addEventListener('click', () => { if (page < totalPages) { page++; paginateAndRender(); } });
 
+    function paginateAndRender() {
+      const total = FILTERED.length;
+      totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+      if (page > totalPages) page = totalPages;
 
-/* ===== Drawer Controls ===== */
-function closeDrawer(){drawer.classList.remove('active');drawerOverlay.classList.remove('active');CURRENT_EDIT=null;}
-dwClose.onclick=closeDrawer;
-dwCancel.onclick=closeDrawer;
-drawerOverlay.onclick=closeDrawer;
-dwB2BYes.onclick=()=>{dwB2BYes.classList.add('active');dwB2BNo.classList.remove('active');};
-dwB2BNo.onclick=()=>{dwB2BNo.classList.add('active');dwB2BYes.classList.remove('active');};
+      const start = (page - 1) * PAGE_SIZE;
+      const end = start + PAGE_SIZE;
+      const slice = FILTERED.slice(start, end);
 
-/* ===== Save ===== */
-dwSave.onclick=async()=>{
-  if(!CURRENT_EDIT)return;
-  const payload={
-    action:'updateBooking',
-    bookingId:dwId.value,
-    cleaner:dwCleaner.value,
-    date:dwDate.value,
-    status:dwStatus.value,
-    b2b:dwB2BYes.classList.contains('active')?'Yes':'No',
-    notes:dwNotes.value,
-    linen:{}
-  };
-  if(dwAirbnbSection.style.display!=='none'){
-    dwLinenGrid.querySelectorAll('input[data-linen]').forEach(inp=>{
-      const k=inp.getAttribute('data-linen');
-      payload.linen[k]=Number(inp.value||0);
-    });
-  }
-  try{
-    showLoader();
-    await fetch(scriptBaseURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    showToast('Saved changes');
-    await loadBookings();
-    closeDrawer();
-  }catch(e){console.error(e);showToast('Error saving changes');}finally{hideLoader();}
-};
+      renderTable(slice);
 
-/* ===== INIT ===== */
-(async()=>{await loadPriceList();await loadBookings();})();
+      pageIndicator.textContent = `Page ${page} of ${totalPages}`;
+      btnPrev.disabled = (page <= 1);
+      btnNext.disabled = (page >= totalPages);
+    }
 
-    // 🔄 Auto-refresh bookings every 20 seconds (real-time feel)
-setInterval(async () => {
-  try {
-    console.log("🔁 Syncing bookings...");
-    const oldCount = ALL_ROWS.length;
-    await loadBookings();
-    const newCount = ALL_ROWS.length;
-    if (newCount !== oldCount) showToast("🔄 Bookings updated");
-  } catch (err) {
-    console.warn("Sync error:", err);
-  }
-}, 20000); // every 20s
+    /* ===== Table Render ===== */
+    function renderTable(rows) {
+      const tbody = document.querySelector('#bookingsTable tbody');
+      if (!rows || rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px;">No bookings found</td></tr>`;
+        return;
+      }
 
+      tbody.innerHTML = rows.map(r => {
+        const id = r["Booking ID"] || "";
+        const propFull = r["Property Name"] || "";
+        const propTrunc = truncateWords(propFull, 3);
+        const cleaner = r["Cleaners"] || "";
+        const date = r["Cleaning Date"] ? formatDateCell(r["Cleaning Date"]) : "";
+        const b2b = r["B2B"] || "";
+        const type = r["Type"] || (r["Flat Sheets King"] ? "Airbnb Cleaning" : "Home / Office Cleaning");
+        const status = r["Status"] || "Pending";
 
-</script>
+        return `
+          <tr data-id="${escapeHtml(id)}" data-type="${escapeHtml(type)}">
+            <td>${escapeHtml(id)}</td>
+            <td class="cell-actions" onclick="event.stopPropagation();">
+              <select class="status-select" data-id="${escapeHtml(id)}">
+                ${["Pending", "Clean Underway", "Completed"].map(s => `<option value="${s}" ${status===s?"selected":""}>${s}</option>`).join("")}
+              </select>
+            </td>
+            <td title="${escapeHtml(propFull)}"><span class="prop-trunc">${escapeHtml(propTrunc)}</span></td>
+            <td>${escapeHtml(cleaner)}</td>
+            <td>${escapeHtml(date)}</td>
+            <td>${escapeHtml(b2b)}</td>
+            <td>${escapeHtml(type)}</td>
+          </tr>
+        `;
+      }).join("");
 
+      // Row click -> open drawer
+      document.querySelectorAll('#bookingsTable tbody tr').forEach(tr => {
+        tr.addEventListener('click', () => openDrawerWith(tr.dataset.id));
+      });
+
+      // Inline status change
+      document.querySelectorAll('.status-select').forEach(sel => {
+        sel.addEventListener('change', async (e) => {
+          const bookingId = e.target.getAttribute('data-id');
+          const newStatus = e.target.value;
+          const row = e.target.closest('tr');
+          await updateStatus(bookingId, newStatus, row);
+        });
+      });
+    }
+
+    function truncateWords(str, count) {
+      if (!str) return '';
+      const parts = str.trim().split(/\s+/);
+      if (parts.length <= count) return str;
+      return parts.slice(0, count).join(' ') + '…';
+    }
+
+    function formatDateCell(v) {
+      try {
+        const d = (typeof v === 'string' || typeof v === 'number') ? new Date(v) : v;
+        return new Date(d).toLocaleDateString();
+      } catch { return ''; }
+    }
+
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    /* ===== Inline Status Update ===== */
+    async function updateStatus(bookingId, status, rowEl) {
+      try {
+        showLoader();
+        await fetch(scriptBaseURL, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ action: 'updateStatus', bookingId, status })
+        });
+        showToast('Status updated');
+        rowEl.classList.add('flash');
+        setTimeout(() => rowEl.classList.remove('flash'), 800);
+      } catch (e) {
+        console.error(e);
+        showToast('Error updating status');
+      } finally {
+        hideLoader();
+      }
+    }
+
+    /* ===== Drawer (view/edit) ===== */
+    const drawer = document.getElementById('drawer');
+    const drawerOverlay = document.getElementById('drawerOverlay');
+    const dwClose = document.getElementById('dwClose');
+    const dwCancel = document.getElementById('dwCancel');
+    const dwSave = document.getElementById('dwSave');
+
+    const dwTitle = document.getElementById('dwTitle');
+    const dwId = document.getElementById('dwId');
+    const dwType = document.getElementById('dwType');
+    const dwProp = document.getElementById('dwProp');
+    const dwAddr = document.getElementById('dwAddr');
+    const dwCleaner = document.getElementById('dwCleaner');
+    const dwDate = document.getElementById('dwDate');
+    const dwStatus = document.getElementById('dwStatus');
+    const dwB2BYes = document.getElementById('dwB2BYes');
+    const dwB2BNo = document.getElementById('dwB2BNo');
+    const dwNotes = document.getElementById('dwNotes');
+    const dwAirbnbSection = document.getElementById('dwAirbnbSection');
+    const dwLinenGrid = document.getElementById('dwLinenGrid');
+
+    let CURRENT_EDIT = null;
+
+    function openDrawerWith(bookingId) {
+      const row = ALL_ROWS.find(r => (r["Booking ID"] || '') === bookingId);
+      if (!row) return;
+
+      CURRENT_EDIT = JSON.parse(JSON.stringify(row));
+      const type = row["Type"] || (row["Flat Sheets King"] ? "Airbnb Cleaning" : "Home / Office Cleaning");
+
+      dwTitle.textContent = `Booking Details — ${bookingId}`;
+      dwId.value = row["Booking ID"] || '';
+      dwType.value = type;
+      dwProp.value = row["Property Name"] || '';
+      dwAddr.value = row["Address"] || '';
+      dwCleaner.value = row["Cleaners"] || '';
+      dwDate.value = toDateInput(row["Cleaning Date"]);
+      dwStatus.value = row["Status"] || 'Pending';
+      const b2b = (row["B2B"] || 'No').toLowerCase();
+      if (b2b === 'yes') { dwB2BYes.classList.add('active'); dwB2BNo.classList.remove('active'); } else { dwB2BNo.classList.add('active'); dwB2BYes.classList.remove('active'); }
+      dwNotes.value = row["Notes"] || row["Note"] || '';
+
+      if (type.toLowerCase().includes('airbnb')) {
+        dwAirbnbSection.style.display = 'block';
+        renderLinenInputs(row);
+      } else {
+        dwAirbnbSection.style.display = 'none';
+        dwLinenGrid.innerHTML = '';
+      }
+
+      drawer.classList.add('active');
+      drawerOverlay.classList.add('active');
+    }
+
+    function toDateInput(v) {
+      if (!v) return '';
+      const d = new Date(v);
+      if (isNaN(d)) return '';
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const dd = String(d.getDate()).padStart(2,'0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function renderLinenInputs(row) {
+      const keys = Object.keys(row);
+      const linenKeys = [
+        "Flat Sheets King","Flat Sheets Queen","Flat Sheets Double","Flat Sheets Single",
+        "Doona King","Doona Queen","Doona Double","Doona Single",
+        "Pillowcases","Bath Towels","Hand Towels","Face Towels","Bathmats","Tea Towels",
+        "King Fitted","Queen Fitted","Single Fitted"
+      ].filter(k => keys.includes(k));
+
+      if (linenKeys.length === 0) {
+        dwLinenGrid.innerHTML = `<div style="grid-column:1/-1;color:var(--muted);">No packing list on this booking.</div>`;
+        return;
+      }
+
+      dwLinenGrid.innerHTML = linenKeys.map(k => `
+        <div class="group">
+          <label><i class="fa-solid fa-box-open"></i> ${k}</label>
+          <input type="number" min="0" step="1" data-linen="${k}" value="${Number(row[k] || 0)}">
+        </div>
+      `).join("");
+    }
+
+    function closeDrawer() {
+      drawer.classList.remove('active');
+      drawerOverlay.classList.remove('active');
+      CURRENT_EDIT = null;
+    }
+
+    dwClose.onclick = closeDrawer;
+    dwCancel.onclick = closeDrawer;
+    drawerOverlay.onclick = closeDrawer;
+
+    // B2B toggles
+    dwB2BYes.onclick = () => { dwB2BYes.classList.add('active'); dwB2BNo.classList.remove('active'); };
+    dwB2BNo.onclick = () => { dwB2BNo.classList.add('active'); dwB2BYes.classList.remove('active'); };
+
+    // Save from drawer
+    dwSave.onclick = async () => {
+      if (!CURRENT_EDIT) return;
+      const payload = {
+        action: 'updateBooking',
+        bookingId: dwId.value,
+        cleaner: dwCleaner.value,
+        date: dwDate.value,
+        status: dwStatus.value,
+        b2b: dwB2BYes.classList.contains('active') ? 'Yes' : 'No',
+        notes: dwNotes.value,
+        linen: {}
+      };
+
+      if (dwAirbnbSection.style.display !== 'none') {
+        dwLinenGrid.querySelectorAll('input[data-linen]').forEach(inp => {
+          const k = inp.getAttribute('data-linen');
+          payload.linen[k] = Number(inp.value || 0);
+        });
+      }
+
+      try {
+        showLoader();
+        await fetch(scriptBaseURL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        showToast('Saved changes');
+        await loadBookings(); // refresh list, preserves current filters by reapplying after load
+        closeDrawer();
+      } catch (e) {
+        console.error(e);
+        showToast('Error saving changes');
+      } finally {
+        hideLoader();
+      }
+    };
+
+    /* ===== Boot ===== */
+    loadBookings();
+  </script>
 </body>
 </html>
