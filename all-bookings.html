@@ -252,7 +252,7 @@
   right: 0;
   bottom: 0;
   width: 100%;
-  height: 90vh;
+  height: 100vh;
   background: var(--panel);
   border-top: 1px solid var(--border);
   box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
@@ -264,11 +264,6 @@
   flex-direction: column;
   overflow: hidden; /* Drawer itself never scrolls */
   z-index: 3000;
-}
-
-/* When active, drawer slides up */
-.drawer.active {
-  transform: translateY(0);
 }
 
 /* Content scrolls internally (not the drawer) */
