@@ -161,7 +161,7 @@
 
     /* Drawer (details panel) */
 
-    .drawer {
+  .drawer {
   position: fixed;
   top: 60px;
   right: 0;
@@ -184,6 +184,10 @@
   transform: translateX(0);
 }
 
+.drawer__handle {
+  display: none;
+}
+
 /* Mobile: slide up from bottom */
 @media (max-width: 768px) {
   .drawer {
@@ -199,7 +203,15 @@
     box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
     transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   }
-
+  .drawer__handle {
+    display: block;
+    width: 50px;
+    height: 5px;
+    background: #ccc;
+    border-radius: 10px;
+    margin: 8px auto -4px;
+  }
+  
   .drawer.active {
     transform: translateY(0);
   }
@@ -375,6 +387,7 @@
   <!-- Drawer -->
   <div class="drawer-overlay" id="drawerOverlay"></div>
   <aside class="drawer" id="drawer">
+    <div class="drawer__handle"></div>
     <div class="drawer__head">
       <div class="drawer__title"><i class="fa-solid fa-clipboard-list"></i><span id="dwTitle">Booking Details</span></div>
       <button class="btn btn-light" id="dwClose"><i class="fa-solid fa-xmark"></i></button>
