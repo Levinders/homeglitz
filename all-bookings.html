@@ -259,39 +259,48 @@
   gap: 12px;
 }
 
-/* But for the Airbnb Packing List grid */
+/* 🧺 Packing List Summary (2-row layout, non-editable) */
 #dwLinenGrid.drawer__grid {
-  grid-template-columns: repeat(2, 1fr); /* 2 neat columns only for linens */
-  gap: 10px 14px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: auto;
+  gap: 10px 16px;
 }
 
-#dwLinenGrid .group {
+#dwLinenGrid .linen-group {
+  display: flex;
+  flex-direction: column;
   background: #f9fafb;
   border: 1px solid #e8ecf0;
   border-radius: 10px;
-  padding: 10px 12px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  padding: 12px 14px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 
-#dwLinenGrid .group label {
-  font-size: 13px;
+#dwLinenGrid .linen-title {
+  display: flex;
+  align-items: center;
   font-weight: 600;
   color: var(--primary);
+  margin-bottom: 6px;
+  font-size: 14px;
+  gap: 6px;
 }
 
-#dwLinenGrid .group input {
-  margin-top: 4px;
-  border-radius: 8px;
-  border: 1px solid #dde3ea;
-  padding: 8px 10px;
-  font-size: 14px;
-  width: 100%;
-  text-align: center;
+#dwLinenGrid .linen-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  font-size: 13px;
+  color: var(--muted);
 }
-   .drawer__body {
-    padding: 16px;
-    overflow-y: auto;
-  }
+
+#dwLinenGrid .linen-items span {
+  background: #eef4f8;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-weight: 500;
+}
 
   .group input,
   .group select,
@@ -323,20 +332,33 @@
     padding: 12px 16px;
     gap: 8px;
   }
-  
-  .drawer {
-    top: auto;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 90vh;
-    transform: translateY(100%);
-    border-left: none;
-    border-top: 1px solid var(--border);
-    box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
-    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-  }
+
+  /* Drawer behavior on mobile */
+.drawer {
+  position: fixed;
+  top: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 90vh;
+  transform: translateY(100%);
+  border-left: none;
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Drawer itself doesn’t scroll */
+}
+
+.drawer__body {
+  flex: 1;
+  padding: 18px 16px;
+  overflow-y: auto; /* Only the content scrolls */
+  -webkit-overflow-scrolling: touch;
+}
+
   .drawer__handle {
     display: block;
     width: 50px;
@@ -883,40 +905,59 @@ async function syncServerBookings() {
     }
 
 function renderLinenInputs(row) {
-  const keys = Object.keys(row);
-  const linenKeys = [
-    "Flat Sheets King","Flat Sheets Queen","Flat Sheets Double","Flat Sheets Single",
-    "Doona King","Doona Queen","Doona Double","Doona Single",
-    "Pillowcases","Bath Towels","Hand Towels","Face Towels","Bathmats","Tea Towels",
-    "King Fitted","Queen Fitted","Single Fitted"
-  ].filter(k => keys.includes(k));
+  const dwLinenGrid = document.getElementById('dwLinenGrid');
+  const dwTotal = document.getElementById('dwTotal');
 
-  const totalEl = document.getElementById('dwTotal');
-  if (linenKeys.length === 0) {
-    dwLinenGrid.innerHTML = `<div style="grid-column:1/-1;color:var(--muted);">No packing list on this booking.</div>`;
-    totalEl.textContent = 'Total: 0';
-    return;
-  }
+  // Define abbreviations and grouping
+  const bedItems = [
+    ["Flat Sheets King", "FS K"],
+    ["Flat Sheets Queen", "FS Q"],
+    ["Flat Sheets Double", "FS D"],
+    ["Flat Sheets Single", "FS S"],
+    ["Doona King", "DK"],
+    ["Doona Queen", "DQ"],
+    ["Doona Double", "DD"],
+    ["Doona Single", "DS"],
+    ["Pillowcases", "Pillow"],
+    ["King Fitted", "KF"],
+    ["Queen Fitted", "QF"],
+    ["Single Fitted", "SF"]
+  ];
 
-  dwLinenGrid.innerHTML = linenKeys.map(k => `
-    <div class="group">
-      <label><i class="fa-solid fa-box-open"></i> ${k}</label>
-      <input type="number" min="0" step="1" data-linen="${k}" value="${Number(row[k] || 0)}">
-    </div>
-  `).join("");
+  const bathItems = [
+    ["Bath Towels", "BT"],
+    ["Hand Towels", "HT"],
+    ["Face Towels", "FT"],
+    ["Bathmats", "BM"],
+    ["Tea Towels", "TT"]
+  ];
 
-  // 🔹 Calculate initial total
-  const updateTotal = () => {
-    const inputs = dwLinenGrid.querySelectorAll('input[data-linen]');
-    const total = Array.from(inputs).reduce((sum, inp) => sum + (Number(inp.value) || 0), 0);
-    totalEl.textContent = `Total: ${total}`;
+  const createGroup = (title, icon, items) => {
+    const chips = items
+      .filter(([key]) => row[key] && row[key] !== "")
+      .map(([key, short]) => `<span>${short}: ${row[key]}</span>`)
+      .join(" ");
+
+    return `
+      <div class="linen-group">
+        <div class="linen-title"><i class="fa-solid ${icon}"></i> ${title}</div>
+        <div class="linen-items">${chips || "<span style='color:#aaa;'>—</span>"}</div>
+      </div>
+    `;
   };
 
-  updateTotal(); // initial calc
-  dwLinenGrid.querySelectorAll('input[data-linen]').forEach(inp => {
-    inp.addEventListener('input', updateTotal);
-  });
+  dwLinenGrid.innerHTML = `
+    ${createGroup("Bed Linen", "fa-bed", bedItems)}
+    ${createGroup("Bath & Towels", "fa-bath", bathItems)}
+  `;
+
+  // Calculate total quantity (sum of all numeric linen values)
+  const total = [...bedItems, ...bathItems].reduce((sum, [key]) => {
+    return sum + (Number(row[key]) || 0);
+  }, 0);
+  dwTotal.textContent = `Total: ${total}`;
 }
+
 
 
     function closeDrawer() {
