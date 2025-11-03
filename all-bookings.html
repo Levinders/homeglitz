@@ -25,7 +25,7 @@
     html, body { margin: 0; padding: 0; overflow-x: hidden; }
     body { display: flex; min-height: 100vh; background: var(--primary-light); color: var(--text); }
 
-    /* === SIDEBAR (exact from Create New) === */
+    /* === SIDEBAR === */
     .sidebar {
       position: fixed; left: 0; top: 0; bottom: 0;
       width: 250px; background: var(--panel); border-right: 1px solid var(--border);
@@ -36,14 +36,21 @@
     .sidebar .brand img { height: 48px; transition: all var(--transition); }
     .nav-links { list-style: none; padding: 0; margin: 0; }
     .nav-item { position: relative; }
-    .nav-links li a { display: flex; align-items: center; gap: 12px; padding: 14px 22px; color: var(--muted); font-weight: 500; text-decoration: none; transition: all var(--transition); }
-    .nav-links li a:hover, .nav-links li a.active { background: var(--primary-light); color: var(--primary); border-left: 4px solid var(--primary); }
+    .nav-links li a {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 22px; color: var(--muted); font-weight: 500;
+      text-decoration: none; transition: all var(--transition);
+    }
+    .nav-links li a:hover, .nav-links li a.active {
+      background: var(--primary-light); color: var(--primary);
+      border-left: 4px solid var(--primary);
+    }
     .sub-menu { display: none; flex-direction: column; margin-left: 40px; }
     .sub-menu a { font-size: 14px; color: var(--muted); padding: 8px 0; transition: 0.2s; }
     .sub-menu a:hover { color: var(--primary); }
     .nav-item.open .sub-menu { display: flex; }
 
-    /* === TOPBAR (exact) === */
+    /* === TOPBAR === */
     .topbar {
       height: 60px; background: var(--panel); border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
@@ -56,488 +63,135 @@
     /* === MAIN === */
     main { flex: 1; margin-left: 250px; padding: 100px 40px 40px; background: var(--primary-light); }
 
-    /* Card becomes a column layout so footer can be fixed at bottom of card */
     .card {
       background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow);
       border: 1px solid var(--border); padding: 0; overflow: hidden;
-      display: flex; flex-direction: column;
-      /* Fill viewport height below topbar with some breathing room */
-      height: calc(100vh - 120px);
+      display: flex; flex-direction: column; height: calc(100vh - 120px);
     }
 
-    /* Sticky header area inside card */
-    .card__header {
-      background: var(--panel);
-      border-bottom: 1px solid var(--border);
-      z-index: 5;
-      padding: 16px 20px;
-    }
+    .card__header { background: var(--panel); border-bottom: 1px solid var(--border); z-index: 5; padding: 16px 20px; }
+    h2.card__title { font-size: 22px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; margin: 0 0 12px 0; }
 
-    h2.card__title {
-      font-size: 22px; font-weight: 700; color: var(--primary);
-      display: flex; align-items: center; gap: 10px; margin: 0 0 12px 0;
-    }
-
-    /* Filters row (title + filters on the same horizontal) */
-    .filters {
-      display: grid;
-      grid-template-columns: 0.2fr 0.2fr 0.2fr 0.2fr auto;
-      gap: 10px;
-      align-items: center;
-    }
+    /* === Filters === */
+    .filters { display: grid; grid-template-columns: 0.2fr 0.2fr 0.2fr 0.2fr auto; gap: 10px; align-items: center; }
     .filters .field {
-      display: flex; align-items: center; gap: 8px;
-      border: 1px solid var(--border); border-radius: 10px;
-      padding: 8px 12px; background: #fdfdfd;
+      display: flex; align-items: center; gap: 8px; border: 1px solid var(--border);
+      border-radius: 10px; padding: 8px 12px; background: #fdfdfd;
     }
-    .filters .field input, .filters .field select, .filters .field button {
-      border: none; outline: none; background: transparent; font-size: 14px; flex: 1;
-    }
+    .filters .field input, .filters .field select { border: none; outline: none; background: transparent; font-size: 14px; flex: 1; }
     .filters .btn-clear {
       border: none; border-radius: 10px; padding: 10px 16px;
-      background: #f1f3f5; color: var(--muted); font-weight: 600;
-      cursor: pointer; transition: var(--transition);
+      background: #f1f3f5; color: var(--muted); font-weight: 600; cursor: pointer;
+      transition: var(--transition);
     }
     .filters .btn-clear:hover { background: #e9ecef; }
 
-    /* Table area scrolls (both axes) with sticky header */
-    .table-wrap {
-      flex: 1 1 auto;
-      overflow: auto;               /* vertical + horizontal scroll */
-      border-top: 1px solid var(--border);
-      background: #fff;
-      max-height: 85vh;
-    }
-
+    /* === Table === */
+    .table-wrap { flex: 1 1 auto; overflow: auto; border-top: 1px solid var(--border); background: #fff; }
     table { width: 100%; border-collapse: collapse; min-width: 500px; }
-    thead th {
-      position: sticky; top: 0;
-      background: var(--primary); color: #fff; z-index: 2; font-size: 14px;
-      white-space: nowrap;
-    }
-    th, td {
-      padding: 12px 12px; font-size: 13px; text-align: left;
-      border-bottom: 1px solid var(--border); vertical-align: middle;
-    }
+    thead th { position: sticky; top: 0; background: var(--primary); color: #fff; z-index: 2; font-size: 14px; white-space: nowrap; }
+    th, td { padding: 12px 12px; font-size: 13px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
     tbody tr:hover { background: var(--primary-light); cursor: pointer; }
     td.cell-actions { cursor: default; }
-
-    /* Property name cell: show first 3 words + ellipsis, full on hover via title */
-    .prop-trunc {
-      max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      display: inline-block;
-    }
-
-    /* Inline status select */
+    .prop-trunc { max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; }
     select.status-select {
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 6px 8px;
-      font-size: 13px;
-      background: #f9fbfd;
-      color: var(--text);
-      cursor: pointer;
+      border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px;
+      font-size: 13px; background: #f9fbfd; color: var(--text); cursor: pointer;
     }
-    tr.flash { background: #e9f7ff !important; transition: background 0.5s ease; }
 
-    /* Card footer (fixed at bottom of card) */
-    .card__footer {
-      border-top: 1px solid var(--border);
-      background: var(--panel);
-      padding: 10px 16px;
-      display: flex; align-items: center; justify-content: space-between;
-      flex: 0 0 auto;
-    }
-    .pagination {
-      display: flex; align-items: center; gap: 10px;
-    }
-    .pagination .btn {
-      border: none; border-radius: 8px; padding: 8px 14px; font-weight: 400; cursor: pointer; font-size: 12px; transition: var(--transition);
-      background: #f1f3f5; color: var(--muted);
-    }
-    .pagination .btn:hover { background: #e9ecef; }
-    .pagination .btn[disabled] { opacity: .5; cursor: not-allowed; }
-    .page-indicator { color: var(--muted); font-weight: 400; font-size: 12px;}
-
-    /* Drawer (details panel) */
-
-  .drawer {
-  position: fixed;
-  top: 60px;
-  right: 0;
-  bottom: 0;
-  width: min(560px, 100%);
-  background: var(--panel);
-  border-left: 1px solid var(--border);
-  box-shadow: -10px 0 30px rgba(0,0,0,.08);
-  transform: translateX(100%);
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-  z-index: 3100;
-  display: flex;
-  flex-direction: column;
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-}
-
-/* Desktop: slide from right */
-.drawer.active {
-  transform: translateX(0);
-}
-
-.drawer__handle {
-  display: none;
-}
-
-.drawer-overlay {
+    /* === Drawer === */
+    .drawer-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.25);
       opacity: 0; visibility: hidden; transition: var(--transition); z-index: 3000;
     }
     .drawer-overlay.active { opacity: 1; visibility: visible; }
+
+    .drawer {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--panel); border-left: none; box-shadow: none;
+      transform: none; z-index: 3100;
+      display: none; flex-direction: column;
+    }
+    .drawer.active { display: flex; }
+
     .drawer__head {
       padding: 16px 20px; border-bottom: 1px solid var(--border);
       display: flex; justify-content: space-between; align-items: center;
       position: sticky; top: 0; background: var(--panel); z-index: 1;
     }
     .drawer__title { font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
-    .drawer__body { padding: 20px; overflow: auto; }
+    .drawer__body { flex: 1; padding: 20px; overflow-y: auto; }
     .drawer__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .group { display: flex; flex-direction: column; gap: 8px; }
     .group label { font-weight: 600; font-size: 14px; color: var(--primary); display: flex; align-items: center; gap: 8px; }
     .group input, .group select, .group textarea {
-      border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 14px; background: #fdfdfd; outline: none;
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 10px 12px; font-size: 14px; background: #fdfdfd; outline: none;
     }
     .section-title { font-weight: 700; color: var(--text); margin: 8px 0; border-bottom: 1px solid #eef2f6; padding-bottom: 6px; }
-    .b2b-badges { display: flex; gap: 10px; }
-    .badge { flex: 1; text-align: center; padding: 8px 10px; border-radius: 18px; border: 1px solid rgba(15,114,180,0.25); background: rgba(15,114,180,0.08); color: var(--primary); font-weight: 600; cursor: pointer; }
-    .badge.active { background: var(--primary); color: #fff; box-shadow: 0 0 8px rgba(15,114,180,0.3); }
+
+    /* Packing List for Airbnb */
+    #dwLinenGrid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 12px;
+    }
+    #dwLinenGrid .group {
+      background: #f9fafb; border: 1px solid #e8ecf0; border-radius: 10px;
+      padding: 8px 10px; text-align: center;
+    }
+    #dwLinenGrid .group label { font-size: 12px; font-weight: 600; color: var(--primary); }
+    #dwLinenGrid .group input {
+      margin-top: 2px; font-size: 13px; border-radius: 8px;
+      border: 1px solid #dde3ea; padding: 6px; width: 100%;
+    }
+
     .drawer__footer {
-      border-top: 1px solid var(--border); padding: 14px 20px; display: flex; justify-content: flex-end; gap: 10px;
-      position: sticky; bottom: 0; background: var(--panel);
+      border-top: 1px solid var(--border);
+      padding: 14px 20px; display: flex; justify-content: flex-end; gap: 10px;
+      background: var(--panel);
     }
-    .btn { border: none; border-radius: 8px; padding: 12px 22px; font-weight: 600; cursor: pointer; font-size: 14px; transition: var(--transition); }
-    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(15,114,180,0.2); }
-    .btn-primary:hover { background: #0d5f95; transform: translateY(-1px); }
-    .btn-light { background: #f1f3f5; color: var(--muted); }
-    .btn-light:hover { background: #e9ecef; }
 
-    /* Toast + Loader (same visuals as Create New) */
-    .hz-toast {
-      position: fixed; bottom: 24px; right: 24px;
-      background: #0F72B4; color: #fff; padding: 12px 16px;
-      border-radius: 10px; font-weight: 600; box-shadow: 0 10px 24px rgba(15,114,180,.25);
-      opacity: 0; transform: translateY(16px); transition: .3s ease; z-index: 5000;
-    }
-    .hz-toast.show { opacity: 1; transform: translateY(0); }
-    .hz-loader {
-      position: fixed; inset: 0; background: rgba(0,0,0,.25);
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; visibility: hidden; transition: opacity .15s ease; z-index: 4000;
-    }
-    .hz-loader.active { opacity: 1; visibility: visible; }
-    .hz-loader .box {
-      background: #fff; border: 1px solid #e4e9ef; box-shadow: 0 10px 30px rgba(0,0,0,.08);
-      padding: 18px 22px; border-radius: 12px; color: #222; font-weight: 600; display: flex; align-items: center; gap: 12px;
-    }
-    .hz-loader .spin { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(15,114,180,.2); border-top-color: #0F72B4; animation: hzspin 1s linear infinite; }
-    @keyframes hzspin { to { transform: rotate(360deg); } }
-
-
-    /* Mobile: slide up from bottom */
-@media (max-width: 768px) {
-
-  /* Drawer: fixed bottom sheet (mobile) */
-.drawer {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100vh;
-  background: var(--panel);
-  border-top: 1px solid var(--border);
-  box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-  transform: translateY(100%);
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden; /* Drawer itself never scrolls */
-  z-index: 3000;
-}
-
-/* Content scrolls internally (not the drawer) */
-.drawer__body {
-  flex: 1;
-  padding: 18px 16px;
-  overflow-y: auto; /* smooth content scroll */
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Hide scrollbar for clean look */
-.drawer__body::-webkit-scrollbar {
-  width: 0;
-}
-
-/* Hide overlay click interaction — only X closes it */
-.drawer-overlay {
-  background: rgba(0,0,0,0.4);
-  pointer-events: none; /* overlay no longer closes drawer */
-  opacity: 0; /* optional: make it invisible */
-}
-
-
-    body, html {
-    overflow-x: hidden !important;
-  }
-  .drawer, .drawer__body {
-    max-width: 100%;
-    overflow-x: hidden;
-  }
-
-.drawer__grid {
-  display: grid;
-  grid-template-columns: 1fr; /* default single column for most sections */
-  gap: 12px;
-}
-
-
-/* 🧺 Packing List Summary: 2 neat rows */
-#dwLinenGrid.drawer__grid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
-}
-
-#dwLinenGrid .linen-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #f9fafb;
-  border: 1px solid #e8ecf0;
-  border-radius: 10px;
-  padding: 10px 12px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-}
-
-#dwLinenGrid .linen-title {
-  display: flex;
-  align-items: center;
-  font-weight: 600;
-  color: var(--primary);
-  gap: 8px;
-  min-width: 130px;
-}
-
-#dwLinenGrid .linen-items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--muted);
-  justify-content: flex-end;
-}
-
-#dwLinenGrid .linen-items span {
-  background: #eef4f8;
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-weight: 500;
-}
-
-
-
-  .group input,
-  .group select,
-  .group textarea {
-    width: 100%;
-    font-size: 15px;
-  }
-
-  .group label {
-  font-size: 14px;
-  font-weight: 600;
-  }
-  
-  .group {
-    gap: 6px;
-  }
-  
-  .section-title {
-    margin-top: 18px;
-    font-size: 15px;
-    padding-bottom: 4px;
-  }
-
-  .drawer__footer {
-    padding: 12px 16px;
-    gap: 8px;
-  }
-
-  .drawer__handle {
-    display: block;
-    width: 50px;
-    height: 5px;
-    background: #ccc;
-    border-radius: 10px;
-    margin: 8px auto -4px;
-  }
-
-  #dwTotal {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--primary);
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.drawer__footer {
-  border-top: 1px solid var(--border);
-  background: var(--panel);
-  position: sticky;
-  bottom: 0;
-}
-
-/* 🧭 Responsive Table Styling (Mobile - refined) */
-.table-wrap {
-  position: relative;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-  background: var(--panel);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  margin-top: 12px;
-  padding-bottom: 4px;
-}
-
-/* Hide scrollbar for clean UI */
-.table-wrap::-webkit-scrollbar {
-  height: 0;
-}
-
-/* Table: compact layout with consistent spacing */
-table {
-  width: 100%;
-  min-width: 720px; /* ensures stable column layout */
-  border-collapse: separate;
-  border-spacing: 0;
-  background: var(--panel);
-}
-
-thead th {
-  position: sticky;
-  top: 0;
-  background: var(--primary);
-  color: #fff;
-  font-size: 13px;
-  text-align: left;
-  padding: 10px 8px;
-  white-space: nowrap;
-  font-weight: 600;
-  z-index: 2;
-}
-
-tbody td {
-  font-size: 13px;
-  padding: 10px 8px;
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-  vertical-align: middle;
-}
-
-tbody tr {
-  transition: background 0.2s ease;
-}
-
-tbody tr:hover {
-  background: rgba(15, 114, 180, 0.05);
-}
-
-td.cell-actions {
-  padding: 8px 6px;
-}
-
-select.status-select {
-  font-size: 12px;
-  padding: 4px 6px;
-  border-radius: 6px;
-}
-
-/* Compact alignment and truncation for property names */
-.prop-trunc {
-  max-width: 140px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: inline-block;
-}
-
-/* Table footer stays clean */
-.card__footer {
-  padding: 12px 10px;
-  border-top: none;
-  background: transparent;
-}
-
-/* Gentle scroll shadow hint (UX cue) */
-.table-wrap::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 24px;
-  background: linear-gradient(to left, var(--primary-light), transparent);
-  pointer-events: none;
-}
-
-/* Subtle row separation on smaller screens */
-tbody td:first-child {
-  font-weight: 600;
-  color: var(--primary);
-}
-
-/* Better tap space for rows */
-tbody tr {
-  cursor: pointer;
-  touch-action: manipulation;
-}
-
-/* Fix alignment inside the card */
-.card {
-  box-shadow: none;
-  border: none;
-  background: transparent;
-}
-
-
-}
-
-
-
-    
-    /* Mobile */
-    @media (max-width: 900px) {
+    /* === Mobile Enhancements === */
+    @media (max-width: 768px) {
+      main { margin-left: 0; padding: 100px 12px; }
       .sidebar { left: -250px; }
       .sidebar.open { left: 0; }
       .topbar { left: 0; right: 0; }
-      main { margin-left: 0; padding: 100px 10px 40px; }
-      .filters { grid-template-columns: 1fr 1fr; gap: 10px; }
-      .drawer { top: 60px; width: 100%; }
-      table { min-width: 800px; }
+
+      /* Responsive table container */
+      .table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        margin-top: 8px;
+      }
+      table { min-width: 720px; }
+
+      /* Drawer full screen */
+      .drawer {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        width: 100%; height: 100vh;
+        border: none; box-shadow: none;
+        transform: none; display: none;
+      }
+      .drawer.active { display: flex; }
+
+      /* Packing List: 2-row summary look */
+      #dwLinenGrid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      #dwLinenGrid .group {
+        padding: 8px 10px;
+        background: #fff;
+        border-radius: 8px;
+        border: 1px solid #eaeaea;
+      }
     }
-    
   </style>
 </head>
-
 <body>
+
+
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="brand">
@@ -1189,5 +843,6 @@ observer.observe(drawer, { attributes: true, attributeFilter: ['class'] });
     /* ===== Boot ===== */
     loadBookings();
   </script>
+
 </body>
 </html>
