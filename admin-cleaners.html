@@ -24,7 +24,7 @@
     html, body { margin: 0; padding: 0; overflow-x: hidden; }
     body { display: flex; min-height: 100vh; background: var(--primary-light); color: var(--text); }
 
-    /* Sidebar and topbar same as booking.html */
+    /* === Sidebar & Topbar (unchanged from booking.html) === */
     .sidebar {
       position: fixed; left: 0; top: 0; bottom: 0;
       width: 250px; background: var(--panel); border-right: 1px solid var(--border);
@@ -39,9 +39,10 @@
       display: flex; align-items: center; gap: 12px; padding: 14px 22px;
       color: var(--muted); font-weight: 500; text-decoration: none; transition: all var(--transition);
     }
-    .nav-links li a:hover, .nav-links li a.active { background: var(--primary-light); color: var(--primary); border-left: 4px solid var(--primary); }
+    .nav-links li a:hover, .nav-links li a.active {
+      background: var(--primary-light); color: var(--primary); border-left: 4px solid var(--primary);
+    }
     .sub-menu { display: none; flex-direction: column; margin-left: 40px; font-size: 12px; }
-    .sub-menu a { color: var(--muted); }
     .nav-item.open .sub-menu { display: flex; }
 
     .topbar {
@@ -56,7 +57,7 @@
 
     main { flex: 1; margin-left: 250px; padding: 100px 40px 40px; background: var(--primary-light); }
 
-    /* Card and Table */
+    /* === Card and Table === */
     .card {
       background: var(--panel);
       border-radius: var(--radius);
@@ -100,24 +101,27 @@
     .btn.edit { background: #eef3ff; color: var(--primary); }
     .btn.delete { background: #fdeaea; color: #c0392b; }
 
-    /* Drawer (slide-up) */
+    /* === Drawer (Slide-Up / Centered Modal) === */
     .drawer {
       position: fixed;
       bottom: 0;
-      left: 0;
-      right: 0;
+      left: 50%;
+      transform: translate(-50%, 100%);
       background: var(--panel);
-      border-top-left-radius: 20px;
-      border-top-right-radius: 20px;
+      border-radius: 20px;
       box-shadow: 0 -6px 20px rgba(0,0,0,0.1);
-      transform: translateY(100%);
       transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
       z-index: 5000;
-      max-height: 90vh;
+      width: 600px;
+      max-width: 95%;
+      max-height: 85vh;
       display: flex;
       flex-direction: column;
     }
-    .drawer.active { transform: translateY(0); }
+    .drawer.active {
+      transform: translate(-50%, 0);
+    }
+
     .drawer__header {
       padding: 18px 24px;
       border-bottom: 1px solid var(--border);
@@ -129,20 +133,20 @@
     }
     .drawer__body {
       padding: 20px 24px;
-      overflow-y: auto;
       flex: 1;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px 24px;
     }
-    .drawer__body .group {
-      margin-bottom: 16px;
-    }
-    .drawer__body label {
+    .drawer__body .group label {
       display: block;
       font-weight: 600;
       margin-bottom: 6px;
       color: var(--primary);
       font-size: 15px;
     }
-    .drawer__body input {
+    .drawer__body .group input {
       width: 100%;
       padding: 12px;
       border: 1px solid var(--border);
@@ -157,8 +161,36 @@
       gap: 10px;
     }
 
-    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.25); backdrop-filter: blur(3px); opacity: 0; visibility: hidden; transition: all 0.3s ease; z-index: 4000; }
-    .overlay.active { opacity: 1; visibility: visible; }
+    /* === Mobile Drawer Behaviour === */
+    @media (max-width: 768px) {
+      .drawer {
+        left: 0;
+        width: 100%;
+        border-radius: 20px 20px 0 0;
+        transform: translateY(100%);
+      }
+      .drawer.active {
+        transform: translateY(0);
+      }
+      .drawer__body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.25);
+      backdrop-filter: blur(3px);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 4000;
+    }
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
 
     .hz-toast {
       position: fixed; bottom: 24px; right: 24px;
@@ -169,10 +201,10 @@
       transition: .3s ease; z-index: 6000;
     }
     .hz-toast.show { opacity: 1; transform: translateY(0); }
-
   </style>
 </head>
 <body>
+  <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="brand"><img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png"></div>
     <ul class="nav-links">
@@ -243,7 +275,7 @@
     const toast = document.getElementById('toast');
 
     menuToggle.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
-    overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
+    overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); closeDrawer(); };
     bookingMenu.onclick = (e) => { e.preventDefault(); bookingItem.classList.toggle('open'); };
 
     const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbxP6TEna3Q5MpQOSaxgt66rwXLGOvBeLKI4NhiqlIEE5FfMZAtLf1bxMJcziCxVXhFP/exec");
