@@ -3,272 +3,208 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cleaners — HomeGlitz Admin</title>
+  <title>HomeGlitz — Cleaners</title>
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/64%C3%9764pxlogo.png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* Use same variables + structure as booking.html */
     :root {
       --primary: #0F72B4;
-      --primary-light: #e8f4ff;
-      --border: #e8edf3;
-      --text: #1e1e1e;
+      --primary-light: #f5faff;
+      --text: #222;
       --muted: #6c757d;
+      --panel: #fff;
+      --border: #e4e9ef;
       --radius: 12px;
-      --panel: #ffffff;
+      --shadow: 0 6px 20px rgba(15,114,180,0.1);
+      --transition: 0.3s ease;
     }
 
-    body {
-      margin: 0;
-      font-family: "Montserrat", sans-serif;
-      background: #f7f9fb;
-      color: var(--text);
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
+    * { box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+    html, body { margin: 0; padding: 0; overflow-x: hidden; }
+    body { display: flex; min-height: 100vh; background: var(--primary-light); color: var(--text); }
+
+    /* === Sidebar and topbar identical to booking page === */
+    .sidebar {
+      position: fixed; left: 0; top: 0; bottom: 0;
+      width: 250px; background: var(--panel); border-right: 1px solid var(--border);
+      box-shadow: var(--shadow); display: flex; flex-direction: column;
+      padding: 20px 0; overflow-y: auto; z-index: 2000;
+    }
+    .sidebar .brand { display: flex; align-items: center; justify-content: center; margin-bottom: 30px; }
+    .sidebar .brand img { height: 48px; transition: all var(--transition); }
+    .nav-links { list-style: none; padding: 0; margin: 0; }
+    .nav-item { position: relative; }
+    .nav-links li a {
+      display: flex; align-items: center; gap: 12px; padding: 14px 22px;
+      color: var(--muted); font-weight: 500; text-decoration: none; transition: all var(--transition);
+    }
+    .nav-links li a:hover, .nav-links li a.active { background: var(--primary-light); color: var(--primary); border-left: 4px solid var(--primary); }
+    .sub-menu { display: none; flex-direction: column; margin-left: 40px; font-size: 12px; }
+    .sub-menu a { color: var(--muted); }
+    .nav-item.open .sub-menu { display: flex; }
+
+    .topbar {
+      height: 60px; background: var(--panel); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 25px; box-shadow: var(--shadow);
+      position: fixed; top: 0; left: 250px; right: 0; z-index: 1000;
+    }
+    .menu-toggle { background: none; border: none; font-size: 20px; color: var(--primary); cursor: pointer; }
+    .topbar-right { display: flex; align-items: center; gap: 20px; color: var(--muted); }
+
+    main { flex: 1; margin-left: 250px; padding: 100px 40px 40px; background: var(--primary-light); }
+
+    /* === Cleaner Management Card === */
+    .card {
+      background: var(--panel); border-radius: var(--radius);
+      box-shadow: var(--shadow); border: 1px solid var(--border);
+      padding: 40px 50px;
+    }
+    .card__title {
+      font-size: 22px; font-weight: 700; color: var(--primary);
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 2px solid rgba(15,114,180,0.1);
+      padding-bottom: 10px; margin-bottom: 25px;
     }
 
-    /* SIDEBAR */
-    aside {
-      width: 240px;
-      background: #fff;
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      padding: 18px;
-      transition: all 0.3s ease;
-    }
-    aside a {
-      text-decoration: none;
-      color: var(--text);
-      padding: 10px 14px;
-      border-radius: 8px;
-      margin-bottom: 6px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: 0.2s ease;
-    }
-    aside a:hover {
-      background: var(--primary-light);
-      color: var(--primary);
-    }
-    aside a.active {
-      background: var(--primary-light);
-      color: var(--primary);
-      border-left: 4px solid var(--primary);
-    }
-
-    /* MAIN */
-    main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      padding: 20px;
-      animation: fadeIn 0.35s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    header {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    /* TABLE */
+    /* Table styling */
     table {
       width: 100%;
       border-collapse: collapse;
       background: #fff;
       border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
     }
     th, td {
       padding: 12px 16px;
       border-bottom: 1px solid #f1f5f9;
-      text-align: left;
       font-size: 14px;
     }
     th {
       background: #f9fbfd;
       color: var(--primary);
       font-weight: 600;
+      text-align: left;
     }
-    tr:hover td {
-      background: #f9fafb;
-    }
+    tr:hover td { background: #f9fafb; }
 
-    /* BUTTONS */
-    .btn {
-      border: none;
-      border-radius: 8px;
-      padding: 8px 12px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: 0.2s ease;
-      font-size: 14px;
-    }
-    .btn.add {
-      background: var(--primary);
-      color: #fff;
-    }
-    .btn.edit {
-      background: #eef3ff;
-      color: var(--primary);
-    }
-    .btn.delete {
-      background: #fdeaea;
-      color: #c0392b;
-    }
-    .btn:hover {
-      opacity: 0.9;
-    }
+    /* Buttons */
+    .btn { border: none; border-radius: 8px; padding: 8px 12px; font-weight: 600; cursor: pointer; font-size: 14px; transition: 0.2s ease; }
+    .btn.add { background: var(--primary); color: #fff; }
+    .btn.edit { background: #eef3ff; color: var(--primary); }
+    .btn.delete { background: #fdeaea; color: #c0392b; }
 
-    /* DIALOG */
-    dialog {
-      border: none;
-      border-radius: 12px;
-      box-shadow: 0 5px 25px rgba(0,0,0,0.2);
-      padding: 24px;
-      width: 380px;
-      max-width: 90%;
-      animation: popIn 0.25s ease;
+    /* Toast + loader reused */
+    .hz-toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #0F72B4; color: #fff; padding: 12px 16px;
+      border-radius: 10px; font-weight: 600;
+      box-shadow: 0 10px 24px rgba(15,114,180,.25);
+      opacity: 0; transform: translateY(16px);
+      transition: .3s ease; z-index: 5000;
     }
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-    .dialog-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 14px;
-      color: var(--primary);
-    }
-    .form-group {
-      margin-bottom: 12px;
-    }
-    label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 4px;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 14px;
-    }
+    .hz-toast.show { opacity: 1; transform: translateY(0); }
+    .hz-loader { position: fixed; inset: 0; background: rgba(0,0,0,.25); display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity .15s ease; z-index: 4000; }
+    .hz-loader.active { opacity: 1; visibility: visible; }
+    .hz-loader .box { background: #fff; border: 1px solid #e4e9ef; box-shadow: 0 10px 30px rgba(0,0,0,.08); padding: 18px 22px; border-radius: 12px; color: #222; font-weight: 600; display: flex; align-items: center; gap: 12px; }
+    .hz-loader .spin { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(15,114,180,.2); border-top-color: #0F72B4; animation: hzspin 1s linear infinite; }
+    @keyframes hzspin { to { transform: rotate(360deg); } }
   </style>
 </head>
-
 <body>
-  <!-- Sidebar (same as others) -->
-  <aside>
-    <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-    <a href="booking.html"><i class="fa-solid fa-plus"></i> Create New</a>
-    <a href="all-bookings.html"><i class="fa-solid fa-calendar"></i> All Bookings</a>
-    <a href="admin-cleaners.html" class="active"><i class="fa-solid fa-broom"></i> Cleaners</a>
-    <a href="price-list.html"><i class="fa-solid fa-list"></i> Price List</a>
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png" alt="HomeGlitz Logo">
+    </div>
+    <ul class="nav-links">
+      <li><a href="dashboard.html"><i class="fa-solid fa-chart-line"></i><span> Dashboard</span></a></li>
+      <li class="nav-item">
+        <a href="#" id="bookingMenu">
+          <i class="fa-solid fa-broom"></i><span> Bookings</span>
+          <i class="fa-solid fa-chevron-down" style="margin-left:auto;"></i>
+        </a>
+        <div class="sub-menu">
+          <a href="booking.html">Create New</a>
+          <a href="all-bookings.html">All Bookings</a>
+        </div>
+      </li>
+      <li><a href="properties.html"><i class="fa-solid fa-house"></i><span> Properties</span></a></li>
+      <li><a href="cleaners.html" class="active"><i class="fa-solid fa-users"></i><span> Cleaners</span></a></li>
+      <li><a href="reports.html"><i class="fa-solid fa-chart-pie"></i><span> Reports</span></a></li>
+      <li><a href="settings.html"><i class="fa-solid fa-gear"></i><span> Settings</span></a></li>
+    </ul>
   </aside>
 
-  <!-- Main Content -->
-  <main>
-    <header>
-      <span>🧹 Cleaners Management</span>
-      <button class="btn add" onclick="showDialog()">+ Add Cleaner</button>
+  <div class="overlay" id="overlay"></div>
+
+  <div style="flex:1; display:flex; flex-direction:column;">
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+      <div class="topbar-right">
+        <i class="fa-regular fa-bell"></i>
+        <i class="fa-regular fa-user"></i>
+      </div>
     </header>
 
-    <table id="cleanersTable">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Phone</th>
-          <th>Active</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </main>
+    <main>
+      <div class="card">
+        <h2 class="card__title"><i class="fa-solid fa-users"></i> Cleaners Management</h2>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:14px;">
+          <button class="btn add" onclick="addCleanerDialog()">+ Add Cleaner</button>
+        </div>
 
-  <!-- Add/Edit Cleaner Dialog -->
-  <dialog id="cleanerDialog">
-    <div class="dialog-title">Add Cleaner</div>
-    <form id="cleanerForm">
-      <input type="hidden" id="cleanerId" />
-      <div class="form-group"><label>Name</label><input id="cleanerName" required></div>
-      <div class="form-group"><label>Email</label><input id="cleanerEmail" required type="email"></div>
-      <div class="form-group"><label>Phone</label><input id="cleanerPhone"></div>
-      <div class="form-group"><label>Password</label><input id="cleanerPassword" type="text" required></div>
-      <div class="form-group"><label>Active (Yes/No)</label><input id="cleanerActive" type="text" placeholder="Yes or No"></div>
-      <div style="display:flex;justify-content:space-between;gap:10px;margin-top:10px;">
-        <button type="button" class="btn" onclick="closeDialog()">Cancel</button>
-        <button type="submit" class="btn add">Save</button>
+        <table id="cleanersTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Active</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
-    </form>
-  </dialog>
+    </main>
+  </div>
+
+  <div class="hz-toast" id="toast"></div>
+  <div class="hz-loader" id="loader"><div class="box"><div class="spin"></div><span id="loaderText">Processing…</span></div></div>
 
   <script>
-    const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbwZabbuOurfnmFtHcBvAguUbKKiYcKvMYioe5YwpisRkBxFgEe_wvO6mo-jWAzLgUGS/exec");
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const menuToggle = document.getElementById('menuToggle');
+    const bookingMenu = document.getElementById('bookingMenu');
+    const bookingItem = bookingMenu.parentElement;
+    const toast = document.getElementById('toast');
+    const loader = document.getElementById('loader');
+    const loaderText = document.getElementById('loaderText');
 
-    const dialog = document.getElementById("cleanerDialog");
-    const form = document.getElementById("cleanerForm");
+    menuToggle.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
+    overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
+    bookingMenu.onclick = (e) => { e.preventDefault(); bookingItem.classList.toggle('open'); };
 
-    function showDialog() {
-      dialog.querySelector(".dialog-title").textContent = "Add Cleaner";
-      form.reset();
-      dialog.showModal();
-    }
+    const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbxP6TEna3Q5MpQOSaxgt66rwXLGOvBeLKI4NhiqlIEE5FfMZAtLf1bxMJcziCxVXhFP/exec");
 
-    function closeDialog() {
-      dialog.close();
-    }
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const payload = {
-        action: "saveCleaner",
-        cleanerId: document.getElementById("cleanerId").value,
-        name: document.getElementById("cleanerName").value,
-        phone: document.getElementById("cleanerPhone").value,
-        email: document.getElementById("cleanerEmail").value,
-        active: document.getElementById("cleanerActive").value || "Yes",
-        password: document.getElementById("cleanerPassword").value,
-      };
-      await fetch(scriptBaseURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      dialog.close();
-      loadCleaners();
-    });
+    function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2500); }
+    function showLoader(msg = "Processing…") { loaderText.textContent = msg; loader.classList.add('active'); }
+    function hideLoader() { loader.classList.remove('active'); }
 
     async function loadCleaners() {
+      showLoader('Loading cleaners…');
       const res = await fetch(scriptBaseURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "getAllCleaners" })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'getAllCleaners' })
       });
       const data = await res.json();
-      const tbody = document.querySelector("#cleanersTable tbody");
+      hideLoader();
+      const tbody = document.querySelector('#cleanersTable tbody');
       tbody.innerHTML = data.map(c => `
         <tr>
           <td>${c["Cleaner ID"] || ""}</td>
@@ -280,29 +216,51 @@
             <button class="btn edit" onclick='editCleaner(${JSON.stringify(c)})'><i class="fa fa-edit"></i></button>
             <button class="btn delete" onclick="deleteCleaner('${c["Cleaner ID"]}')"><i class="fa fa-trash"></i></button>
           </td>
-        </tr>
-      `).join("");
-    }
-
-    function editCleaner(c) {
-      dialog.querySelector(".dialog-title").textContent = "Edit Cleaner";
-      document.getElementById("cleanerId").value = c["Cleaner ID"];
-      document.getElementById("cleanerName").value = c["Cleaner Name"];
-      document.getElementById("cleanerEmail").value = c["Email"];
-      document.getElementById("cleanerPhone").value = c["Phone"];
-      document.getElementById("cleanerPassword").value = c["Password"] || "";
-      document.getElementById("cleanerActive").value = c["Active"] ? "Yes" : "No";
-      dialog.showModal();
+        </tr>`).join('');
     }
 
     async function deleteCleaner(id) {
-      if (!confirm("Delete this cleaner?")) return;
+      if (!confirm('Delete this cleaner?')) return;
+      showLoader('Deleting…');
       await fetch(scriptBaseURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "deleteCleaner", cleanerId: id })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'deleteCleaner', cleanerId: id })
       });
+      hideLoader();
+      showToast('Cleaner deleted');
       loadCleaners();
+    }
+
+    function addCleanerDialog() {
+      const name = prompt('Cleaner Name:');
+      if (!name) return;
+      const email = prompt('Email:');
+      const phone = prompt('Phone:');
+      const password = prompt('Password:');
+      const active = confirm('Set as active cleaner?') ? 'Yes' : 'No';
+      saveCleaner({ name, email, phone, password, active });
+    }
+
+    async function saveCleaner(payload) {
+      showLoader('Saving cleaner…');
+      await fetch(scriptBaseURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'saveCleaner', ...payload })
+      });
+      hideLoader();
+      showToast('Cleaner saved');
+      loadCleaners();
+    }
+
+    function editCleaner(c) {
+      const name = prompt('Name:', c["Cleaner Name"]);
+      const email = prompt('Email:', c["Email"]);
+      const phone = prompt('Phone:', c["Phone"]);
+      const password = prompt('Password:', c["Password"] || "");
+      const active = confirm('Active?');
+      saveCleaner({ cleanerId: c["Cleaner ID"], name, email, phone, password, active: active ? 'Yes' : 'No' });
     }
 
     loadCleaners();
