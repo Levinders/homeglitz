@@ -353,6 +353,7 @@
   <div class="hz-toast" id="toast"></div>
   <div class="hz-loader" id="loader"><div class="box"><div class="spin"></div><span>Loading…</span></div></div>
 
+
   <script>
     /* ===== Sidebar / Topbar (exact behavior) ===== */
     const sidebar = document.getElementById('sidebar');
@@ -374,14 +375,16 @@
 
     /* ===== API base (your latest endpoint via corsproxy) ===== */
     const scriptBaseURL =
-      "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbz4CQZimGppW3SafV4p_67H9_teGdzzfOYv4iIJ8i7RtmLddYNC9AMOQS1TzQ7RXl1N/exec");
+      "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbxjAdlGU7-W3oapup7aXK787tEV1S4obF42uhQBQHpwHbN4GzcQTxECmTXWsknF739y/exec");
 
-    async function fetchJSON(url) {
-      const res = await fetch(url, { cache: 'no-store' });
-      const text = await res.text();
-      if (text.trim().startsWith('<')) throw new Error('Non-JSON response (HTML) – check deployment permissions.');
-      return JSON.parse(text);
-    }
+async function fetchJSON(url) {
+  const res = await fetch(url, { cache: 'no-store' });
+  const text = await res.text();
+  if (text.trim().startsWith('<'))
+    throw new Error('Non-JSON response (HTML) – check deployment permissions.');
+  return JSON.parse(text);
+}
+
 
     /* ===== State ===== */
     let ALL_ROWS = [];       // all bookings
@@ -842,6 +845,44 @@ observer.observe(drawer, { attributes: true, attributeFilter: ['class'] });
     
     /* ===== Boot ===== */
     loadBookings();
+
+async function loadCleaners() {
+  try {
+    const data = await fetchJSON(`${scriptBaseURL}?type=cleanersList`);
+    renderCleaners(data);
+  } catch (err) {
+    console.error(err);
+    showToast('Error loading cleaners');
+    renderCleaners([]);
+  }
+}
+
+
+    function renderCleaners(rows) {
+  const tbody = document.querySelector('#cleanersTable tbody');
+  if (!rows || rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#888;padding:20px;">No cleaners found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map(c => {
+    const active = (c["Active"] === true || (c["Active"] || "").toString().toLowerCase() === "yes");
+    return `
+      <tr>
+        <td>${c["Cleaner ID"] || ""}</td>
+        <td>${c["Cleaner Name"] || ""}</td>
+        <td>${c["Email"] || ""}</td>
+        <td>${c["Phone"] || ""}</td>
+        <td>${active ? "✅" : "❌"}</td>
+        <td>
+          <button class="btn edit" onclick='openDrawer(${JSON.stringify(c)})'><i class="fa fa-edit"></i></button>
+          <button class="btn delete" onclick="deleteCleaner('${c["Cleaner ID"]}')"><i class="fa fa-trash"></i></button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+
   </script>
 
 </body>
