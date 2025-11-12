@@ -18,113 +18,89 @@
       --border: #e4e9ef;
       --radius: 12px;
       --shadow: 0 6px 20px rgba(15,114,180,0.1);
-      --success: #28a745;
-      --danger: #dc3545;
+      --transition: 0.3s ease;
     }
 
     * { box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
     html, body { margin: 0; padding: 0; overflow-x: hidden; }
     body { display: flex; min-height: 100vh; background: var(--primary-light); color: var(--text); }
 
-    /* Sidebar + Topbar (unchanged) */
-    .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 250px; background: var(--panel); border-right: 1px solid var(--border); box-shadow: var(--shadow); padding: 20px 0; overflow-y: auto; z-index: 2000; }
+    /* === Sidebar & Topbar === */
+    .sidebar {
+      position: fixed; left: 0; top: 0; bottom: 0;
+      width: 250px; background: var(--panel); border-right: 1px solid var(--border);
+      box-shadow: var(--shadow); display: flex; flex-direction: column;
+      padding: 20px 0; overflow-y: auto; z-index: 2000;
+    }
     .sidebar .brand { display: flex; align-items: center; justify-content: center; margin-bottom: 30px; }
     .sidebar .brand img { height: 48px; }
     .nav-links { list-style: none; padding: 0; margin: 0; }
-    .nav-links li a { display: flex; align-items: center; gap: 12px; padding: 14px 22px; color: var(--muted); font-weight: 500; text-decoration: none; transition: .3s ease; }
-    .nav-links li a:hover, .nav-links li a.active { background: var(--primary-light); color: var(--primary); border-left: 4px solid var(--primary); }
-    .topbar { height: 60px; background: var(--panel); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; box-shadow: var(--shadow); position: fixed; top: 0; left: 250px; right: 0; z-index: 1000; }
+    .nav-item { position: relative; }
+    .nav-links li a {
+      display: flex; align-items: center; gap: 12px; padding: 14px 22px;
+      color: var(--muted); font-weight: 500; text-decoration: none; transition: all var(--transition);
+    }
+    .nav-links li a:hover, .nav-links li a.active {
+      background: var(--primary-light); color: var(--primary); border-left: 4px solid var(--primary);
+    }
+    .sub-menu { display: none; flex-direction: column; margin-left: 40px; font-size: 12px; }
+    .nav-item.open .sub-menu { display: flex; }
+
+    .topbar {
+      height: 60px; background: var(--panel); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 25px; box-shadow: var(--shadow);
+      position: fixed; top: 0; left: 250px; right: 0; z-index: 1000;
+    }
+
+    .menu-toggle { background: none; border: none; font-size: 20px; color: var(--primary); cursor: pointer; }
+    .topbar-right { display: flex; align-items: center; gap: 20px; color: var(--muted); }
 
     main { flex: 1; margin-left: 250px; padding: 100px 40px 40px; background: var(--primary-light); }
 
-    /* === Card & Filters === */
+    /* === Card & Table === */
     .card {
       background: var(--panel);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       border: 1px solid var(--border);
-      padding: 0;
-      position: relative;
-      max-width: 1200px;
-      margin: 0 auto;
+      padding: 40px 50px;
     }
 
-    .card__header {
-      position: sticky;
-      top: 0;
-      background: var(--panel);
-      padding: 22px 30px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 50;
+    .card__title {
+      font-size: 22px; font-weight: 700; color: var(--primary);
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 2px solid rgba(15,114,180,0.1);
+      padding-bottom: 10px; margin-bottom: 25px;
     }
 
-    .card__header h2 {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .filter-bar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .filter-bar input, .filter-bar select {
-      padding: 8px 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 14px;
-      background: var(--primary-light);
-    }
-
-    .btn {
-      border: none;
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 14px;
-      transition: .2s ease;
-    }
-    .btn.add { background: var(--primary); color: #fff; }
-
-    /* === Table === */
     table {
       width: 100%;
       border-collapse: collapse;
       background: #fff;
-      table-layout: fixed;
+      border-radius: 10px;
+      overflow: hidden;
     }
-
     th, td {
-      padding: 12px 14px;
+      padding: 12px 16px;
       border-bottom: 1px solid #f1f5f9;
       font-size: 14px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
+    th { background: #f9fbfd; color: var(--primary); font-weight: 600; text-align: left; }
+    tr:hover td { background: #f9fafb; }
 
-    th { background: #f9fbfd; color: var(--primary); text-align: left; }
-    tr:hover td { background: #f9fafb; cursor: pointer; }
-
-    .badge {
-      padding: 5px 10px;
-      border-radius: 6px;
-      color: #fff;
-      font-size: 12px;
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
       font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.2s ease;
     }
-    .badge.active { background: var(--success); }
-    .badge.inactive { background: var(--danger); }
+    .btn.add { background: var(--primary); color: #fff; }
+    .btn.edit { background: #eef3ff; color: var(--primary); }
+    .btn.delete { background: #fdeaea; color: #c0392b; }
 
     /* === Drawer === */
     .drawer {
@@ -133,17 +109,16 @@
       left: 50%;
       transform: translate(-50%, 100%);
       background: var(--panel);
-      border-radius: 20px 20px 0 0;
+      border-radius: 20px;
       box-shadow: 0 -6px 20px rgba(0,0,0,0.1);
-      transition: transform .35s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: 5000;
       width: 600px;
       max-width: 95%;
       max-height: 85vh;
       display: flex;
       flex-direction: column;
-      z-index: 5000;
     }
-
     .drawer.active { transform: translate(-50%, 0); }
 
     .drawer__header {
@@ -152,177 +127,202 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      color: var(--primary);
       font-weight: 700;
+      color: var(--primary);
+    }
+
+    .drawer__header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 15px;
+      box-shadow: 0 0 0 2px var(--primary-light);
     }
 
     .drawer__body {
+      padding: 20px 24px;
       flex: 1;
-      padding: 24px;
       overflow-y: auto;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 18px 24px;
     }
-
-    .group label {
+    .drawer__body .group label {
       display: block;
       font-weight: 600;
-      color: var(--primary);
-      font-size: 14px;
       margin-bottom: 6px;
+      color: var(--primary);
+      font-size: 15px;
     }
-
-    .group input, .group textarea {
+    .drawer__body .group input {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       border: 1px solid var(--border);
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 15px;
     }
 
     .drawer__footer {
       padding: 14px 24px;
       border-top: 1px solid var(--border);
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
+      gap: 10px;
     }
 
-    .btn.delete { background: #fdeaea; color: var(--danger); }
+    /* === Mobile === */
+    @media (max-width: 768px) {
+      main { margin-left: 0; padding: 90px 12px 40px; }
+      .sidebar { left: -250px; position: fixed; }
+      .sidebar.open { left: 0; }
+      .topbar { left: 0; right: 0; position: fixed; }
+      .drawer {
+        left: 0;
+        width: 100%;
+        border-radius: 20px 20px 0 0;
+        transform: translateY(100%);
+      }
+      .drawer.active { transform: translateY(0); }
+      .drawer__body { grid-template-columns: 1fr; }
+    }
 
     .overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.25); backdrop-filter: blur(3px);
-      opacity: 0; visibility: hidden; transition: all .3s ease; z-index: 4000;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.25);
+      backdrop-filter: blur(3px);
+      opacity: 0; visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 4000;
     }
     .overlay.active { opacity: 1; visibility: visible; }
+
+    .hz-toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #0F72B4; color: #fff; padding: 12px 16px;
+      border-radius: 10px; font-weight: 600;
+      box-shadow: 0 10px 24px rgba(15,114,180,.25);
+      opacity: 0; transform: translateY(16px);
+      transition: .3s ease; z-index: 6000;
+    }
+    .hz-toast.show { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
-
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar">
     <div class="brand"><img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png"></div>
     <ul class="nav-links">
       <li><a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a></li>
-      <li><a href="booking.html"><i class="fa-solid fa-broom"></i> Bookings</a></li>
+      <li class="nav-item">
+        <a href="#" id="bookingMenu"><i class="fa-solid fa-broom"></i> Bookings <i class="fa-solid fa-chevron-down" style="margin-left:auto;"></i></a>
+        <div class="sub-menu"><a href="booking.html">Create New</a><a href="all-bookings.html">All Bookings</a></div>
+      </li>
       <li><a href="properties.html"><i class="fa-solid fa-house"></i> Properties</a></li>
       <li><a href="cleaners.html" class="active"><i class="fa-solid fa-users"></i> Cleaners</a></li>
       <li><a href="reports.html"><i class="fa-solid fa-chart-pie"></i> Reports</a></li>
+      <li><a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a></li>
     </ul>
   </aside>
 
   <div class="overlay" id="overlay"></div>
 
-  <main>
-    <div class="card">
-      <div class="card__header">
-        <h2><i class="fa-solid fa-users"></i> Cleaners Management</h2>
-        <div class="filter-bar">
-          <input type="text" id="searchInput" placeholder="Search...">
-          <select id="statusFilter">
-            <option value="all">All</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
+  <div style="flex:1; display:flex; flex-direction:column;">
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+      <div class="topbar-right"><i class="fa-regular fa-bell"></i><i class="fa-regular fa-user"></i></div>
+    </header>
+
+    <main>
+      <div class="card">
+        <h2 class="card__title"><i class="fa-solid fa-users"></i> Cleaners Management</h2>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:14px;">
           <button class="btn add" onclick="openDrawer()">+ Add Cleaner</button>
         </div>
+
+        <table id="cleanersTable">
+          <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Active</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
       </div>
+    </main>
+  </div>
 
-      <table id="cleanersTable">
-        <thead>
-          <tr>
-            <th>Cleaner ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Jobs</th>
-            <th>Earnings</th>
-            <th>Unpaid</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </main>
-
+  <!-- Drawer -->
   <div class="drawer" id="drawer">
     <div class="drawer__header">
-      <span id="drawerTitle"><i class="fa-solid fa-user"></i> Cleaner Details</span>
+      <div class="drawer__header-left">
+        <div class="avatar" id="drawerAvatar">CL</div>
+        <span id="drawerTitle">Add Cleaner</span>
+      </div>
       <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeDrawer()"></i>
     </div>
+
     <div class="drawer__body">
       <input type="hidden" id="cleanerId">
       <div class="group"><label>Name</label><input id="cleanerName"></div>
-      <div class="group"><label>Email</label><input id="cleanerEmail"></div>
+      <div class="group"><label>Email</label><input id="cleanerEmail" type="email"></div>
       <div class="group"><label>Phone</label><input id="cleanerPhone"></div>
       <div class="group"><label>Password</label><input id="cleanerPassword" type="text"></div>
-      <div class="group"><label>Bio</label><textarea id="cleanerNotes" rows="3"></textarea></div>
       <div class="group"><label>Active (Yes/No)</label><input id="cleanerActive"></div>
     </div>
+
     <div class="drawer__footer">
-      <button class="btn delete" id="deleteCleanerBtn"><i class="fa-solid fa-trash"></i> Delete</button>
+      <button class="btn" onclick="closeDrawer()">Cancel</button>
       <button class="btn add" onclick="saveCleaner()">Save</button>
     </div>
   </div>
 
+  <div class="hz-toast" id="toast"></div>
+
   <script>
-  const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbx04byXSnZH_gzI2J7OQRCQzY3U40KmNmSKgydU-AbhI8zZSjgXOlZdspMXYoMzzJVM/exec");
+  const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('overlay');
+  const menuToggle = document.getElementById('menuToggle');
+  const bookingMenu = document.getElementById('bookingMenu');
+  const bookingItem = bookingMenu.parentElement;
   const drawer = document.getElementById('drawer');
-  const deleteBtn = document.getElementById('deleteCleanerBtn');
-  let cleanersData = [];
+  const toast = document.getElementById('toast');
+  const drawerAvatar = document.getElementById('drawerAvatar');
 
-  async function loadCleaners() {
-    const res = await fetch(`${scriptBaseURL}?type=cleanersList`);
-    cleanersData = await res.json();
-    renderCleaners(cleanersData);
+  menuToggle.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
+  overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); closeDrawer(); };
+  bookingMenu.onclick = (e) => { e.preventDefault(); bookingItem.classList.toggle('open'); };
+
+const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbx04byXSnZH_gzI2J7OQRCQzY3U40KmNmSKgydU-AbhI8zZSjgXOlZdspMXYoMzzJVM/exec");
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
   }
 
-  function renderCleaners(rows) {
-    const search = document.getElementById("searchInput").value.toLowerCase();
-    const status = document.getElementById("statusFilter").value;
-    const tbody = document.querySelector("#cleanersTable tbody");
-
-    const filtered = rows.filter(c => {
-      const active = (c["Active"] || "").toString().toLowerCase() === "yes";
-      const matchesSearch =
-        c["Cleaner Name"]?.toLowerCase().includes(search) ||
-        c["Email"]?.toLowerCase().includes(search);
-      const matchesStatus =
-        status === "all" ||
-        (status === "active" && active) ||
-        (status === "inactive" && !active);
-      return matchesSearch && matchesStatus;
-    });
-
-    tbody.innerHTML = filtered.map(c => `
-      <tr onclick='openDrawer(${JSON.stringify(c)})'>
-        <td>${c["Cleaner ID"] || ""}</td>
-        <td>${c["Cleaner Name"] || ""}</td>
-        <td>${c["Email"] || ""}</td>
-        <td>${c["Phone"] || ""}</td>
-        <td>${c["Total Jobs Completed"] || 0}</td>
-        <td>$${c["Total Earnings (Ex GST)"] || 0}</td>
-        <td>$${c["Outstanding Balance"] || 0}</td>
-        <td>${(c["Active"] || "").toString().toLowerCase() === "yes"
-          ? '<span class="badge active">Active</span>'
-          : '<span class="badge inactive">Inactive</span>'}</td>
-      </tr>`).join("");
+  function initials(name) {
+    if (!name) return "CL";
+    const parts = name.trim().split(" ");
+    return (parts[0][0] + (parts[1]?.[0] || "")).toUpperCase();
   }
 
-  function openDrawer(c = null) {
+  function openDrawer(cleaner = null) {
+    document.getElementById('drawerTitle').textContent = cleaner ? 'Edit Cleaner' : 'Add Cleaner';
+    document.getElementById('cleanerId').value = cleaner?.['Cleaner ID'] || '';
+    document.getElementById('cleanerName').value = cleaner?.['Cleaner Name'] || '';
+    document.getElementById('cleanerEmail').value = cleaner?.['Email'] || '';
+    document.getElementById('cleanerPhone').value = cleaner?.['Phone'] || '';
+    document.getElementById('cleanerPassword').value = cleaner?.['Password'] || '';
+    document.getElementById('cleanerActive').value = (cleaner?.['Active'] === true || cleaner?.['Active'] === "Yes") ? 'Yes' : 'No';
+    drawerAvatar.textContent = cleaner ? initials(cleaner['Cleaner Name']) : "CL";
     drawer.classList.add('active');
     overlay.classList.add('active');
-    document.getElementById('drawerTitle').textContent = c ? c["Cleaner Name"] : "Add Cleaner";
-    document.getElementById('cleanerId').value = c?.["Cleaner ID"] || "";
-    document.getElementById('cleanerName').value = c?.["Cleaner Name"] || "";
-    document.getElementById('cleanerEmail').value = c?.["Email"] || "";
-    document.getElementById('cleanerPhone').value = c?.["Phone"] || "";
-    document.getElementById('cleanerPassword').value = c?.["Password"] || "";
-    document.getElementById('cleanerNotes').value = c?.["Notes"] || "";
-    document.getElementById('cleanerActive').value = (c?.["Active"] === true || c?.["Active"] === "Yes") ? "Yes" : "No";
-
-    deleteBtn.onclick = () => deleteCleaner(c?.["Cleaner ID"]);
   }
 
   function closeDrawer() {
@@ -330,42 +330,107 @@
     overlay.classList.remove('active');
   }
 
-  async function saveCleaner() {
-    const payload = {
-      action: 'saveCleaner',
-      cleanerId: document.getElementById('cleanerId').value,
-      name: document.getElementById('cleanerName').value,
-      email: document.getElementById('cleanerEmail').value,
-      phone: document.getElementById('cleanerPhone').value,
-      password: document.getElementById('cleanerPassword').value,
-      notes: document.getElementById('cleanerNotes').value,
-      active: document.getElementById('cleanerActive').value || 'Yes'
-    };
+  async function loadCleaners() {
+  try {
+    const res = await fetch(`${scriptBaseURL}?type=cleanersList`, { cache: "no-store" });
+    const text = await res.text();
+
+    if (text.trim().startsWith("<")) {
+      console.error("Received HTML instead of JSON");
+      showToast("Error: HTML response — check deployment access");
+      return;
+    }
+
+    const data = JSON.parse(text);
+    if (!Array.isArray(data)) {
+      console.error("Invalid data format:", data);
+      showToast("No cleaners found or invalid data");
+      return;
+    }
+
+    renderCleaners(data);
+  } catch (err) {
+    console.error("Error fetching cleaners:", err);
+    showToast("Error loading cleaners");
+  }
+}
+
+    function renderCleaners(rows) {
+  const tbody = document.querySelector("#cleanersTable tbody");
+
+  if (!rows || rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#888;padding:20px;">No cleaners found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map(c => {
+    const active = (c["Active"] === true || (c["Active"] || "").toString().toLowerCase() === "yes");
+    return `
+      <tr>
+        <td>${c["Cleaner ID"] || ""}</td>
+        <td>${c["Cleaner Name"] || ""}</td>
+        <td>${c["Email"] || ""}</td>
+        <td>${c["Phone"] || ""}</td>
+        <td>${active ? "✅" : "❌"}</td>
+        <td>
+          <button class="btn edit" onclick='openDrawer(${JSON.stringify(c)})'><i class="fa fa-edit"></i></button>
+          <button class="btn delete" onclick="deleteCleaner('${c["Cleaner ID"]}')"><i class="fa fa-trash"></i></button>
+        </td>
+      </tr>`;
+  }).join("");
+}
+
+
+async function saveCleaner() {
+  const payload = {
+    action: 'saveCleaner',
+    cleanerId: document.getElementById('cleanerId').value,
+    name: document.getElementById('cleanerName').value,
+    email: document.getElementById('cleanerEmail').value,
+    phone: document.getElementById('cleanerPhone').value,
+    password: document.getElementById('cleanerPassword').value,
+    active: document.getElementById('cleanerActive').value || 'Yes'
+  };
+
+  try {
     await fetch(scriptBaseURL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
+   
     closeDrawer();
-    loadCleaners();
+    showToast('Cleaner saved successfully');
+
+    // ✅ Refresh list
+    setTimeout(loadCleaners, 800);
+    
+  } catch (err) {
+    console.error(err);
+    showToast('Error saving cleaner');
   }
+}
+
 
   async function deleteCleaner(id) {
     if (!confirm('Delete this cleaner?')) return;
-    await fetch(scriptBaseURL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'deleteCleaner', cleanerId: id })
-    });
-    closeDrawer();
-    loadCleaners();
+    try {
+      await fetch(scriptBaseURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'deleteCleaner', cleanerId: id })
+      });
+      showToast('Cleaner deleted');
+      setTimeout(() => location.reload(), 1000); // ✅ refresh after delete
+    } catch (err) {
+      console.error(err);
+      showToast('Error deleting cleaner');
+    }
   }
 
-  document.getElementById("searchInput").oninput = () => renderCleaners(cleanersData);
-  document.getElementById("statusFilter").onchange = () => renderCleaners(cleanersData);
-  overlay.onclick = closeDrawer;
-
+  // Initial load
   loadCleaners();
-  </script>
+</script>
+
 </body>
 </html>
