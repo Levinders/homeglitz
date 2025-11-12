@@ -359,4 +359,44 @@
         name: document.getElementById('cleanerName').value,
         email: document.getElementById('cleanerEmail').value,
         phone: document.getElementById('cleanerPhone').value,
-        password: document.getElement
+        password: document.getElementById('cleanerPassword').value,
+        active: document.getElementById('cleanerActive').value || 'Yes'
+      };
+
+      try {
+        await fetch(scriptBaseURL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        closeDrawer();
+        showToast('Cleaner saved successfully');
+        loadCleaners();
+      } catch (err) {
+        console.error(err);
+        showToast('Error saving cleaner');
+      }
+    }
+
+    async function deleteCleaner(id) {
+      if (!confirm('Delete this cleaner?')) return;
+      try {
+        await fetch(scriptBaseURL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'deleteCleaner', cleanerId: id })
+        });
+        showToast('Cleaner deleted');
+        loadCleaners();
+      } catch (err) {
+        console.error(err);
+        showToast('Error deleting cleaner');
+      }
+    }
+
+    // Load cleaners list on page ready
+    loadCleaners();
+  </script>
+</body>
+</html>
+
