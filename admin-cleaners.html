@@ -338,7 +338,7 @@
         body: JSON.stringify({ action: 'getAllCleaners' })
       });
       const response = await res.json();
-      const data = response.data || []; // ✅ FIX: actual data array
+const data = Array.isArray(response) ? response : (response.data || []);
       const tbody = document.querySelector('#cleanersTable tbody');
 
       if (!Array.isArray(data) || data.length === 0) {
@@ -366,35 +366,36 @@
     }
   }
 
-  async function saveCleaner() {
-    const payload = {
-      action: 'saveCleaner',
-      cleanerId: document.getElementById('cleanerId').value,
-      name: document.getElementById('cleanerName').value,
-      email: document.getElementById('cleanerEmail').value,
-      phone: document.getElementById('cleanerPhone').value,
-      password: document.getElementById('cleanerPassword').value,
-      active: document.getElementById('cleanerActive').value || 'Yes'
-    };
+async function saveCleaner() {
+  const payload = {
+    action: 'saveCleaner',
+    cleanerId: document.getElementById('cleanerId').value,
+    name: document.getElementById('cleanerName').value,
+    email: document.getElementById('cleanerEmail').value,
+    phone: document.getElementById('cleanerPhone').value,
+    password: document.getElementById('cleanerPassword').value,
+    active: document.getElementById('cleanerActive').value || 'Yes'
+  };
 
-    try {
-      await fetch(scriptBaseURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+  try {
+    await fetch(scriptBaseURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
 
-      closeDrawer();
-      showToast('Cleaner saved successfully');
-      
-      // ✅ Reload the page after a short delay to sync with sheet
-      setTimeout(() => location.reload(), 1200);
-      
-    } catch (err) {
-      console.error(err);
-      showToast('Error saving cleaner');
-    }
+    closeDrawer();
+    showToast('Cleaner saved successfully');
+
+    // ✅ Refresh list
+    setTimeout(loadCleaners, 1000);
+    
+  } catch (err) {
+    console.error(err);
+    showToast('Error saving cleaner');
   }
+}
+
 
   async function deleteCleaner(id) {
     if (!confirm('Delete this cleaner?')) return;
