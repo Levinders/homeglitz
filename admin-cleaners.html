@@ -238,18 +238,19 @@
 
     <main>
       <div class="card">
-        <h2 class="card__title">
-          <span><i class="fa-solid fa-users"></i> Cleaners Management</span>
-          <div class="filter-bar">
-            <input type="text" id="searchInput" placeholder="Search cleaners...">
-            <select id="statusFilter">
-              <option value="all">All</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-            <button class="btn add" onclick="openDrawer()">+ Add Cleaner</button>
-          </div>
-        </h2>
+<h2 class="card__title" style="position:sticky; top:80px; z-index:20; background:var(--panel);">
+  <span><i class="fa-solid fa-users"></i> Cleaners Management</span>
+  <div class="filter-bar" style="display:flex; gap:10px; align-items:center;">
+    <input type="text" id="searchInput" placeholder="Search cleaners..." />
+    <select id="statusFilter">
+      <option value="all">All</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select>
+    <button class="btn add" onclick="openDrawer()">+ Add Cleaner</button>
+  </div>
+</h2>
+
 
         <table id="cleanersTable">
           <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Jobs</th><th>Earnings</th><th>Unpaid</th><th>Status</th><th>Actions</th></tr></thead>
