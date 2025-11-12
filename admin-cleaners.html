@@ -26,7 +26,7 @@
     html, body { margin: 0; padding: 0; overflow-x: hidden; }
     body { display: flex; min-height: 100vh; background: var(--primary-light); color: var(--text); }
 
-    /* Sidebar + Topbar */
+    /* Sidebar + Topbar (unchanged) */
     .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 250px; background: var(--panel); border-right: 1px solid var(--border); box-shadow: var(--shadow); padding: 20px 0; overflow-y: auto; z-index: 2000; }
     .sidebar .brand { display: flex; align-items: center; justify-content: center; margin-bottom: 30px; }
     .sidebar .brand img { height: 48px; }
@@ -202,7 +202,7 @@
   <aside class="sidebar">
     <div class="brand"><img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png"></div>
     <ul class="nav-links">
-      <li><a href="index.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a></li>
+      <li><a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a></li>
       <li><a href="booking.html"><i class="fa-solid fa-broom"></i> Bookings</a></li>
       <li><a href="properties.html"><i class="fa-solid fa-house"></i> Properties</a></li>
       <li><a href="cleaners.html" class="active"><i class="fa-solid fa-users"></i> Cleaners</a></li>
@@ -230,6 +230,7 @@
       <table id="cleanersTable">
         <thead>
           <tr>
+            <th>Cleaner ID</th>
             <th>Name</th>
             <th>Email</th>
             <th>Phone</th>
@@ -244,7 +245,6 @@
     </div>
   </main>
 
-  <!-- Drawer -->
   <div class="drawer" id="drawer">
     <div class="drawer__header">
       <span id="drawerTitle"><i class="fa-solid fa-user"></i> Cleaner Details</span>
@@ -256,7 +256,7 @@
       <div class="group"><label>Email</label><input id="cleanerEmail"></div>
       <div class="group"><label>Phone</label><input id="cleanerPhone"></div>
       <div class="group"><label>Password</label><input id="cleanerPassword" type="text"></div>
-      <div class="group" style="grid-column: span 2;"><label>Bio</label><textarea id="cleanerNotes" rows="3"></textarea></div>
+      <div class="group"><label>Bio</label><textarea id="cleanerNotes" rows="3"></textarea></div>
       <div class="group"><label>Active (Yes/No)</label><input id="cleanerActive"></div>
     </div>
     <div class="drawer__footer">
@@ -297,6 +297,7 @@
 
     tbody.innerHTML = filtered.map(c => `
       <tr onclick='openDrawer(${JSON.stringify(c)})'>
+        <td>${c["Cleaner ID"] || ""}</td>
         <td>${c["Cleaner Name"] || ""}</td>
         <td>${c["Email"] || ""}</td>
         <td>${c["Phone"] || ""}</td>
@@ -320,6 +321,7 @@
     document.getElementById('cleanerPassword').value = c?.["Password"] || "";
     document.getElementById('cleanerNotes').value = c?.["Notes"] || "";
     document.getElementById('cleanerActive').value = (c?.["Active"] === true || c?.["Active"] === "Yes") ? "Yes" : "No";
+
     deleteBtn.onclick = () => deleteCleaner(c?.["Cleaner ID"]);
   }
 
