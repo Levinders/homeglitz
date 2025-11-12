@@ -355,6 +355,32 @@ const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://scr
   }
 }
 
+    function renderCleaners(rows) {
+  const tbody = document.querySelector("#cleanersTable tbody");
+
+  if (!rows || rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#888;padding:20px;">No cleaners found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map(c => {
+    const active = (c["Active"] === true || (c["Active"] || "").toString().toLowerCase() === "yes");
+    return `
+      <tr>
+        <td>${c["Cleaner ID"] || ""}</td>
+        <td>${c["Cleaner Name"] || ""}</td>
+        <td>${c["Email"] || ""}</td>
+        <td>${c["Phone"] || ""}</td>
+        <td>${active ? "✅" : "❌"}</td>
+        <td>
+          <button class="btn edit" onclick='openDrawer(${JSON.stringify(c)})'><i class="fa fa-edit"></i></button>
+          <button class="btn delete" onclick="deleteCleaner('${c["Cleaner ID"]}')"><i class="fa fa-trash"></i></button>
+        </td>
+      </tr>`;
+  }).join("");
+}
+
+
 async function saveCleaner() {
   const payload = {
     action: 'saveCleaner',
@@ -372,12 +398,12 @@ async function saveCleaner() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-
+   
     closeDrawer();
     showToast('Cleaner saved successfully');
 
     // ✅ Refresh list
-    setTimeout(loadCleaners, 1000);
+    setTimeout(loadCleaners, 800);
     
   } catch (err) {
     console.error(err);
