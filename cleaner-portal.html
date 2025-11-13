@@ -103,6 +103,142 @@
   @media (min-width:651px){
     .list-cards{display:none}
   }
+
+  /* ===============================
+   MOBILE FIX PACK (IMPORTANT)
+   =============================== */
+@media (max-width: 650px) {
+
+  html, body {
+    overflow-x: hidden !important;
+    width: 100%;
+  }
+
+  /* HEADER */
+  .header {
+    padding: 10px 14px;
+  }
+  .brand img {
+    height: 30px;
+  }
+
+  /* PAGE CONTAINER */
+  .page {
+    padding: 0 10px;
+    margin-top: 10px;
+  }
+
+  /* TABLE hidden on mobile */
+  .table-wrap {
+    display: none !important;
+  }
+
+  /* SHOW MOBILE CARDS */
+  .list-cards {
+    display: block !important;
+  }
+
+  /* JOB CARD */
+  .job-card {
+    padding: 14px 12px;
+    border-radius: 14px;
+    border: 1px solid #e4eaf3;
+    background: #fff;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+  }
+
+  .job-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .job-row div:first-child {
+    width: 65%;
+  }
+
+  .job-row div:last-child {
+    width: 35%;
+    text-align: right;
+  }
+
+  .job-card button {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 8px;
+  }
+
+  /* STATUS BADGES SMALLER */
+  .status-badge {
+    font-size: 12px !important;
+    padding: 4px 8px !important;
+  }
+
+  /* COUNTERS */
+  .chip {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  /* SEARCH + FILTERS STACK */
+  .filters {
+    flex-direction: column;
+    width: 100%;
+    gap: 6px;
+  }
+  .filters input,
+  .filters select {
+    width: 100%;
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+  .filters button {
+    width: 100%;
+  }
+
+  /* DRAWER = FULLSCREEN ON MOBILE */
+  .drawer {
+    right: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 95vh !important;
+    border-radius: 16px 16px 0 0 !important;
+    transform: translateY(120%) scale(1) !important;
+    opacity: 0;
+    transition: transform .28s cubic-bezier(.2,.9,.2,1), opacity .2s ease;
+  }
+
+  .drawer.open {
+    transform: translateY(0) !important;
+    opacity: 1 !important;
+  }
+
+  .drawer .body {
+    max-height: calc(95vh - 140px) !important;
+  }
+
+  /* DRAWER INPUTS */
+  #dwNotes,
+  #dwRequestAmount {
+    font-size: 14px;
+  }
+
+  /* BOTTOM NAV ALWAYS ON MOBILE */
+  .bottom-nav {
+    display: flex !important;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  .bottom-nav a {
+    font-size: 12px;
+  }
+}
+
 </style>
 </head>
 <body>
