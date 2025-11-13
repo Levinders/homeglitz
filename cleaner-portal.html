@@ -54,27 +54,43 @@
   .btn{padding:8px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
   .btn-primary{background:var(--primary);color:#fff}
   .chip{background:#f8fbff;padding:6px 10px;border-radius:999px;border:1px solid #e6eef8;font-weight:400;color:var(--primary)}
+
+  .summary {
+  display: flex;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 4px 0;
+}
+
   .icon-chip {
   font-size: 18px;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   display:flex;
   align-items:center;
   justify-content:center;
+  position:relative;
+  border-radius:999px;
   padding:0;
+  flex-shrink: 0; /* important: prevents squishing */
 }
 
-  .icon-chip::after {
+
+.icon-chip::after {
   content: attr(data-count);
   position:absolute;
-  top:-4px;
-  right:-4px;
+  top:-5px;
+  right:-5px;
   background:var(--primary);
   color:#fff;
   font-size:10px;
   padding:2px 5px;
   border-radius:999px;
 }
+
 
 
 
@@ -519,14 +535,15 @@ async function loadTasks() {
    UI rendering
    --------------------------- */
 function updateCounts(list) {
-  const pending = list.filter(r => (r.Status||'')==='Pending').length;
-  const underway = list.filter(r => (r.Status||'')==='Clean Underway').length;
-  const completed = list.filter(r => (r.Status||'')==='Completed').length;
+  const pending = list.filter(r => (r.Status || '') === 'Pending').length || 0;
+  const underway = list.filter(r => (r.Status || '') === 'Clean Underway').length || 0;
+  const completed = list.filter(r => (r.Status || '') === 'Completed').length || 0;
 
   document.getElementById('countPending').setAttribute('data-count', pending);
   document.getElementById('countUnderway').setAttribute('data-count', underway);
   document.getElementById('countCompleted').setAttribute('data-count', completed);
 }
+
 
 function renderJobs(rows){
   // table desktop
