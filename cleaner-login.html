@@ -3,428 +3,167 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>HomeGlitz — Cleaner Portal</title>
+<title>HomeGlitz — Cleaner Login</title>
 <link rel="icon" href="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/64%C3%9764pxlogo.png"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-  :root{--primary:#0F72B4;--panel:#fff;--muted:#6c757d;--success:#16a34a;--danger:#ef4444;--radius:12px}
-  *{box-sizing:border-box;font-family:'Montserrat',sans-serif}
-  html,body{height:100%;margin:0;background:#f5faff;color:#222}
-  header.top{height:60px;background:var(--panel);display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #e6eef8}
-  .brand{display:flex;align-items:center;gap:10px}
-  .brand img{height:36px}
-  .wrap{display:flex;min-height:calc(100vh - 60px)}
-  nav.side{width:220px;background:var(--panel);border-right:1px solid #e6eef8;padding:18px;display:flex;flex-direction:column;gap:12px}
-  nav.side .profile{display:flex;align-items:center;gap:12px}
-  nav.side .avatar{width:44px;height:44px;border-radius:10px;background:#f0f6fb;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--primary)}
-  nav.side .name{font-weight:700}
-  nav.side a{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;text-decoration:none;color:var(--muted);font-weight:600}
-  nav.side a.active{background:#f8fbff;color:var(--primary);box-shadow:0 6px 18px rgba(15,114,180,.06)}
-  main.content{flex:1;padding:18px;overflow:auto}
-  .card{background:var(--panel);border-radius:12px;padding:18px;border:1px solid #eaf2fb}
-  .top-row{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap}
-  .filters{display:flex;gap:10px;align-items:center}
-  .filters input,.filters select{padding:8px 10px;border-radius:8px;border:1px solid #e6eef8;font-size:14px}
-  .btn-primary{background:var(--primary);color:#fff;padding:8px 12px;border-radius:8px;border:none;font-weight:700}
-  .summary{display:flex;gap:12px;align-items:center}
-  .chip{background:#f8fbff;padding:6px 10px;border-radius:999px;border:1px solid #e6eef8;font-weight:700;color:var(--primary)}
-  table{width:100%;border-collapse:collapse;margin-top:8px}
-  th,td{padding:10px;border-bottom:1px solid #f1f5f9;text-align:left;font-size:14px}
-  tr:hover td{background:#fbfdff}
-  .status-badge{padding:6px 10px;border-radius:999px;font-weight:700;font-size:13px}
-  .s-pending{background:#fff7ed;border:1px solid #ffe7c7;color:#b45309}
-  .s-underway{background:#eef9f1;border:1px solid #c7f0d2;color:var(--success)}
-  .s-completed{background:#eef2ff;border:1px solid #e0d7ff;color:var(--primary)}
-  .s-cancelled{background:#fff1f2;border:1px solid #ffd6dc;color:var(--danger)}
-  .inline-msg{font-size:13px;color:#c0392b;min-height:18px;margin-top:8px}
+  :root { --primary:#0F72B4; --panel:#fff; --muted:#6c757d; --radius:12px; }
+  * { box-sizing:border-box; font-family:'Montserrat',sans-serif; }
+  html,body { height:100%; margin:0; background:#f5faff; }
 
-  /* Drawer */
-  .drawer{position:fixed;right:16px;bottom:16px;width:400px;max-width:95%;background:var(--panel);border-radius:12px;border:1px solid #e6eef8;box-shadow:0 14px 40px rgba(12,60,120,.08);display:none;flex-direction:column;z-index:9000}
-  .drawer.active{display:flex}
-  .drawer .head{padding:12px 14px;border-bottom:1px solid #eef6ff;display:flex;align-items:center;justify-content:space-between}
-  .drawer .body{padding:14px;overflow:auto;max-height:60vh}
-  .drawer .footer{padding:12px 14px;border-top:1px solid #eef6ff;display:flex;gap:8px;justify-content:flex-end}
+  .wrap {
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
 
-  @media (max-width:880px){
-    nav.side{display:none}
-    .wrap{flex-direction:column}
-    header.top{padding:0 12px}
+  .card {
+    width:100%;
+    max-width:420px;
+    background:var(--panel);
+    padding:28px 28px 24px;
+    border-radius:16px;
+    box-shadow:0 8px 30px rgba(15,114,180,0.06);
+  }
+
+  .logo { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+  .logo img { height:44px; }
+
+  h1 { margin:0; font-size:20px; color:var(--primary); }
+  p.lead { margin:6px 0 18px; color:var(--muted); font-size:14px; }
+
+  .form-group { display:flex; flex-direction:column; margin-bottom:14px; }
+  label { font-weight:600; color:var(--primary); font-size:13px; margin-bottom:6px; }
+
+  input {
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #e6eef8;
+    font-size:14px;
+    background:#fff;
+  }
+
+  button.primary {
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+    background:var(--primary);
+    color:#fff;
+    font-weight:700;
+    margin-top:6px;
+  }
+
+  .inline-msg {
+    margin-top:12px;
+    color:#c0392b;
+    font-size:13px;
+    min-height:18px;
+  }
+
+  .small-link {
+    display:block;
+    margin-top:12px;
+    text-align:center;
+    color:var(--muted);
+    font-size:13px;
+  }
+
+  @media (max-width:420px) {
+    .card { padding:20px; }
   }
 </style>
 </head>
 
 <body>
-<header class="top">
-  <div class="brand">
-    <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/64%C3%9764pxlogo.png">
-    <strong>HomeGlitz</strong>
-  </div>
-  <div id="topRight">
-    <span id="cleanerNameDisplay" style="margin-right:12px;color:var(--muted)"></span>
-    <button class="btn-primary" id="btnLogout">Log out</button>
-  </div>
-</header>
-
 <div class="wrap">
-  <nav class="side" id="sideNav">
-    <div class="profile">
-      <div class="avatar" id="navAvatar">CL</div>
+  <div class="card">
+    <div class="logo">
+      <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png">
       <div>
-        <div class="name" id="navName">Cleaner</div>
-        <div style="font-size:13px;color:var(--muted)" id="navEmail"></div>
+        <h1>Cleaner Login</h1>
+        <p class="lead">Access your HomeGlitz cleaner dashboard</p>
       </div>
     </div>
 
-    <a href="#" class="active"><i class="fa-solid fa-list-check"></i> My Jobs</a>
-    <a href="#"><i class="fa-solid fa-wallet"></i> Payments</a>
-    <a href="#"><i class="fa-solid fa-gear"></i> Account</a>
-  </nav>
-
-  <main class="content">
-    <div class="card">
-      <div class="top-row">
-        <div style="display:flex;align-items:center;gap:14px">
-          <h2 style="margin:0;font-size:18px;color:var(--primary)">My Jobs</h2>
-          <div class="summary">
-            <div class="chip" id="countPending">Pending: 0</div>
-            <div class="chip" id="countUnderway">Underway: 0</div>
-            <div class="chip" id="countCompleted">Completed: 0</div>
-          </div>
-        </div>
-
-        <div class="filters">
-          <input id="q" placeholder="Search property, notes..." />
-          <select id="filterStatus">
-            <option value="all">All statuses</option>
-            <option value="Pending">Pending</option>
-            <option value="Clean Underway">Clean Underway</option>
-            <option value="Completed">Completed</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
-          <button class="btn-primary" id="btnRefresh">Refresh</button>
-        </div>
-      </div>
-
-      <table id="jobsTable">
-        <thead>
-          <tr>
-            <th>Booking</th>
-            <th>Property</th>
-            <th>Cleaner</th>
-            <th>Cleaning Date</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px">Loading…</td></tr></tbody>
-      </table>
-
-      <div class="inline-msg" id="inlineMsg"></div>
-    </div>
-  </main>
-</div>
-
-<!-- Drawer -->
-<div class="drawer" id="drawer">
-  <div class="head">
-    <div>
-      <strong id="dwBookingId">Booking</strong>
-      <div style="font-size:13px;color:var(--muted)" id="dwPropName"></div>
-    </div>
-    <button id="btnCloseDrawer" style="background:none;border:none;font-size:18px;color:var(--muted)">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-  </div>
-
-  <div class="body">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-      <div><label style="font-weight:700;color:var(--primary)">Cleaner</label><div id="dwCleaner"></div></div>
-      <div><label style="font-weight:700;color:var(--primary)">Date</label><div id="dwDate"></div></div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="username"/>
     </div>
 
-    <div style="margin-bottom:10px">
-      <label style="font-weight:700;color:var(--primary)">Status</label>
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button class="status-badge s-pending" data-status="Pending">Pending</button>
-        <button class="status-badge s-underway" data-status="Clean Underway">Clean Underway</button>
-        <button class="status-badge s-completed" data-status="Completed">Completed</button>
-        <button class="status-badge s-cancelled" data-status="Cancelled">Cancelled</button>
-      </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password"/>
     </div>
 
-    <div style="margin-bottom:12px">
-      <label style="font-weight:700;color:var(--primary)">Notes</label>
-      <textarea id="dwNotes" rows="3" style="width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef8"></textarea>
-    </div>
-
-    <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
-      <label style="font-weight:700;color:var(--primary);min-width:110px">Payment request</label>
-      <input id="dwRequestAmount" placeholder="Amount" style="padding:8px;border-radius:8px;border:1px solid #e6eef8;width:130px"/>
-      <div style="font-size:13px;color:var(--muted)">Only if requesting payment</div>
-    </div>
-
-    <div style="display:flex;gap:10px">
-      <button class="btn-primary" id="btnSaveStatus">Save status</button>
-      <button id="btnRequestPayment" style="padding:8px 12px;border-radius:8px;border:1px solid #e6eef8;background:#fff;font-weight:700">Request Payment</button>
-    </div>
-
-    <div style="margin-top:12px;font-size:13px;color:var(--muted)">
-      Admin will approve payment request and notify you.
-    </div>
-
-    <div class="inline-msg" id="drawerMsg"></div>
+    <button class="primary" id="btnLogin">Sign in</button>
+    <div class="inline-msg" id="msg"></div>
   </div>
 </div>
 
 <script>
 /* =====================================================
-   APPS SCRIPT THROUGH AllOrigins
+   APPS SCRIPT THROUGH AllOrigins (POST-safe)
    ===================================================== */
 const SCRIPT_BASE_URL =
   "https://api.allorigins.win/raw?url=" +
   encodeURIComponent("https://script.google.com/macros/s/AKfycbw2XuTOfx9d_ABkJ5Xw5ah1IPc3mMRZPqIOpNBDb_U0uLfLQPHaf6ukveV8c4DPcJCh/exec");
 
-const token = localStorage.getItem("homeglitz_cleaner_token");
-const cleanerId = localStorage.getItem("homeglitz_cleaner_id");
-const cleanerName = localStorage.getItem("homeglitz_cleaner_name");
+const msgEl = document.getElementById("msg");
 
-if (!token) window.location.href = "/cleaner-login.html";
+document.getElementById("btnLogin").addEventListener("click", async () => {
+  msgEl.textContent = "";
 
-/* Fill UI header */
-document.getElementById("cleanerNameDisplay").textContent = cleanerName || "";
-document.getElementById("navName").textContent = cleanerName || "Cleaner";
-document.getElementById("navAvatar").textContent =
-  (cleanerName || "CL").split(" ").map(s => s[0]).join("").toUpperCase();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-let JOBS = [];
-let CURRENT = null;
-const inlineMsg = document.getElementById("inlineMsg");
-const drawerMsg = document.getElementById("drawerMsg");
+  if (!email || !password) {
+    msgEl.textContent = "Please enter email and password";
+    return;
+  }
 
-/* =====================================================
-   LOAD TASKS
-   ===================================================== */
-async function loadTasks() {
-  inlineMsg.textContent = "";
   try {
     const res = await fetch(SCRIPT_BASE_URL, {
       method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ action: "getCleanerTasks", token })
+      headers: { "Content-Type":"application/json" },
+      body: JSON.stringify({
+        action: "loginCleaner",
+        email,
+        password
+      })
     });
 
     const text = await res.text();
     let json;
-    try { json = JSON.parse(text); }
-    catch { inlineMsg.textContent = "Server error"; return; }
 
-    if (!json.success) {
-      inlineMsg.textContent = json.message || "Unable to load tasks";
-      renderJobs([]);
+    try { json = JSON.parse(text); }
+    catch {
+      msgEl.textContent = "Server error — invalid response";
       return;
     }
 
-    JOBS = json.tasks || [];
-    renderJobs(JOBS);
-    updateCounts(JOBS);
+    if (!json.success) {
+      msgEl.textContent = json.message || "Login failed";
+      return;
+    }
+
+    // store session
+    localStorage.setItem("homeglitz_cleaner_token", json.token);
+    localStorage.setItem("homeglitz_cleaner_id", json.cleanerId);
+    localStorage.setItem("homeglitz_cleaner_name", json.name);
+
+    // redirect
+    window.location.href = "/cleaner-portal.html";
 
   } catch (err) {
     console.error(err);
-    inlineMsg.textContent = "Network error";
+    msgEl.textContent = "Network error — check deployment";
   }
-}
-
-function updateCounts(list){
-  document.getElementById("countPending").textContent =
-    "Pending: " + list.filter(r => r.Status === "Pending").length;
-
-  document.getElementById("countUnderway").textContent =
-    "Underway: " + list.filter(r => r.Status === "Clean Underway").length;
-
-  document.getElementById("countCompleted").textContent =
-    "Completed: " + list.filter(r => r.Status === "Completed").length;
-}
-
-function renderJobs(rows) {
-  const tbody = document.querySelector("#jobsTable tbody");
-  if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#888;padding:30px">No jobs</td></tr>`;
-    return;
-  }
-
-  tbody.innerHTML = rows.map(r => {
-    const id = r["Booking ID"];
-    const prop = r["Property Name"] || "";
-    const cleaner = r["Cleaners"] || "";
-    const date = r["Cleaning Date"]
-      ? new Date(r["Cleaning Date"]).toLocaleDateString()
-      : "";
-    const status = r["Status"] || "Pending";
-
-    const classMap = {
-      "Pending": "s-pending",
-      "Clean Underway": "s-underway",
-      "Completed": "s-completed",
-      "Cancelled": "s-cancelled"
-    };
-
-    return `
-      <tr data-id="${id}">
-        <td>${id}</td>
-        <td>${prop}</td>
-        <td>${cleaner}</td>
-        <td>${date}</td>
-        <td><span class="status-badge ${classMap[status] || "s-pending"}">${status}</span></td>
-        <td><button onclick="openDrawer('${id}')" style="padding:6px 10px;border-radius:8px;border:1px solid #e6eef8;background:#fff;font-weight:700">Details</button></td>
-      </tr>`;
-  }).join("");
-}
-
-/* =====================================================
-   DRAWER
-   ===================================================== */
-window.openDrawer = (id) => {
-  drawerMsg.textContent = "";
-  const row = JOBS.find(r => r["Booking ID"] === id);
-  if (!row) return;
-
-  CURRENT = row;
-
-  document.getElementById("dwBookingId").textContent = id;
-  document.getElementById("dwPropName").textContent = row["Property Name"] || "";
-  document.getElementById("dwCleaner").textContent = row["Cleaners"] || "";
-  document.getElementById("dwNotes").value = row["Notes"] || row["Note"] || "";
-  document.getElementById("dwDate").textContent =
-    row["Cleaning Date"] ? new Date(row["Cleaning Date"]).toLocaleDateString() : "";
-
-  document.getElementById("dwRequestAmount").value = "";
-
-  document.querySelectorAll(".status-badge[data-status]").forEach(b => {
-    b.style.opacity = (b.getAttribute("data-status") === row["Status"]) ? 1 : 0.4;
-  });
-
-  document.getElementById("drawer").classList.add("active");
-};
-
-document.getElementById("btnCloseDrawer").onclick = () => {
-  document.getElementById("drawer").classList.remove("active");
-};
-
-/* =====================================================
-   STATUS SAVE
-   ===================================================== */
-document.querySelectorAll(".status-badge[data-status]").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".status-badge[data-status]").forEach(x => x.style.opacity = 0.4);
-    btn.style.opacity = 1;
-    if (CURRENT) CURRENT._newStatus = btn.getAttribute("data-status");
-  });
 });
-
-document.getElementById("btnSaveStatus").onclick = async () => {
-  drawerMsg.textContent = "";
-  if (!CURRENT) return;
-
-  const newStatus = CURRENT._newStatus || CURRENT.Status;
-  const notes = document.getElementById("dwNotes").value;
-
-  try {
-    const res = await fetch(SCRIPT_BASE_URL, {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({
-        action: "updateCleanerTask",
-        token,
-        bookingId: CURRENT["Booking ID"],
-        status: newStatus,
-        notes
-      })
-    });
-
-    const json = await res.json();
-    if (!json.success) {
-      drawerMsg.textContent = json.message || "Save failed";
-      return;
-    }
-
-    drawerMsg.textContent = "Saved";
-    setTimeout(loadTasks, 600);
-
-  } catch (err) {
-    drawerMsg.textContent = "Network error";
-  }
-};
-
-/* =====================================================
-   REQUEST PAYMENT
-   ===================================================== */
-document.getElementById("btnRequestPayment").onclick = async () => {
-  drawerMsg.textContent = "";
-  if (!CURRENT) return;
-
-  const amount = Number(document.getElementById("dwRequestAmount").value.trim());
-  if (!amount || isNaN(amount)) {
-    drawerMsg.textContent = "Enter valid amount";
-    return;
-  }
-
-  try {
-    const res = await fetch(SCRIPT_BASE_URL, {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({
-        action: "requestPayment",
-        token,
-        bookingId: CURRENT["Booking ID"],
-        amount
-      })
-    });
-
-    const json = await res.json();
-    if (!json.success) {
-      drawerMsg.textContent = json.message || "Request failed";
-      return;
-    }
-
-    drawerMsg.textContent = "Request sent — admin will review";
-    setTimeout(loadTasks, 600);
-
-  } catch (err) {
-    drawerMsg.textContent = "Network error";
-  }
-};
-
-/* =====================================================
-   FILTERS + LOGOUT
-   ===================================================== */
-document.getElementById("q").oninput = applyFilters;
-document.getElementById("filterStatus").onchange = applyFilters;
-document.getElementById("btnRefresh").onclick = loadTasks;
-
-function applyFilters() {
-  const q = document.getElementById("q").value.toLowerCase();
-  const s = document.getElementById("filterStatus").value;
-
-  const filtered = JOBS.filter(r => {
-    if (s !== "all" && r.Status !== s) return false;
-    const hay = (r["Property Name"] + " " + r["Booking ID"] + " " + (r.Notes || "")).toLowerCase();
-    return hay.includes(q);
-  });
-
-  renderJobs(filtered);
-}
-
-document.getElementById("btnLogout").onclick = () => {
-  localStorage.removeItem("homeglitz_cleaner_token");
-  window.location.href = "/cleaner-login.html";
-};
-
-/* =====================================================
-   INITIAL LOAD
-   ===================================================== */
-loadTasks();
 </script>
 
 </body>
