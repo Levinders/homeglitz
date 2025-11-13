@@ -108,12 +108,124 @@
   .s-cancelled{background:#fff1f2;border:1px solid #ffd6dc;color:var(--danger)}
 
   /* Drawer */
-  .drawer{position:fixed;right:20px;bottom:20px;width:420px;max-width:95%;background:var(--panel);border-radius:14px;border:1px solid #eaf2fb;box-shadow:0 18px 60px rgba(12,60,120,0.12);display:flex;flex-direction:column;opacity:0;transform:translateY(24px) scale(.98);pointer-events:none;transition:all .28s cubic-bezier(.2,.9,.2,1);z-index:80}
-  .drawer.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
-  .drawer .head{padding:12px 14px;border-bottom:1px solid #eef6ff;display:flex;align-items:center;justify-content:space-between}
-  .drawer .body{padding:14px;max-height:62vh;overflow:auto}
-  .drawer .footer{padding:12px 14px;border-top:1px solid #eef6ff;display:flex;gap:8px;justify-content:flex-end}
-  .status-row{display:flex;gap:8px;flex-wrap:wrap}
+/* ================================
+   NEW POLISHED DRAWER (DESKTOP + MOBILE)
+   ================================ */
+
+.drawer {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 420px;
+  max-width: 95%;
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #eaf2fb;
+  box-shadow: 0 15px 50px rgba(15, 70, 140, 0.15);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(40px) scale(.96);
+  pointer-events: none;
+  transition: all .3s cubic-bezier(.2,.9,.2,1);
+  z-index: 100;
+}
+
+.drawer.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.drawer .head {
+  padding: 16px 18px;
+  border-bottom: 1px solid #eef4fc;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.drawer .head strong {
+  font-size: 17px;
+  color: var(--primary);
+}
+
+.drawer .body {
+  padding: 18px;
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+.drawer label {
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.drawer textarea,
+.drawer input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #e6eef8;
+  font-size: 14px;
+}
+
+.status-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.status-row .status-badge {
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .2s, opacity .2s;
+}
+
+.drawer .footer {
+  padding: 16px 18px;
+  border-top: 1px solid #eef4fc;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* MOBILE FULLSCREEN DRAWER */
+@media (max-width: 650px) {
+  .drawer {
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 92vh !important;
+    max-width: 100% !important;
+    border-radius: 20px 20px 0 0 !important;
+    transform: translateY(100%) !important;
+  }
+
+  .drawer.open {
+    transform: translateY(0) !important;
+  }
+
+  .drawer .body {
+    max-height: calc(92vh - 160px) !important;
+    padding: 20px;
+  }
+
+  .drawer .head {
+    padding: 18px;
+  }
+
+  .drawer .footer {
+    padding: 18px;
+  }
+}
+
 
   /* Buttons / disabled */
   .btn.ghost{background:#fff;border:1px solid #e6eef8}
@@ -708,8 +820,21 @@ btnSaveStatus.addEventListener('click', async () => {
   btnSaveStatus.classList.add('disabled');
   attachSpinner(btnSaveStatus);
   try {
-    const action = newStatus === 'Clean Underway' ? 'start' : newStatus === 'Completed' ? 'complete' : newStatus === 'Cancelled' ? 'cancel' : 'saveStatus';
-    const json = await fetchApi({ action: 'updateCleanerTask', token, bookingId: CURRENT['Booking ID'], action, status: newStatus, notes });
+const subAction =
+  newStatus === 'Clean Underway' ? 'start' :
+  newStatus === 'Completed' ? 'complete' :
+  newStatus === 'Cancelled' ? 'cancel' :
+  'saveStatus';
+
+const json = await fetchApi({
+  action: 'updateCleanerTask',
+  subAction,
+  token,
+  bookingId: CURRENT['Booking ID'],
+  status: newStatus,
+  notes
+});
+
     if (!json || !json.success) {
       showToast((json && json.message) ? json.message : 'Save failed', {duration:3500});
       return;
