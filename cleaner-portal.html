@@ -54,6 +54,29 @@
   .btn{padding:8px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
   .btn-primary{background:var(--primary);color:#fff}
   .chip{background:#f8fbff;padding:6px 10px;border-radius:999px;border:1px solid #e6eef8;font-weight:400;color:var(--primary)}
+  .icon-chip {
+  font-size: 18px;
+  width: 34px;
+  height: 34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+}
+
+  .icon-chip::after {
+  content: attr(data-count);
+  position:absolute;
+  top:-4px;
+  right:-4px;
+  background:var(--primary);
+  color:#fff;
+  font-size:10px;
+  padding:2px 5px;
+  border-radius:999px;
+}
+
+
 
   /* Table / cards */
   .table-wrap{overflow:auto}
@@ -262,9 +285,18 @@
         <div class="top-controls">
           <div style="display:flex;align-items:center;gap:12px;">
             <h4 style="margin:0;color:var(--primary)">Jobs</h4>
-            <div class="chip" id="countPending">Pending: 0</div>
-            <div class="chip" id="countUnderway">Underway: 0</div>
-            <div class="chip" id="countCompleted">Completed: 0</div>
+<div class="summary">
+  <div class="chip icon-chip" id="countPending" title="Pending">
+    ⏳
+  </div>
+  <div class="chip icon-chip" id="countUnderway" title="Underway">
+    🚀
+  </div>
+  <div class="chip icon-chip" id="countCompleted" title="Completed">
+    ✔️
+  </div>
+</div>
+
           </div>
 
           <div class="filters" role="search" aria-label="Job filters">
@@ -486,13 +518,14 @@ async function loadTasks() {
 /* ---------------------------
    UI rendering
    --------------------------- */
-function updateCounts(list){
+function updateCounts(list) {
   const pending = list.filter(r => (r.Status||'')==='Pending').length;
   const underway = list.filter(r => (r.Status||'')==='Clean Underway').length;
   const completed = list.filter(r => (r.Status||'')==='Completed').length;
-  document.getElementById('countPending').textContent = 'Pending: ' + pending;
-  document.getElementById('countUnderway').textContent = 'Underway: ' + underway;
-  document.getElementById('countCompleted').textContent = 'Completed: ' + completed;
+
+  document.getElementById('countPending').setAttribute('data-count', pending);
+  document.getElementById('countUnderway').setAttribute('data-count', underway);
+  document.getElementById('countCompleted').setAttribute('data-count', completed);
 }
 
 function renderJobs(rows){
