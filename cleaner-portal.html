@@ -576,7 +576,7 @@ function renderJobs(rows){
       const date = r['Cleaning Date'] ? formatDateCell(r['Cleaning Date']) : '';
       const status = r['Status'] || 'Pending';
       const statusClass = status === 'Pending' ? 's-pending' : status === 'Clean Underway' ? 's-underway' : status === 'Completed' ? 's-completed' : 's-cancelled';
-      return `<tr data-id="${id}"><td>${id}</td><td>${prop}</td><td>${cleaner}</td><td>${date}</td><td><span class="status-badge ${statusClass}">${status}</span></td><td><button class="btn ghost" data-open="${id}">Details</button></td></tr>`;
+      return `<tr data-id="${id}"><td>${id}</td><td>${prop}</td><td>${cleaner}</td><td>${date}</td><td><span class="status-badge ${statusClass}">${status}</span></td><td><button class="btn ghost" data-open="${id}"><i class="fa-solid fa-pen-to-square" style="color: #142139;"></i></button></td></tr>`;
     }).join('');
   }
 
