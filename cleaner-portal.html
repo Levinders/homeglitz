@@ -199,7 +199,7 @@ const inlineMsg = document.getElementById('inlineMsg');
 const drawerMsg = document.getElementById('drawerMsg');
 
 if (!token) {
-  window.location.href = '/cleaner-login.html';
+  window.location.href = '/homeglitz/cleaner-login.html';
 }
 
 navName.textContent = cleanerName || 'Cleaner';
@@ -218,7 +218,7 @@ async function loadTasks() {
       // if server says session expired, redirect
       if (json && json.message && json.message.toLowerCase().includes('session')) {
         localStorage.removeItem(tokenKey);
-        window.location.href = '/cleaner-login.html';
+        window.location.href = '/homeglitz/cleaner-login.html';
         return;
       }
       inlineMsg.textContent = (json && json.message) ? json.message : 'Unable to load tasks';
@@ -348,7 +348,7 @@ document.getElementById('btnRefresh').addEventListener('click', loadTasks);
 
 document.getElementById('btnLogout').addEventListener('click', () => {
   localStorage.removeItem(tokenKey); localStorage.removeItem('homeglitz_cleaner_id'); localStorage.removeItem('homeglitz_cleaner_name');
-  window.location.href = '/cleaner-login.html';
+  window.location.href = '/homeglitz/cleaner-login.html';
 });
 
 function applyFilters() {
