@@ -725,7 +725,7 @@ btnRequestPayment.addEventListener('click', async () => {
    --------------------------- */
 document.getElementById('q').addEventListener('input', applyFilters);
 document.getElementById('filterStatus').addEventListener('change', applyFilters);
-document.getElementById('btnRefresh').addEventListener('click', () => { loadTasks(); showToast('Refreshing…', {duration:1100}); });
+document.getElementById('btnRefresh').addEventListener('click', () => { loadTasks(); showToast('Refreshing…', {duration:2000}); });
 
 function applyFilters() {
   const q = (document.getElementById('q').value || '').toLowerCase().trim();
