@@ -1,236 +1,346 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>HomeGlitz — Cleaner Portal</title>
 <link rel="icon" href="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/64%C3%9764pxlogo.png"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{--primary:#0F72B4;--panel:#fff;--muted:#6c757d;--success:#16a34a;--danger:#ef4444;--radius:12px}
+  :root{
+    --primary:#0F72B4;
+    --panel:#ffffff;
+    --muted:#6c757d;
+    --success:#16a34a;
+    --danger:#ef4444;
+    --glass: rgba(255,255,255,0.72);
+    --radius:14px;
+    --shadow: 0 10px 30px rgba(12,60,120,0.06);
+    --max-w:1080px;
+  }
   *{box-sizing:border-box;font-family:'Montserrat',sans-serif}
-  html,body{height:100%;margin:0;background:#f5faff;color:#222}
-  header.top{height:60px;background:var(--panel);display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #e6eef8}
-  .brand{display:flex;align-items:center;gap:10px}
-  .brand img{height:36px}
-  .wrap{display:flex;min-height:calc(100vh - 60px)}
-  nav.side{width:220px;background:var(--panel);border-right:1px solid #e6eef8;padding:18px;display:flex;flex-direction:column;gap:12px}
-  nav.side .profile{display:flex;align-items:center;gap:12px}
-  nav.side .avatar{width:44px;height:44px;border-radius:10px;background:#f0f6fb;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--primary)}
-  nav.side .name{font-weight:700}
-  nav.side a{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;text-decoration:none;color:var(--muted);font-weight:600}
-  nav.side a.active{background:#f8fbff;color:var(--primary);box-shadow:0 6px 18px rgba(15,114,180,.06)}
-  main.content{flex:1;padding:18px;overflow:auto}
-  .card{background:var(--panel);border-radius:12px;padding:18px;border:1px solid #eaf2fb}
-  .top-row{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap}
-  .filters{display:flex;gap:10px;align-items:center}
-  .filters input,.filters select{padding:8px 10px;border-radius:8px;border:1px solid #e6eef8;font-size:14px}
-  .btn-primary{background:var(--primary);color:#fff;padding:8px 12px;border-radius:8px;border:none;font-weight:700}
-  .summary{display:flex;gap:12px;align-items:center}
+  html,body{height:100%;margin:0;background:#f5faff;color:#111;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+
+  /* Header */
+  .header{
+    position:sticky;top:0;z-index:60;
+    display:flex;align-items:center;justify-content:space-between;
+    gap:12px;padding:12px 16px;background:var(--panel);border-bottom:1px solid #eef6fb;
+    box-shadow: 0 2px 10px rgba(12,60,120,0.02);
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--primary)}
+  .brand img{height:38px;border-radius:8px}
+  .header-right{display:flex;gap:12px;align-items:center}
+  .avatar{width:40px;height:40px;border-radius:10px;background:#f0f6fb;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--primary)}
+
+  /* Layout */
+  .page {max-width:var(--max-w);margin:20px auto;padding:0 16px}
+  .grid {display:grid;grid-template-columns: 1fr 320px;gap:18px}
+  @media (max-width:980px){ .grid{grid-template-columns:1fr} .side{display:none} }
+
+  /* Side nav (desktop) */
+  .side { background:var(--panel);padding:16px;border-radius:12px;border:1px solid #eaf2fb; height:fit-content }
+  .side .profile{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+  .side a{display:block;padding:10px;border-radius:10px;color:var(--muted);text-decoration:none;margin-bottom:8px;font-weight:700}
+  .side a.active{background:#f8fbff;color:var(--primary);box-shadow:0 6px 18px rgba(15,114,180,.04)}
+
+  /* Main card */
+  .card{background:var(--panel);border-radius:14px;padding:14px;border:1px solid #eaf2fb;box-shadow:var(--shadow)}
+  .top-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  .filters{display:flex;gap:8px;align-items:center}
+  .filters input, .filters select{padding:8px 12px;border-radius:10px;border:1px solid #e6eef8;font-size:14px}
+  .btn{padding:8px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+  .btn-primary{background:var(--primary);color:#fff}
   .chip{background:#f8fbff;padding:6px 10px;border-radius:999px;border:1px solid #e6eef8;font-weight:700;color:var(--primary)}
-  table{width:100%;border-collapse:collapse;margin-top:8px}
-  th,td{padding:10px;border-bottom:1px solid #f1f5f9;text-align:left;font-size:14px}
+
+  /* Table / cards */
+  .table-wrap{overflow:auto}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:12px;border-bottom:1px solid #f1f5f9;text-align:left}
+  th{background:#f9fbfd;color:var(--primary);font-weight:800}
   tr:hover td{background:#fbfdff}
-  .status-badge{padding:6px 10px;border-radius:999px;font-weight:700;font-size:13px}
+  .status-badge{padding:6px 10px;border-radius:999px;font-weight:700;font-size:13px;display:inline-block}
   .s-pending{background:#fff7ed;border:1px solid #ffe7c7;color:#b45309}
   .s-underway{background:#eef9f1;border:1px solid #c7f0d2;color:var(--success)}
   .s-completed{background:#eef2ff;border:1px solid #e0d7ff;color:var(--primary)}
   .s-cancelled{background:#fff1f2;border:1px solid #ffd6dc;color:var(--danger)}
-  .inline-msg{font-size:13px;color:#c0392b;min-height:18px;margin-top:8px}
 
   /* Drawer */
-  .drawer{position:fixed;right:16px;bottom:16px;width:420px;max-width:95%;background:var(--panel);border-radius:12px;border:1px solid #e6eef8;box-shadow:0 14px 40px rgba(12,60,120,.08);display:none;flex-direction:column;z-index:9000}
-  .drawer.active{display:flex}
+  .drawer{position:fixed;right:20px;bottom:20px;width:420px;max-width:95%;background:var(--panel);border-radius:14px;border:1px solid #eaf2fb;box-shadow:0 18px 60px rgba(12,60,120,0.12);display:flex;flex-direction:column;opacity:0;transform:translateY(24px) scale(.98);pointer-events:none;transition:all .28s cubic-bezier(.2,.9,.2,1);z-index:80}
+  .drawer.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
   .drawer .head{padding:12px 14px;border-bottom:1px solid #eef6ff;display:flex;align-items:center;justify-content:space-between}
-  .drawer .body{padding:14px;overflow:auto;max-height:60vh}
+  .drawer .body{padding:14px;max-height:62vh;overflow:auto}
   .drawer .footer{padding:12px 14px;border-top:1px solid #eef6ff;display:flex;gap:8px;justify-content:flex-end}
+  .status-row{display:flex;gap:8px;flex-wrap:wrap}
 
-  .action-btn { padding:8px 10px;border-radius:8px;border:1px solid #e6eef8;background:#fff;font-weight:700; cursor:pointer; }
+  /* Buttons / disabled */
+  .btn.ghost{background:#fff;border:1px solid #e6eef8}
+  .disabled{opacity:.55;pointer-events:none}
 
-  /* responsive */
-  @media (max-width:880px){
-    nav.side{display:none}
-    .wrap{flex-direction:column}
-    header.top{padding:0 12px}
+  /* Loading spinner */
+  .spinner{display:inline-block;width:18px;height:18px;border-radius:50%;border:2px solid rgba(0,0,0,0.08);border-top-color:var(--primary);animation:spin .9s linear infinite;vertical-align:middle;margin-left:8px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* Toast */
+  .toaster{position:fixed;left:50%;transform:translateX(-50%);bottom:34px;z-index:110;display:flex;flex-direction:column;gap:8px;align-items:center}
+  .toast{background:rgba(17,24,39,0.98);color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 6px 20px rgba(2,6,23,0.24);min-width:180px;text-align:center;opacity:0;transform:translateY(8px);transition:all .26s ease}
+  .toast.show{opacity:1;transform:translateY(0)}
+
+  /* Bottom nav for mobile */
+  .bottom-nav{position:fixed;left:0;right:0;bottom:0;background:var(--panel);display:flex;gap:0;border-top:1px solid #eef6ff;z-index:70;justify-content:space-around;padding:8px 6px}
+  .bottom-nav a{flex:1;text-align:center;padding:8px 6px;color:var(--muted);text-decoration:none;font-weight:700}
+  .bottom-nav a.active{color:var(--primary)}
+
+  /* small screen list cards */
+  @media (max-width:650px){
+    table{display:none}
+    .list-cards{display:block}
+    .job-card{background:#fff;padding:12px;border-radius:12px;border:1px solid #eef6fb;margin-bottom:10px}
+    .job-row{display:flex;justify-content:space-between;gap:8px;align-items:center}
+  }
+  @media (min-width:651px){
+    .list-cards{display:none}
   }
 </style>
 </head>
 <body>
-  <header class="top">
-    <div class="brand"><img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png"><strong style="margin-left:6px">HomeGlitz</strong></div>
-    <div id="topRight">
-      <span id="cleanerNameDisplay" style="margin-right:12px;color:var(--muted)"></span>
-      <button class="btn-primary" id="btnLogout">Log out</button>
-    </div>
-  </header>
 
-  <div class="wrap">
-    <nav class="side" id="sideNav" aria-label="Cleaner navigation">
-      <div class="profile">
-        <div class="avatar" id="navAvatar">CL</div>
-        <div>
-          <div class="name" id="navName">Cleaner</div>
-          <div style="font-size:13px;color:var(--muted)" id="navEmail"></div>
-        </div>
-      </div>
+<!-- Header -->
+<header class="header">
+  <div class="brand"><img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png" alt="HomeGlitz logo"><div>HomeGlitz</div></div>
+  <div class="header-right">
+    <div id="cleanerNameTop" style="font-weight:700;color:var(--muted);"></div>
+    <div class="avatar" id="navAvatar">CL</div>
+    <button class="btn ghost" id="btnLogout" aria-label="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
+  </div>
+</header>
 
-      <a href="#" class="active"><i class="fa-solid fa-list-check"></i> My Jobs</a>
-      <a href="#"><i class="fa-solid fa-wallet"></i> Payments</a>
-      <a href="#"><i class="fa-solid fa-gear"></i> Account</a>
-    </nav>
+<!-- Page -->
+<main class="page">
+  <div class="grid">
 
-    <main class="content">
+    <!-- Main -->
+    <section>
       <div class="card">
-        <div class="top-row">
-          <div style="display:flex;align-items:center;gap:14px">
-            <h2 style="margin:0;font-size:18px;color:var(--primary)">My Jobs</h2>
-            <div class="summary">
-              <div class="chip" id="countPending">Pending: 0</div>
-              <div class="chip" id="countUnderway">Underway: 0</div>
-              <div class="chip" id="countCompleted">Completed: 0</div>
-            </div>
+        <div class="top-controls">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <h2 style="margin:0;color:var(--primary)">My Jobs</h2>
+            <div class="chip" id="countPending">Pending: 0</div>
+            <div class="chip" id="countUnderway">Underway: 0</div>
+            <div class="chip" id="countCompleted">Completed: 0</div>
           </div>
 
-          <div class="filters">
-            <input id="q" placeholder="Search property, notes..." />
-            <select id="filterStatus">
+          <div class="filters" role="search" aria-label="Job filters">
+            <input id="q" placeholder="Search property, notes or booking..." aria-label="Search jobs">
+            <select id="filterStatus" aria-label="Filter status">
               <option value="all">All statuses</option>
               <option value="Pending">Pending</option>
               <option value="Clean Underway">Clean Underway</option>
               <option value="Completed">Completed</option>
               <option value="Cancelled">Cancelled</option>
             </select>
-            <button class="btn-primary" id="btnRefresh">Refresh</button>
+            <button class="btn btn-primary" id="btnRefresh">Refresh</button>
           </div>
         </div>
 
-        <div id="jobsTableWrap">
-          <table id="jobsTable" aria-live="polite">
-            <thead><tr><th>Booking</th><th>Property</th><th>Cleaner</th><th>Cleaning Date</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px">Loading…</td></tr></tbody>
-          </table>
+        <div id="jobsContainer">
+          <div class="table-wrap">
+            <table aria-live="polite" id="jobsTable">
+              <thead>
+                <tr><th>Booking</th><th>Property</th><th>Cleaner</th><th>Cleaning Date</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody>
+                <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:40px">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- mobile card list -->
+          <div class="list-cards" id="listCards" aria-hidden="true"></div>
         </div>
 
-        <div class="inline-msg" id="inlineMsg"></div>
+        <div style="margin-top:12px;font-size:13px;color:var(--muted)" id="inlineMsg"></div>
       </div>
-    </main>
-  </div>
+    </section>
 
-  <!-- Drawer -->
-  <div class="drawer" id="drawer" role="dialog" aria-hidden="true">
-    <div class="head">
-      <div>
-        <strong id="dwBookingId">Booking</strong>
-        <div style="font-size:13px;color:var(--muted)" id="dwPropName"></div>
-      </div>
-      <div><button id="btnCloseDrawer" style="background:none;border:none;font-size:18px;color:var(--muted)"><i class="fa-solid fa-xmark"></i></button></div>
-    </div>
-    <div class="body">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-        <div><label style="font-weight:700;color:var(--primary)">Cleaner</label><div id="dwCleaner"></div></div>
-        <div><label style="font-weight:700;color:var(--primary)">Date</label><div id="dwDate"></div></div>
-      </div>
-
-      <div style="margin-bottom:10px">
-        <label style="font-weight:700;color:var(--primary)">Status</label>
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <button class="status-badge s-pending" data-status="Pending">Pending</button>
-          <button class="status-badge s-underway" data-status="Clean Underway">Clean Underway</button>
-          <button class="status-badge s-completed" data-status="Completed">Completed</button>
-          <button class="status-badge s-cancelled" data-status="Cancelled">Cancelled</button>
+    <!-- Side (desktop) -->
+    <aside class="side" aria-labelledby="profileTitle">
+      <div class="profile">
+        <div class="avatar" id="sideAvatar">CL</div>
+        <div>
+          <div id="sideName" style="font-weight:800">Cleaner</div>
+          <div id="sideEmail" style="color:var(--muted);font-size:13px"></div>
         </div>
       </div>
+      <nav>
+        <a href="#" class="active"><i class="fa-solid fa-list-check" style="margin-right:8px"></i> My Jobs</a>
+        <a href="/homeglitz/payments.html"><i class="fa-solid fa-wallet" style="margin-right:8px"></i> Payments</a>
+        <a href="/homeglitz/account.html"><i class="fa-solid fa-gear" style="margin-right:8px"></i> Account</a>
+      </nav>
+    </aside>
+  </div>
+</main>
 
-      <div style="margin-bottom:12px">
-        <label style="font-weight:700;color:var(--primary)">Notes</label>
-        <textarea id="dwNotes" rows="3" style="width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef8"></textarea>
+<!-- Drawer -->
+<aside id="drawer" class="drawer" role="dialog" aria-hidden="true" aria-labelledby="dwBookingId">
+  <div class="head">
+    <div>
+      <strong id="dwBookingId">Booking</strong>
+      <div id="dwPropName" style="font-size:13px;color:var(--muted)"></div>
+    </div>
+    <div><button id="btnCloseDrawer" style="background:none;border:none;font-size:18px;color:var(--muted)"><i class="fa-solid fa-xmark"></i></button></div>
+  </div>
+  <div class="body">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div><label style="font-weight:700;color:var(--primary)">Cleaner</label><div id="dwCleaner"></div></div>
+      <div><label style="font-weight:700;color:var(--primary)">Date</label><div id="dwDate"></div></div>
+    </div>
+
+    <div style="margin-bottom:10px">
+      <label style="font-weight:700;color:var(--primary)">Status</label>
+      <div class="status-row" aria-hidden="false">
+        <button class="status-badge s-pending" data-status="Pending">Pending</button>
+        <button class="status-badge s-underway" data-status="Clean Underway">Clean Underway</button>
+        <button class="status-badge s-completed" data-status="Completed">Completed</button>
+        <button class="status-badge s-cancelled" data-status="Cancelled">Cancelled</button>
       </div>
+    </div>
 
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-        <label style="font-weight:700;color:var(--primary);min-width:110px">Payment request</label>
-        <input id="dwRequestAmount" placeholder="Amount (ex GST)" style="padding:8px;border-radius:8px;border:1px solid #e6eef8;width:140px"/>
-        <div style="font-size:13px;color:var(--muted)">Only used when requesting payment</div>
-      </div>
+    <div style="margin-bottom:12px">
+      <label style="font-weight:700;color:var(--primary)">Notes</label>
+      <textarea id="dwNotes" rows="3" style="width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef8"></textarea>
+    </div>
 
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn-primary" id="btnSaveStatus">Save status</button>
-        <button class="action-btn" id="btnRequestPayment">Request Payment</button>
-      </div>
-
-      <div style="margin-top:10px;font-size:13px;color:var(--muted)">Requests will be sent to admin for approval. You will be notified when approved.</div>
-      <div class="inline-msg" id="drawerMsg"></div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+      <label style="font-weight:700;color:var(--primary);min-width:110px">Payment amount</label>
+      <input id="dwRequestAmount" placeholder="Amount (ex GST)" style="padding:8px;border-radius:8px;border:1px solid #e6eef8;width:140px" inputmode="numeric" />
+      <div style="font-size:13px;color:var(--muted)">Only allowed when job is <strong>Completed</strong></div>
     </div>
   </div>
+
+  <div class="footer">
+    <button class="btn ghost" id="btnSaveStatus">Save status</button>
+    <button class="btn btn-primary" id="btnRequestPayment">Request Payment</button>
+  </div>
+</aside>
+
+<!-- Mobile bottom nav -->
+<nav class="bottom-nav" role="navigation" aria-label="Primary">
+  <a href="#" class="active"><i class="fa-solid fa-list-check"></i><div style="font-size:12px">Jobs</div></a>
+  <a href="/homeglitz/payments.html"><i class="fa-solid fa-wallet"></i><div style="font-size:12px">Payments</div></a>
+  <a href="/homeglitz/account.html"><i class="fa-solid fa-gear"></i><div style="font-size:12px">Account</div></a>
+</nav>
+
+<!-- Toast container -->
+<div class="toaster" id="toaster" aria-live="polite" aria-atomic="true"></div>
 
 <script>
-/* PROXY base (your Cloudflare worker) */
-const PROXY_BASE = "https://homeglitz.raphaellevinders.workers.dev/";
+/* ===========================
+   CONFIG - set your worker
+   =========================== */
+const PROXY_BASE = "https://homeglitz.raphaellevinders.workers.dev/"; // <- keep as-is or update
+const tokenKey = 'homeglitz_cleaner_token';
 
-/* small helper for POSTing to worker, handles JSON and network errors */
+/* ---------------------------
+   small UI helpers
+   --------------------------- */
+const toaster = document.getElementById('toaster');
+function showToast(text, { duration=3000 } = {}) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = text;
+  toaster.appendChild(el);
+  // show
+  requestAnimationFrame(()=> el.classList.add('show'));
+  setTimeout(()=> {
+    el.classList.remove('show');
+    setTimeout(()=> el.remove(), 280);
+  }, duration);
+}
+
+/* spinner helper */
+function attachSpinner(btn) {
+  const s = document.createElement('span');
+  s.className = 'spinner';
+  btn.dataset._spinner = '1';
+  btn.appendChild(s);
+}
+function removeSpinner(btn) {
+  const sp = btn.querySelector('.spinner');
+  if (sp) sp.remove();
+  delete btn.dataset._spinner;
+}
+
+/* el selectors */
+const inlineMsg = document.getElementById('inlineMsg');
+const jobsTableBody = document.querySelector('#jobsTable tbody');
+const listCards = document.getElementById('listCards');
+const drawer = document.getElementById('drawer');
+const dwBookingId = document.getElementById('dwBookingId');
+const dwPropName = document.getElementById('dwPropName');
+const dwCleaner = document.getElementById('dwCleaner');
+const dwDate = document.getElementById('dwDate');
+const dwNotes = document.getElementById('dwNotes');
+const dwRequestAmount = document.getElementById('dwRequestAmount');
+const btnSaveStatus = document.getElementById('btnSaveStatus');
+const btnRequestPayment = document.getElementById('btnRequestPayment');
+const btnCloseDrawer = document.getElementById('btnCloseDrawer');
+const btnLogout = document.getElementById('btnLogout');
+
+const navAvatar = document.getElementById('navAvatar');
+const sideAvatar = document.getElementById('sideAvatar');
+const sideName = document.getElementById('sideName');
+const sideEmail = document.getElementById('sideEmail');
+const cleanerNameTop = document.getElementById('cleanerNameTop');
+
+let JOBS = [];
+let CURRENT = null;
+let token = localStorage.getItem(tokenKey);
+
+/* Redirect to login helper */
+function redirectToLogin() {
+  localStorage.removeItem(tokenKey);
+  window.location.href = '/homeglitz/cleaner-login.html';
+}
+
+/* ---------------------------
+   Fetch wrapper (worker)
+   --------------------------- */
 async function fetchApi(payload) {
   try {
     const res = await fetch(PROXY_BASE, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type':'application/json'},
       body: JSON.stringify(payload)
     });
     const text = await res.text();
-    try { return JSON.parse(text); } 
-    catch(e){ throw new Error('Invalid JSON response from server'); }
+    try { return JSON.parse(text); } catch(e){ throw new Error('Invalid JSON from backend'); }
   } catch (err) {
     throw err;
   }
 }
 
-/* Session */
-const tokenKey = 'homeglitz_cleaner_token';
-let token = localStorage.getItem(tokenKey);
-const cleanerId = localStorage.getItem('homeglitz_cleaner_id');
-const cleanerName = localStorage.getItem('homeglitz_cleaner_name');
-
-/* UI refs */
-const navName = document.getElementById('navName');
-const navEmail = document.getElementById('navEmail');
-const navAvatar = document.getElementById('navAvatar');
-const cleanerNameDisplay = document.getElementById('cleanerNameDisplay');
-
-const inlineMsg = document.getElementById('inlineMsg');
-const drawerMsg = document.getElementById('drawerMsg');
-
-if (!token) {
-  window.location.href = '/homeglitz/cleaner-login.html';
-}
-
-navName.textContent = cleanerName || 'Cleaner';
-cleanerNameDisplay.textContent = cleanerName || '';
-navAvatar.textContent = (cleanerName || 'CL').split(' ').map(s=>s[0]).slice(0,2).join('').toUpperCase();
-
-let JOBS = [];
-let CURRENT = null;
-
-/* load tasks */
+/* ---------------------------
+   Load tasks
+   --------------------------- */
 async function loadTasks() {
   inlineMsg.textContent = '';
   try {
     const json = await fetchApi({ action: 'getCleanerTasks', token });
     if (!json || !json.success) {
-      // if server says session expired, redirect
-      if (json && json.message && json.message.toLowerCase().includes('session')) {
-        localStorage.removeItem(tokenKey);
-        window.location.href = '/homeglitz/cleaner-login.html';
-        return;
-      }
-      inlineMsg.textContent = (json && json.message) ? json.message : 'Unable to load tasks';
+      if (json && json.message && json.message.toLowerCase().includes('session')) return redirectToLogin();
+      inlineMsg.textContent = json && json.message ? json.message : 'Unable to load tasks';
       renderJobs([]);
       return;
     }
-    // update token if backend refreshed
+    // refresh token if provided
     if (json.newToken) { token = json.newToken; localStorage.setItem(tokenKey, token); }
-
     JOBS = json.tasks || [];
     renderJobs(JOBS);
     updateCounts(JOBS);
+    inlineMsg.textContent = '';
   } catch (err) {
     console.error(err);
     inlineMsg.textContent = 'Network error';
@@ -238,7 +348,10 @@ async function loadTasks() {
   }
 }
 
-function updateCounts(list) {
+/* ---------------------------
+   UI rendering
+   --------------------------- */
+function updateCounts(list){
   const pending = list.filter(r => (r.Status||'')==='Pending').length;
   const underway = list.filter(r => (r.Status||'')==='Clean Underway').length;
   const completed = list.filter(r => (r.Status||'')==='Completed').length;
@@ -247,109 +360,186 @@ function updateCounts(list) {
   document.getElementById('countCompleted').textContent = 'Completed: ' + completed;
 }
 
-function renderJobs(rows) {
-  const tbody = document.querySelector('#jobsTable tbody');
-  if (!rows || rows.length===0) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px">No jobs found</td></tr>';
-    return;
+function renderJobs(rows){
+  // table desktop
+  if (!rows || rows.length === 0) {
+    jobsTableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px">No jobs found</td></tr>';
+  } else {
+    jobsTableBody.innerHTML = rows.map(r => {
+      const id = escapeHtml(r['Booking ID'] || '');
+      const prop = escapeHtml(r['Property Name'] || r['Property'] || '');
+      const cleaner = escapeHtml(r['Cleaners'] || '');
+      const date = r['Cleaning Date'] ? formatDateCell(r['Cleaning Date']) : '';
+      const status = r['Status'] || 'Pending';
+      const statusClass = status === 'Pending' ? 's-pending' : status === 'Clean Underway' ? 's-underway' : status === 'Completed' ? 's-completed' : 's-cancelled';
+      return `<tr data-id="${id}"><td>${id}</td><td>${prop}</td><td>${cleaner}</td><td>${date}</td><td><span class="status-badge ${statusClass}">${status}</span></td><td><button class="btn ghost" data-open="${id}">Details</button></td></tr>`;
+    }).join('');
   }
-  const html = rows.map(r => {
-    const id = escapeHtml(r['Booking ID'] || '');
-    const prop = escapeHtml(r['Property Name'] || r['Property'] || '');
-    const cleaner = escapeHtml(r['Cleaners'] || '');
-    const date = r['Cleaning Date'] ? formatDateCell(r['Cleaning Date']) : '';
-    const status = r['Status'] || 'Pending';
-    const statusClass = status === 'Pending' ? 's-pending' : status === 'Clean Underway' ? 's-underway' : status === 'Completed' ? 's-completed' : 's-cancelled';
-    const actions = `<button onclick="openDrawer('${id}')" style="padding:6px 10px;border-radius:8px;border:1px solid #e6eef8;background:#fff;font-weight:700">Details</button>`;
-    return `<tr data-id="${id}"><td>${id}</td><td>${prop}</td><td>${cleaner}</td><td>${date}</td><td><span class="status-badge ${statusClass}">${status}</span></td><td>${actions}</td></tr>`;
-  }).join('');
-  tbody.innerHTML = html;
+
+  // mobile cards
+  if (!rows || rows.length === 0) {
+    listCards.innerHTML = '<div style="color:var(--muted);padding:16px;text-align:center">No jobs found</div>';
+  } else {
+    listCards.innerHTML = rows.map(r => {
+      const id = escapeHtml(r['Booking ID'] || '');
+      const prop = escapeHtml(r['Property Name'] || r['Property'] || '');
+      const date = r['Cleaning Date'] ? formatDateCell(r['Cleaning Date']) : '';
+      const status = r['Status'] || 'Pending';
+      return `<div class="job-card" data-id="${id}">
+        <div class="job-row"><div><div style="font-weight:800">${prop}</div><div style="font-size:13px;color:var(--muted)">${id} · ${date}</div></div><div><div style="text-align:right"><div style="font-weight:700">${status}</div><button class="btn ghost" data-open="${id}" style="margin-top:8px">Details</button></div></div></div>
+      </div>`;
+    }).join('');
+  }
+
+  // wire up details buttons
+  document.querySelectorAll('[data-open]').forEach(b => {
+    b.addEventListener('click', (e) => {
+      const id = b.getAttribute('data-open');
+      openDrawer(id);
+    });
+  });
 }
 
-/* open drawer */
-window.openDrawer = (bookingId) => {
-  drawerMsg.textContent = '';
-  const row = JOBS.find(r => (r['Booking ID']||'')===bookingId);
-  if (!row) return;
+/* ---------------------------
+   Drawer open/close
+   --------------------------- */
+function openDrawer(bookingId) {
+  const row = JOBS.find(r => (r['Booking ID']||'') === bookingId);
+  if (!row) return showToast('Job not found', {duration:2000});
   CURRENT = row;
-  document.getElementById('dwBookingId').textContent = bookingId;
-  document.getElementById('dwPropName').textContent = row['Property Name'] || '';
-  document.getElementById('dwCleaner').textContent = row['Cleaners'] || '';
-  document.getElementById('dwDate').textContent = row['Cleaning Date'] ? formatDateCell(row['Cleaning Date']): '';
-  document.getElementById('dwNotes').value = row['Notes'] || row['Note'] || '';
-  document.getElementById('dwRequestAmount').value = row['Request Amount'] || '';
-  // set status button opacity
+  dwBookingId.textContent = bookingId;
+  dwPropName.textContent = row['Property Name'] || '';
+  dwCleaner.textContent = row['Cleaners'] || '';
+  dwDate.textContent = row['Cleaning Date'] ? formatDateCell(row['Cleaning Date']) : '';
+  dwNotes.value = row['Notes'] || row['Note'] || '';
+  dwRequestAmount.value = row['Request Amount'] || '';
+
+  // highlight status buttons and set CURRENT._newStatus to current status
   document.querySelectorAll('.status-badge[data-status]').forEach(b => {
-    b.style.opacity = (b.getAttribute('data-status') === row['Status']) ? 1 : 0.45;
+    b.style.opacity = (b.getAttribute('data-status') === (row['Status'] || 'Pending')) ? '1' : '0.45';
   });
-  document.getElementById('drawer').classList.add('active');
-};
+  CURRENT._newStatus = row['Status'] || 'Pending';
 
-/* drawer events */
-document.getElementById('btnCloseDrawer').addEventListener('click', () => {
-  document.getElementById('drawer').classList.remove('active');
+  // payment UI: only enable if Completed
+  setPaymentEnabled((row['Status'] || '') === 'Completed');
+
+  // show drawer
+  drawer.classList.add('open');
+  drawer.setAttribute('aria-hidden','false');
+  // focus the first actionable element
+  document.getElementById('dwNotes').focus();
+}
+
+function closeDrawer() {
+  drawer.classList.remove('open');
+  drawer.setAttribute('aria-hidden','true');
   CURRENT = null;
-});
+}
 
-/* status controls */
+/* set payment field/button enabled only when true */
+function setPaymentEnabled(enabled) {
+  if (enabled) {
+    dwRequestAmount.removeAttribute('disabled');
+    btnRequestPayment.classList.remove('disabled');
+  } else {
+    dwRequestAmount.setAttribute('disabled','true');
+    btnRequestPayment.classList.add('disabled');
+  }
+}
+
+/* ---------------------------
+   Status click handlers (in drawer)
+   --------------------------- */
 document.querySelectorAll('.status-badge[data-status]').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.status-badge[data-status]').forEach(b => b.style.opacity = 0.45);
     btn.style.opacity = 1;
-    document.getElementById('dwNotes').focus();
-    if (CURRENT) CURRENT._newStatus = btn.getAttribute('data-status');
+    if (CURRENT) {
+      CURRENT._newStatus = btn.getAttribute('data-status');
+      // enable payment only if Completed
+      setPaymentEnabled(CURRENT._newStatus === 'Completed');
+    }
   });
 });
 
-/* save status */
-document.getElementById('btnSaveStatus').addEventListener('click', async () => {
-  drawerMsg.textContent = '';
+/* Close drawer */
+btnCloseDrawer.addEventListener('click', closeDrawer);
+
+/* ---------------------------
+   Save status action
+   --------------------------- */
+btnSaveStatus.addEventListener('click', async () => {
   if (!CURRENT) return;
   const newStatus = CURRENT._newStatus || CURRENT['Status'] || 'Pending';
-  const notes = document.getElementById('dwNotes').value;
+  const notes = dwNotes.value || '';
+  // show processing
+  btnSaveStatus.classList.add('disabled');
+  attachSpinner(btnSaveStatus);
   try {
-    const json = await fetchApi({ action: 'updateCleanerTask', token, bookingId: CURRENT['Booking ID'], action: newStatus === 'Clean Underway' ? 'start' : newStatus === 'Completed' ? 'complete' : (newStatus === 'Cancelled' ? 'cancel' : 'saveStatus'), status: newStatus, notes });
+    const action = newStatus === 'Clean Underway' ? 'start' : newStatus === 'Completed' ? 'complete' : newStatus === 'Cancelled' ? 'cancel' : 'saveStatus';
+    const json = await fetchApi({ action: 'updateCleanerTask', token, bookingId: CURRENT['Booking ID'], action, status: newStatus, notes });
     if (!json || !json.success) {
-      drawerMsg.textContent = (json && json.message) ? json.message : 'Save failed';
+      showToast((json && json.message) ? json.message : 'Save failed', {duration:3500});
       return;
     }
     if (json.newToken) { token = json.newToken; localStorage.setItem(tokenKey, token); }
-    drawerMsg.textContent = 'Saved';
-    setTimeout(loadTasks, 600);
+    showToast('Saved', {duration:1800});
+    // reload tasks (server source of truth)
+    setTimeout(loadTasks, 500);
+    closeDrawer();
   } catch (err) {
-    console.error(err); drawerMsg.textContent = 'Network error';
+    console.error(err);
+    showToast('Network error — could not save', {duration:3500});
+  } finally {
+    removeSpinner(btnSaveStatus);
+    btnSaveStatus.classList.remove('disabled');
   }
 });
 
-/* request payment */
-document.getElementById('btnRequestPayment').addEventListener('click', async () => {
-  drawerMsg.textContent = '';
+/* ---------------------------
+   Request payment action (ONLY when Completed)
+   --------------------------- */
+btnRequestPayment.addEventListener('click', async () => {
   if (!CURRENT) return;
-  const amount = document.getElementById('dwRequestAmount').value.trim();
-  if (!amount || isNaN(Number(amount))) { drawerMsg.textContent = 'Enter valid amount'; return; }
+  if ((CURRENT._newStatus || CURRENT['Status'] || '') !== 'Completed') {
+    showToast('You can only request payment after marking the job as Completed.', {duration:4000});
+    return;
+  }
+  const amountRaw = dwRequestAmount.value.trim();
+  if (!amountRaw || isNaN(Number(amountRaw))) {
+    showToast('Enter a valid amount', {duration:2800});
+    return;
+  }
+  const amount = Number(amountRaw);
+  // processing
+  btnRequestPayment.classList.add('disabled');
+  attachSpinner(btnRequestPayment);
+
   try {
-    const json = await fetchApi({ action: 'requestPayment', token, bookingId: CURRENT['Booking ID'], amount: Number(amount) });
+    const json = await fetchApi({ action: 'requestPayment', token, bookingId: CURRENT['Booking ID'], amount });
     if (!json || !json.success) {
-      drawerMsg.textContent = (json && json.message) ? json.message : 'Request failed';
+      showToast((json && json.message) ? json.message : 'Request failed', {duration:3500});
       return;
     }
     if (json.newToken) { token = json.newToken; localStorage.setItem(tokenKey, token); }
-    drawerMsg.textContent = 'Request sent — admin will review';
-    setTimeout(loadTasks, 600);
+    showToast('Request sent — admin will review', {duration:3500});
+    setTimeout(loadTasks, 700);
+    closeDrawer();
   } catch (err) {
-    console.error(err); drawerMsg.textContent = 'Network error';
+    console.error(err);
+    showToast('Network error — could not send request', {duration:3500});
+  } finally {
+    removeSpinner(btnRequestPayment);
+    btnRequestPayment.classList.remove('disabled');
   }
 });
 
-/* search & filters */
+/* ---------------------------
+   Search / filters
+   --------------------------- */
 document.getElementById('q').addEventListener('input', applyFilters);
 document.getElementById('filterStatus').addEventListener('change', applyFilters);
-document.getElementById('btnRefresh').addEventListener('click', loadTasks);
-
-document.getElementById('btnLogout').addEventListener('click', () => {
-  localStorage.removeItem(tokenKey); localStorage.removeItem('homeglitz_cleaner_id'); localStorage.removeItem('homeglitz_cleaner_name');
-  window.location.href = '/homeglitz/cleaner-login.html';
-});
+document.getElementById('btnRefresh').addEventListener('click', () => { loadTasks(); showToast('Refreshing…', {duration:900}); });
 
 function applyFilters() {
   const q = (document.getElementById('q').value || '').toLowerCase().trim();
@@ -363,14 +553,43 @@ function applyFilters() {
   renderJobs(filtered);
 }
 
-/* helpers */
+/* ---------------------------
+   Logout
+   --------------------------- */
+btnLogout.addEventListener('click', () => {
+  localStorage.removeItem(tokenKey);
+  localStorage.removeItem('homeglitz_cleaner_id');
+  localStorage.removeItem('homeglitz_cleaner_name');
+  window.location.href = '/homeglitz/cleaner-login.html';
+});
+
+/* ---------------------------
+   Helpers
+   --------------------------- */
 function formatDateCell(v){
   try { const d = new Date(v); if (isNaN(d)) return v; return d.toLocaleDateString(); } catch { return v; }
 }
 function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-/* boot */
-loadTasks();
+/* ---------------------------
+   Boot / session checks
+   --------------------------- */
+(function boot(){
+  // quick session check
+  token = localStorage.getItem(tokenKey);
+  const cleanerName = localStorage.getItem('homeglitz_cleaner_name') || '';
+  const cleanerId = localStorage.getItem('homeglitz_cleaner_id') || '';
+  if (!token || !cleanerId) return redirectToLogin();
+
+  // fill header/profile
+  cleanerNameTop.textContent = cleanerName;
+  sideName.textContent = cleanerName || 'Cleaner';
+  sideEmail.textContent = localStorage.getItem('homeglitz_cleaner_email') || '';
+  navAvatar.textContent = (cleanerName || 'CL').split(' ').map(s=>s[0]).slice(0,2).join('').toUpperCase();
+  sideAvatar.textContent = navAvatar.textContent;
+
+  loadTasks();
+})();
 </script>
 </body>
 </html>
