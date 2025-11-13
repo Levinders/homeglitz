@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HomeGlitz — Admin Payments</title>
+<link rel="icon" href="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/64%C3%9764pxlogo.png" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#0F72B4; --primary-light:#f5faff; --panel:#fff; --muted:#6c757d;
+    --border:#e4e9ef; --radius:12px; --shadow:0 6px 20px rgba(15,114,180,0.08);
+  }
+  *{box-sizing:border-box;font-family:'Montserrat',sans-serif}
+  html,body{height:100%;margin:0;background:var(--primary-light);color:#222}
+  /* layout */
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:250px;background:var(--panel);border-right:1px solid var(--border);padding:20px 0;box-shadow:var(--shadow);z-index:2000}
+  .sidebar .brand{display:flex;align-items:center;justify-content:center;margin-bottom:30px}
+  .sidebar img{height:48px}
+  .nav-links{list-style:none;padding:0;margin:0}
+  .nav-links a{display:flex;align-items:center;gap:12px;padding:12px 18px;color:var(--muted);text-decoration:none;border-radius:8px;margin:6px 12px}
+  .nav-links a.active{background:#f8fbff;color:var(--primary);border-left:3px solid var(--primary)}
+  .topbar{position:fixed;left:250px;right:0;top:0;height:60px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:1500;box-shadow:var(--shadow)}
+  .topbar .brandline{display:flex;align-items:center;gap:12px}
+  main{margin-left:250px;padding:100px 28px 40px}
+  .card{background:var(--panel);border-radius:var(--radius);padding:26px;border:1px solid var(--border);box-shadow:var(--shadow)}
+  .card__title{font-size:20px;color:var(--primary);font-weight:700;display:flex;align-items:center;gap:12px;border-bottom:2px solid rgba(15,114,180,0.06);padding-bottom:12px;margin-bottom:18px}
+  /* fixed controls row */
+  .controls {
+    position: sticky;
+    top: 74px; /* under topbar */
+    z-index:1400;
+    background: transparent;
+    padding-bottom:12px;
+  }
+  .controls-inner {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    justify-content:space-between;
+    margin-bottom:12px;
+  }
+  .left-controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .right-controls{display:flex;gap:12px;align-items:center}
+  .filters input,.filters select{padding:8px 10px;border-radius:8px;border:1px solid var(--border);font-size:14px}
+  .btn {border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer}
+  .btn.primary{background:var(--primary);color:#fff}
+  .btn.ghost{background:#fff;border:1px solid var(--border);color:var(--muted)}
+  .summary{display:flex;gap:10px;align-items:center}
+  .chip{background:#f8fbff;padding:6px 10px;border-radius:999px;border:1px solid var(--border);font-weight:700;color:var(--primary)}
+  /* table */
+  .table-wrap{overflow:auto;border-radius:10px;border:1px solid var(--border);background:#fff}
+  table{width:100%;border-collapse:collapse;min-width:900px}
+  th,td{padding:12px 14px;border-bottom:1px solid #f1f5f9;font-size:14px;text-align:left}
+  thead th{background:#f9fbfd;color:var(--primary);font-weight:700}
+  tr:hover td{background:#fbfdff}
+  .status-badge{padding:6px 10px;border-radius:999px;font-weight:700;font-size:13px}
+  .s-pending{background:#fff7ed;border:1px solid #ffe7c7;color:#b45309}
+  .s-approved{background:#eef2ff;border:1px solid #e0d7ff;color:var(--primary)}
+  .s-paid{background:#eef9f1;border:1px solid #c7f0d2;color:#16a34a}
+  /* drawer */
+  .drawer{position:fixed;right:20px;bottom:20px;width:520px;max-width:96%;background:var(--panel);border-radius:14px;border:1px solid var(--border);box-shadow:0 18px 50px rgba(10,30,70,0.08);display:none;flex-direction:column;z-index:6000}
+  .drawer.active{display:flex}
+  .drawer .head{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+  .drawer .body{padding:16px;overflow:auto;max-height:70vh}
+  .drawer .footer{padding:14px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+  .form-row{display:flex;gap:10px;margin-bottom:10px}
+  .form-col{flex:1;display:flex;flex-direction:column}
+  label{font-weight:700;color:var(--primary);font-size:13px;margin-bottom:6px}
+  input[type="text"],input[type="number"],textarea,select{padding:10px;border-radius:10px;border:1px solid var(--border);font-size:14px}
+  textarea{resize:vertical}
+  .inline-msg{min-height:20px;color:#c0392b;font-size:13px;margin-top:8px}
+  /* responsive */
+  @media (max-width:980px){
+    .drawer{right:12px;left:12px;width:auto}
+    main{padding:120px 14px 30px}
+    table{min-width:720px}
+  }
+  @media (max-width:640px){
+    .controls-inner{flex-direction:column;align-items:stretch}
+    .left-controls{width:100%;justify-content:space-between}
+    .summary{order:2}
+    .table-wrap{overflow:auto}
+  }
+</style>
+</head>
+<body>
+
+  <aside class="sidebar" aria-hidden>
+    <div class="brand"><img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png" alt="HomeGlitz"></div>
+    <ul class="nav-links">
+      <li><a href="/dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a></li>
+      <li><a href="/admin/payments.html" class="active"><i class="fa-solid fa-wallet"></i> Payments</a></li>
+      <li><a href="/cleaners.html"><i class="fa-solid fa-users"></i> Cleaners</a></li>
+      <li><a href="/all-bookings.html"><i class="fa-solid fa-calendar-days"></i> Bookings</a></li>
+      <li><a href="/reports.html"><i class="fa-solid fa-chart-pie"></i> Reports</a></li>
+    </ul>
+  </aside>
+
+  <header class="topbar">
+    <div class="brandline"><img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/64%C3%9764pxlogo.png" style="height:36px"><strong style="color:var(--primary)">HomeGlitz — Admin</strong></div>
+    <div style="display:flex;gap:12px;align-items:center;color:var(--muted)">
+      <div style="text-align:right;font-weight:600">Admin</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="card">
+      <div class="card__title"><i class="fa-solid fa-wallet"></i> Payment Requests</div>
+
+      <!-- fixed controls -->
+      <div class="controls">
+        <div class="controls-inner">
+          <div class="left-controls">
+            <div style="display:flex;align-items:center;gap:14px">
+              <div class="summary">
+                <div class="chip" id="totalPending">Pending: 0</div>
+                <div class="chip" id="totalApproved">Approved: 0</div>
+                <div class="chip" id="totalPaid">Paid: 0</div>
+              </div>
+            </div>
+
+            <div class="filters" style="margin-left:12px;display:flex;gap:8px;align-items:center">
+              <input id="search" placeholder="Search request, booking, cleaner..." />
+              <select id="filterStatus">
+                <option value="all">All statuses</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Paid">Paid</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="right-controls">
+            <button class="btn ghost" id="btnRefresh"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+            <button class="btn primary" id="btnCreateInvoice" disabled><i class="fa-solid fa-file-invoice-dollar"></i> New (disabled)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrap" id="tableWrap">
+        <table id="requestsTable" aria-live="polite">
+          <thead>
+            <tr>
+              <th>Request</th>
+              <th>Booking</th>
+              <th>Cleaner</th>
+              <th>Amount (Ex GST)</th>
+              <th>Requested At</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:36px">Loading…</td></tr></tbody>
+        </table>
+      </div>
+
+      <div class="inline-msg" id="pageMsg"></div>
+    </div>
+  </main>
+
+  <!-- Drawer -->
+  <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="head">
+      <div>
+        <div style="font-weight:800" id="dwRequestId">Request</div>
+        <div style="font-size:13px;color:var(--muted)" id="dwMeta"></div>
+      </div>
+      <div><button id="btnClose" style="background:none;border:none;font-size:18px;color:var(--muted)"><i class="fa-solid fa-xmark"></i></button></div>
+    </div>
+
+    <div class="body">
+      <div class="form-row">
+        <div class="form-col">
+          <label>Booking ID</label>
+          <div id="dwBookingId" style="font-weight:700"></div>
+        </div>
+        <div class="form-col">
+          <label>Property</label>
+          <div id="dwProperty"></div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-col">
+          <label>Cleaner</label>
+          <div id="dwCleaner"></div>
+        </div>
+        <div class="form-col">
+          <label>Requested Amount (Ex GST)</label>
+          <input id="dwAmount" type="number" step="0.01" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-col">
+          <label>Status</label>
+          <select id="dwStatus">
+            <option>Pending</option>
+            <option>Approved</option>
+            <option>Paid</option>
+          </select>
+        </div>
+        <div class="form-col">
+          <label>Mark Paid</label>
+          <select id="dwMarkPaid">
+            <option value="no">No</option>
+            <option value="yes">Yes — mark as Paid</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-bottom:10px">
+        <label>Admin Note</label>
+        <textarea id="dwAdminNote" rows="3"></textarea>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn primary" id="btnApprove">Approve & Generate Invoice</button>
+        <button class="btn ghost" id="btnApproveOnly">Approve (no invoice)</button>
+        <button class="btn ghost" id="btnMarkPaid">Mark Paid</button>
+      </div>
+
+      <div class="inline-msg" id="drawerMsg"></div>
+    </div>
+
+    <div class="footer"></div>
+  </div>
+
+<script>
+/*
+  Admin Payments page JS
+  Uses your Cloudflare Worker proxy to avoid CORS.
+  Worker URL (your proxy): https://homeglitz.raphaellevinders.workers.dev/
+*/
+const PROXY = "https://homeglitz.raphaellevinders.workers.dev/";
+const pageMsg = document.getElementById('pageMsg');
+const drawerMsg = document.getElementById('drawerMsg');
+
+let ALL = []; // all requests
+let CURRENT = null; // current request object
+
+/* DOM refs */
+const tbody = document.querySelector('#requestsTable tbody');
+const searchEl = document.getElementById('search');
+const filterStatus = document.getElementById('filterStatus');
+const totalPending = document.getElementById('totalPending');
+const totalApproved = document.getElementById('totalApproved');
+const totalPaid = document.getElementById('totalPaid');
+
+const drawer = document.getElementById('drawer');
+const btnClose = document.getElementById('btnClose');
+const dwRequestId = document.getElementById('dwRequestId');
+const dwMeta = document.getElementById('dwMeta');
+const dwBookingId = document.getElementById('dwBookingId');
+const dwProperty = document.getElementById('dwProperty');
+const dwCleaner = document.getElementById('dwCleaner');
+const dwAmount = document.getElementById('dwAmount');
+const dwStatus = document.getElementById('dwStatus');
+const dwMarkPaid = document.getElementById('dwMarkPaid');
+const dwAdminNote = document.getElementById('dwAdminNote');
+
+document.getElementById('btnRefresh').addEventListener('click', loadRequests);
+document.getElementById('btnClose').addEventListener('click', closeDrawer);
+document.getElementById('btnApprove').addEventListener('click', () => approveFlow({ createInvoice: true, markPaid: false }));
+document.getElementById('btnApproveOnly').addEventListener('click', () => approveFlow({ createInvoice: false, markPaid: false }));
+document.getElementById('btnMarkPaid').addEventListener('click', () => approveFlow({ createInvoice: false, markPaid: true }));
+
+searchEl.addEventListener('input', applyFilters);
+filterStatus.addEventListener('change', applyFilters);
+
+/* load list from backend */
+async function loadRequests() {
+  pageMsg.textContent = '';
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:28px">Loading…</td></tr>';
+  try {
+    const res = await fetch(PROXY, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ action: 'getAllPaymentRequests' })
+    });
+    const json = await res.json();
+    if (!json || !json.success) {
+      pageMsg.textContent = (json && json.message) ? json.message : 'Failed to load requests';
+      ALL = [];
+      renderTable([]);
+      return;
+    }
+    ALL = json.data || [];
+    updateSummary(ALL);
+    renderTable(ALL);
+  } catch (err) {
+    console.error(err);
+    pageMsg.textContent = 'Network error — check deployment';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:28px">Unable to load</td></tr>';
+  }
+}
+
+/* update counts */
+function updateSummary(list) {
+  const pending = list.filter(r => (r.Status||'').toString() === 'Pending').length;
+  const approved = list.filter(r => (r.Status||'').toString() === 'Approved').length;
+  const paid = list.filter(r => (r.Status||'').toString() === 'Paid').length;
+  totalPending.textContent = 'Pending: ' + pending;
+  totalApproved.textContent = 'Approved: ' + approved;
+  totalPaid.textContent = 'Paid: ' + paid;
+}
+
+/* render table rows */
+function renderTable(rows) {
+  if (!rows || rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:28px">No payment requests</td></tr>';
+    return;
+  }
+
+  const html = rows.map(r => {
+    const req = escapeHtml(r['Request ID'] || r['RequestId'] || '');
+    const booking = escapeHtml(r['Booking ID'] || r['BookingId'] || '');
+    const cleaner = escapeHtml(r['Cleaner ID'] || r['CleanerId'] || r['Cleaner'] || r['Cleaner Name'] || '');
+    const amount = Number(r['Amount'] || r['Approved Amount'] || 0).toFixed(2);
+    const when = r['Requested At'] ? formatDate(r['Requested At']) : (r['RequestedAt'] || '');
+    const status = (r['Status']||'').toString();
+    const statusClass = status === 'Pending' ? 's-pending' : status === 'Approved' ? 's-approved' : 's-paid';
+    return `<tr data-req="${req}">
+      <td>${req}</td>
+      <td>${booking}</td>
+      <td>${cleaner}</td>
+      <td>${amount}</td>
+      <td>${when}</td>
+      <td><span class="status-badge ${statusClass}">${status}</span></td>
+      <td><button class="btn ghost" onclick="openDrawer('${req}')"><i class="fa-solid fa-ellipsis"></i> Details</button></td>
+    </tr>`;
+  }).join('');
+  tbody.innerHTML = html;
+}
+
+/* filtering */
+function applyFilters() {
+  const q = (searchEl.value || '').toLowerCase().trim();
+  const s = filterStatus.value;
+  const filtered = ALL.filter(r => {
+    if (s !== 'all' && (r['Status']||'') !== s) return false;
+    const hay = ((r['Request ID']||'') + ' ' + (r['Booking ID']||'') + ' ' + (r['Cleaner ID']||'') + ' ' + (r['Property']||'') + ' ' + (r['Cleaner Name']||'') + ' ' + (r['Requested At']||'')).toLowerCase();
+    if (q && !hay.includes(q)) return false;
+    return true;
+  });
+  renderTable(filtered);
+}
+
+/* open drawer */
+window.openDrawer = function(requestId) {
+  drawerMsg.textContent = '';
+  const row = ALL.find(r => (r['Request ID']||r['RequestId']||'') === requestId);
+  if (!row) {
+    drawerMsg.textContent = 'Request not found';
+    return;
+  }
+  CURRENT = row;
+  dwRequestId.textContent = row['Request ID'] || row['RequestId'] || '';
+  dwMeta.textContent = `Requested: ${formatDate(row['Requested At'] || row['RequestedAt'])} • ${row['Cleaner ID'] || row['CleanerId'] || ''}`;
+  dwBookingId.textContent = row['Booking ID'] || row['BookingId'] || '';
+  dwProperty.textContent = row['Property'] || row['Property Name'] || '';
+  dwCleaner.textContent = row['Cleaner Name'] || row['Cleaner'] || row['Cleaner ID'] || '';
+  dwAmount.value = (row['Amount'] || row['Approved Amount'] || 0);
+  dwStatus.value = row['Status'] || 'Pending';
+  dwMarkPaid.value = 'no';
+  dwAdminNote.value = row['Admin Note'] || '';
+  drawer.classList.add('active');
+  drawer.setAttribute('aria-hidden', 'false');
+};
+
+/* close drawer */
+function closeDrawer() {
+  drawer.classList.remove('active');
+  drawer.setAttribute('aria-hidden', 'true');
+  CURRENT = null;
+  drawerMsg.textContent = '';
+}
+
+/* approveFlow: createInvoice true = generate invoice. markPaid true = mark paid */
+async function approveFlow({ createInvoice = false, markPaid = false }) {
+  drawerMsg.textContent = '';
+  if (!CURRENT) return;
+
+  const requestId = dwRequestId.textContent;
+  const approvedAmount = Number(dwAmount.value || 0);
+  const adminNote = dwAdminNote.value || '';
+  const approver = 'Admin';
+
+  // validation
+  if (!requestId) { drawerMsg.textContent = 'Missing request id'; return; }
+  if (isNaN(approvedAmount) || approvedAmount <= 0) { drawerMsg.textContent = 'Enter valid amount'; return; }
+
+  // payload determines whether to mark paid
+  const payload = {
+    action: 'adminApprovePayment',
+    requestId,
+    approvedAmount,
+    markPaid: markPaid || (dwMarkPaid.value === 'yes'),
+    adminNote,
+    approver
+  };
+
+  drawerMsg.textContent = 'Saving…';
+  try {
+    const res = await fetch(PROXY, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+
+    if (!json || !json.success) {
+      drawerMsg.textContent = (json && json.message) ? json.message : 'Update failed';
+      return;
+    }
+
+    drawerMsg.textContent = 'Updated — refreshing list';
+    // refresh server-side data
+    setTimeout(async () => {
+      await loadRequests();
+      closeDrawer();
+    }, 700);
+  } catch (err) {
+    console.error(err);
+    drawerMsg.textContent = 'Network error — check deployment';
+  }
+}
+
+/* helpers */
+function formatDate(v) {
+  try {
+    if (!v) return '';
+    const d = new Date(v);
+    if (isNaN(d)) return v;
+    return d.toLocaleString();
+  } catch (e) { return String(v); }
+}
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+/* initial load */
+loadRequests();
+
+</script>
+</body>
+</html>
