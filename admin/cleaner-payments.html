@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>HomeGlitz — My Payments</title>
+<link rel="icon" href="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/64%C3%9764pxlogo.png"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --primary: #0F72B4;
+  --primary-light: #f5faff;
+  --text: #222;
+  --muted: #6b7280;
+  --panel: #fff;
+  --border: #e4e9ef;
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; font-family:'Montserrat',sans-serif; }
+body { margin:0; background:var(--primary-light); }
+
+/* HEADER */
+.header {
+  background: var(--panel);
+  padding: 16px 22px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid var(--border);
+  position: sticky;
+  top:0;
+  z-index:20;
+}
+.header .logo { display:flex; align-items:center; gap:10px; font-weight:700; color:var(--primary); }
+.header img { height:40px; }
+
+/* WRAPPER */
+.wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 18px;
+}
+
+/* CARD */
+.card {
+  background:var(--panel);
+  border-radius:var(--radius);
+  padding:24px;
+  margin-top:16px;
+  border:1px solid var(--border);
+  box-shadow:0 4px 18px rgba(15,114,180,0.07);
+}
+
+.card h2 {
+  margin-top:0;
+  font-size:20px;
+  font-weight:700;
+  color:var(--primary);
+  margin-bottom:16px;
+}
+
+/* TABLE */
+table {
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+th, td {
+  padding:12px 10px;
+  border-bottom:1px solid #eef3f7;
+  font-size:14px;
+}
+th { color:var(--primary); text-align:left; background:#f9fbfd; }
+tr:hover td { background:#f9fafc; }
+
+/* BUTTON */
+.btn {
+  padding:8px 12px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+  font-size:13px;
+}
+.btn.download { background:var(--primary); color:#fff; }
+
+/* MOBILE */
+@media (max-width: 650px) {
+  table, thead, tbody, th, td, tr { display:block; }
+  thead { display:none; }
+  tr {
+    background:#fff;
+    margin-bottom:12px;
+    border-radius:10px;
+    padding:12px;
+    border:1px solid #eef3f7;
+  }
+  td {
+    border:none !important;
+    display:flex;
+    justify-content:space-between;
+    padding:8px 0;
+  }
+  td::before {
+    content: attr(data-label);
+    font-weight:700;
+    color:var(--primary);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png">
+    My Payments
+  </div>
+
+  <div style="font-size:14px;color:var(--muted);" id="cleanerNameTop"></div>
+</div>
+
+<div class="wrap">
+
+  <div class="card">
+    <h2>Your Invoices</h2>
+    <table id="invTable">
+      <thead>
+        <tr>
+          <th>Invoice</th>
+          <th>Booking</th>
+          <th>Total</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Download</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+/* ----------------------------------------------------------
+   CONFIG
+----------------------------------------------------------- */
+const WORKER_URL = "https://homeglitz.raphaellevinders.workers.dev/";  // <---- IMPORTANT: replace
+
+function redirectToLogin() {
+  localStorage.removeItem('homeglitz_cleaner_token');
+  window.location.href = "/homeglitz/cleaner-login.html";
+}
+
+/* ----------------------------------------------------------
+   LOAD INVOICES
+----------------------------------------------------------- */
+async function loadInvoices() {
+  const token = localStorage.getItem('homeglitz_cleaner_token');
+  const cleanerId = localStorage.getItem('homeglitz_cleaner_id');
+  const cleanerName = localStorage.getItem('homeglitz_cleaner_name');
+
+  if (!token || !cleanerId) return redirectToLogin();
+
+  document.getElementById('cleanerNameTop').textContent = cleanerName || "";
+
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        action: "getCleanerInvoices",
+        token
+      })
+    });
+
+    const json = await res.json();
+    if (!json.success) return redirectToLogin();
+
+    renderInvoices(json.data);
+
+  } catch (err) {
+    console.error(err);
+    redirectToLogin();
+  }
+}
+
+/* ----------------------------------------------------------
+   RENDER INVOICES INTO TABLE
+----------------------------------------------------------- */
+function renderInvoices(rows) {
+  const tbody = document.querySelector("#invTable tbody");
+
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="padding:20px;text-align:center;color:#888;">No invoices found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map(inv => `
+    <tr>
+      <td data-label="Invoice">${inv["Invoice ID"]}</td>
+      <td data-label="Booking">${inv["Booking ID"]}</td>
+      <td data-label="Total">$${Number(inv["Total"]||0).toFixed(2)}</td>
+      <td data-label="Date">${new Date(inv["Date"]).toLocaleDateString()}</td>
+      <td data-label="Status">${inv["Status"]}</td>
+      <td data-label="Download">
+        <button class="btn download" onclick="window.open('${inv["PDF URL"]}','_blank')">
+          PDF
+        </button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+loadInvoices();
+</script>
+
+</body>
+</html>
