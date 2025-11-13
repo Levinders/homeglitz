@@ -161,6 +161,18 @@
   </div>
 
 <script>
+
+  function handleSessionExpiry(json) {
+  if (json && json.message && json.message.includes("Session expired")) {
+    localStorage.removeItem('homeglitz_cleaner_token');
+    localStorage.removeItem('homeglitz_cleaner_id');
+    localStorage.removeItem('homeglitz_cleaner_name');
+    window.location.href = '/cleaner-login.html';
+    return true;
+  }
+  return false;
+}
+
 /* CONFIG: set your apps script endpoint here (same pattern as your other pages) */
 const SCRIPT_BASE_URL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbwY7jOV-lMXkd7tyyUnUEIcbQ37GSfbwdNLobOVG2MumbHA6xYDYxM0KfoP_sKVTnbQ/exec");
 
@@ -199,18 +211,21 @@ async function loadTasks() {
       body: JSON.stringify({ action: 'getCleanerTasks', token })
     });
     const json = await res.json();
-    if (!json || !json.success) {
-      inlineMsg.textContent = (json && json.message) ? json.message : 'Unable to load tasks';
-      renderJobs([]);
-      return;
-    }
-    JOBS = json.tasks || [];
-    renderJobs(JOBS);
-    updateCounts(JOBS);
-  } catch (err) {
-    console.error(err); inlineMsg.textContent = 'Network error';
-    renderJobs([]);
-  }
+if (!json || !json.success) {
+  inlineMsg.textContent = (json && json.message) ? json.message : 'Unable to load tasks';
+  renderJobs([]);
+  return;
+}
+
+// 🔁 refresh token if new one received
+if (json.newToken) {
+  localStorage.setItem('homeglitz_cleaner_token', json.newToken);
+}
+
+JOBS = json.tasks || [];
+renderJobs(JOBS);
+updateCounts(JOBS);
+
 }
 
 function updateCounts(list) {
@@ -290,11 +305,18 @@ document.getElementById('btnSaveStatus').addEventListener('click', async () => {
       body: JSON.stringify({ action: 'updateCleanerTask', token, bookingId: CURRENT['Booking ID'], status: newStatus, notes })
     });
     const json = await res.json();
-    if (!json || !json.success) {
-      drawerMsg.textContent = (json && json.message) ? json.message : 'Save failed';
-      return;
-    }
-    drawerMsg.textContent = 'Saved';
+if (!json || !json.success) {
+  drawerMsg.textContent = (json && json.message) ? json.message : 'Save failed';
+  return;
+}
+
+// 🔁 refresh token if new one received
+if (json.newToken) {
+  localStorage.setItem('homeglitz_cleaner_token', json.newToken);
+}
+
+drawerMsg.textContent = 'Saved';
+
     // refresh list (server is source of truth)
     setTimeout(loadTasks, 600);
   } catch (err) {
@@ -316,11 +338,18 @@ document.getElementById('btnRequestPayment').addEventListener('click', async () 
       body: JSON.stringify({ action: 'requestPayment', token, bookingId: CURRENT['Booking ID'], amount: Number(amount) })
     });
     const json = await res.json();
-    if (!json || !json.success) {
-      drawerMsg.textContent = (json && json.message) ? json.message : 'Request failed';
-      return;
-    }
-    drawerMsg.textContent = 'Request sent — admin will review';
+if (!json || !json.success) {
+  drawerMsg.textContent = (json && json.message) ? json.message : 'Request failed';
+  return;
+}
+
+// 🔁 refresh token if new one received
+if (json.newToken) {
+  localStorage.setItem('homeglitz_cleaner_token', json.newToken);
+}
+
+drawerMsg.textContent = 'Request sent — admin will review';
+
     setTimeout(loadTasks, 600);
   } catch (err) {
     console.error(err); drawerMsg.textContent = 'Network error';
