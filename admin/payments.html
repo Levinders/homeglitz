@@ -220,6 +220,10 @@
         <button class="btn primary" id="btnApprove">Approve & Generate Invoice</button>
         <button class="btn ghost" id="btnApproveOnly">Approve (no invoice)</button>
         <button class="btn ghost" id="btnMarkPaid">Mark Paid</button>
+
+                <!-- inside admin drawer actions -->
+        <button id="btnApprovePayment">Approve & Generate Invoice</button>
+        <button id="btnViewInvoice" style="display:none">View Invoice</button>
       </div>
 
       <div class="inline-msg" id="drawerMsg"></div>
@@ -269,6 +273,25 @@ document.getElementById('btnMarkPaid').addEventListener('click', () => approveFl
 
 searchEl.addEventListener('input', applyFilters);
 filterStatus.addEventListener('change', applyFilters);
+
+  
+  async function approveRequest(requestId, approvedAmount) {
+    const res = await fetch(SCRIPT_BASE_URL, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ action: 'adminApprovePayment', requestId, approvedAmount, approver: 'Admin' })
+    });
+    const json = await res.json();
+    if (json && json.success) {
+      // show link
+      document.getElementById('btnViewInvoice').style.display = 'inline-block';
+      document.getElementById('btnViewInvoice').onclick = () => window.open(json.pdfUrl, '_blank');
+      // update UI as needed
+    } else {
+      console.error(json);
+      alert('Approve failed: ' + (json && json.message));
+    }
+  }
 
 /* load list from backend */
 async function loadRequests() {
