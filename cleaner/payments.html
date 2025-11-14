@@ -183,6 +183,44 @@ tr:hover td{background:#fbfdff}
       <div class="card">
 
         <h2>Payments</h2>
+         <!-- FILTER BAR -->
+<div class="filters" style="
+  margin-top:16px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+">
+
+  <!-- Status Filter -->
+  <select id="filterStatus" style="padding:10px;border-radius:10px;border:1px solid #e6eef8;">
+    <option value="all">All Status</option>
+    <option value="Pending">Pending</option>
+    <option value="Approved">Approved</option>
+    <option value="Paid">Paid</option>
+  </select>
+
+  <!-- Property Filter -->
+  <select id="filterProperty" style="padding:10px;border-radius:10px;border:1px solid #e6eef8;">
+    <option value="all">All Properties</option>
+  </select>
+
+  <!-- Date From -->
+  <input id="filterFrom" type="date" style="padding:10px;border-radius:10px;border:1px solid #e6eef8;">
+
+  <!-- Date To -->
+  <input id="filterTo" type="date" style="padding:10px;border-radius:10px;border:1px solid #e6eef8;">
+
+  <!-- Clear Filters -->
+  <button id="btnClearFilters" style="
+    padding:10px 14px;
+    background:#f1f5fb;
+    border:1px solid #dbe5f4;
+    border-radius:10px;
+    font-weight:700;
+    color:#3a4b5c;
+  ">Clear</button>
+</div>
+
 
         <div class="summary-box">
           <div class="sum">
@@ -306,8 +344,21 @@ async function loadPayments(){
     document.getElementById("totalPaid").textContent     = "$" + (json.totalPaid||0);
 
     const list = json.payments || [];
-    renderDesktop(list);
-    renderMobile(list);
+const list = json.payments || [];
+
+/* Store original */
+RAW_PAYMENTS = list;
+
+/* Populate property dropdown */
+const propSelect = document.getElementById("filterProperty");
+const props = [...new Set(list.map(p => p["Property Name"]).filter(Boolean))];
+
+propSelect.innerHTML = `<option value="all">All Properties</option>` +
+  props.map(p => `<option value="${p}">${p}</option>`).join("");
+
+/* Apply all filters and render UI */
+applyPaymentFilters();
+
 
   }catch(e){
     progressFinish();
@@ -364,6 +415,52 @@ function renderMobile(list){
 }
 
 loadPayments();
+
+
+   /* ============================
+   APPLY FILTERS
+============================ */
+
+let RAW_PAYMENTS = []; // store original list
+
+function applyPaymentFilters() {
+  let status = document.getElementById("filterStatus").value;
+  let property = document.getElementById("filterProperty").value;
+  let from = document.getElementById("filterFrom").value;
+  let to = document.getElementById("filterTo").value;
+
+  let filtered = RAW_PAYMENTS.filter(p => {
+    // status filter
+    if (status !== "all" && p.Status !== status) return false;
+
+    // property filter
+    if (property !== "all" && p["Property Name"] !== property) return false;
+
+    // date filter
+    let reqDate = new Date(p["Requested At"]);
+    if (from && reqDate < new Date(from)) return false;
+    if (to && reqDate > new Date(to)) return false;
+
+    return true;
+  });
+
+  renderDesktop(filtered);
+  renderMobile(filtered);
+}
+
+/* Clear filters */
+document.getElementById("btnClearFilters").onclick = () => {
+  document.getElementById("filterStatus").value = "all";
+  document.getElementById("filterProperty").value = "all";
+  document.getElementById("filterFrom").value = "";
+  document.getElementById("filterTo").value = "";
+  applyPaymentFilters();
+};
+
+/* Change events */
+["filterStatus","filterProperty","filterFrom","filterTo"].forEach(id=>{
+  document.getElementById(id).addEventListener("change", applyPaymentFilters);
+});
 
 
 </script>
