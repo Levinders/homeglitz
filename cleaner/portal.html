@@ -978,6 +978,9 @@ function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;'
 /* ---------------------------
    Boot / session checks
    --------------------------- */
+/* ---------------------------
+   Boot / session checks
+   --------------------------- */
 (function boot(){
   // quick session check
   token = localStorage.getItem(tokenKey);
@@ -992,8 +995,15 @@ function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;'
   navAvatar.textContent = (cleanerName || 'CL').split(' ').map(s=>s[0]).slice(0,2).join('').toUpperCase();
   sideAvatar.textContent = navAvatar.textContent;
 
+  // initial load
   loadTasks();
+
+  // 🔥 auto-trigger refresh button immediately
+  setTimeout(() => {
+    document.getElementById('btnRefresh').click();
+  }, 150); 
 })();
+
 </script>
 </body>
 </html>
