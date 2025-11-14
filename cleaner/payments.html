@@ -260,14 +260,16 @@ tr:hover td{background:#fbfdff}
         <!-- DESKTOP TABLE -->
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Property</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Requested</th>
-              </tr>
-            </thead>
+<thead>
+  <tr>
+    <th>Property</th>
+    <th>Amount</th>
+    <th>Status</th>
+    <th>Requested</th>
+    <th>PDF</th>
+  </tr>
+</thead>
+
             <tbody style= "margin-bottom:200px;" id="paymentsBody">
               <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px">Loading…</td></tr>
             </tbody>
@@ -450,14 +452,21 @@ function renderDesktop(list){
                 p.Status==="Approved" ? "b-approved" :
                 "b-paid";
 
-    return `
-      <tr>
-        <td>${p["Property Name"] || "—"}</td>
-        <td>$${p.Amount}</td>
-        <td><span class="badge ${cls}">${p.Status}</span></td>
-        <td>${new Date(p["Requested At"]).toLocaleDateString()}</td>
-      </tr>
-    `;
+return `
+  <tr>
+    <td>${p["Property Name"] || "—"}</td>
+    <td>$${p.Amount}</td>
+    <td><span class="badge ${cls}">${p.Status}</span></td>
+    <td>${new Date(p["Requested At"]).toLocaleDateString()}</td>
+    <td>
+      ${p["PDF URL"] 
+        ? `<button class="btn download" onclick="window.open('${p["PDF URL"]}', '_blank')">Download</button>`
+        : `<span style="color:var(--muted);font-size:12px;">No PDF</span>`
+      }
+    </td>
+  </tr>
+`;
+
   }).join("");
 }
 
@@ -480,6 +489,13 @@ function renderMobile(list){
         <div class="mp-row"><span class="mp-label">Amount:</span> $${p.Amount}</div>
         <div class="mp-row"><span class="mp-label">Status:</span> <span class="badge ${cls}">${p.Status}</span></div>
         <div class="mp-row"><span class="mp-label">Requested:</span> ${new Date(p["Requested At"]).toLocaleDateString()}</div>
+        <div class="mp-row"><span class="mp-label">PDF:</span>
+  ${p["PDF URL"]
+    ? `<button class="btn download" onclick="window.open('${p["PDF URL"]}', '_blank')" style="padding:6px 10px;font-size:12px;">Download</button>`
+    : `<span style="color:var(--muted);font-size:12px;">No PDF</span>`
+  }
+</div>
+
       </div>
     `;
   }).join("");
