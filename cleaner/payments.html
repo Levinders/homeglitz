@@ -184,6 +184,34 @@ tr:hover td{background:#fbfdff}
 
         <h2>Payments</h2>
 
+         <!-- TAB BAR -->
+<div class="tabs" style="
+  display:flex;
+  margin-top:16px;
+  border-bottom:1px solid #e6eef8;
+">
+  <button id="tabRequests" class="tab active" style="
+    flex:1;
+    padding:12px;
+    background:none;
+    border:none;
+    font-weight:700;
+    color:var(--primary);
+    border-bottom:3px solid var(--primary);
+  ">Requests</button>
+
+  <button id="tabInvoices" class="tab" style="
+    flex:1;
+    padding:12px;
+    background:none;
+    border:none;
+    font-weight:700;
+    color:var(--muted);
+  ">Invoices</button>
+</div>
+
+
+<div id="tabRequestsContent">
          <!-- FILTER BAR -->
 <div class="filters" style="
   margin-top:16px;
@@ -248,6 +276,62 @@ tr:hover td{background:#fbfdff}
 
         <!-- MOBILE CARDS -->
         <div style= "margin-bottom:55px;" class="mobile-list" id="paymentsMobile"></div>
+   </div>
+
+         <!-- INVOICES TAB (hidden by default) -->
+<div id="tabInvoicesContent" style="display:none; margin-top:20px;">
+
+  <!-- Filters (Status + Date) -->
+  <div class="filters" style="
+    margin-bottom:16px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  ">
+    <select id="invoiceStatus" style="padding:10px;border-radius:10px;border:1px solid #e6eef8;">
+      <option value="all">All Status</option>
+      <option value="Paid">Paid</option>
+      <option value="Pending">Pending</option>
+      <option value="Overdue">Overdue</option>
+    </select>
+
+    <input id="invoiceDate" type="date"
+      style="padding:10px;border-radius:10px;border:1px solid #e6eef8;">
+
+    <button id="clearInvoiceFilters" style="
+      padding:10px 14px;
+      background:#f1f5fb;
+      border:1px solid #dbe5f4;
+      border-radius:10px;
+      font-weight:700;
+      color:#3a4b5c;
+    ">Clear</button>
+  </div>
+
+  <!-- INVOICE TABLE -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Invoice</th>
+          <th>Booking</th>
+          <th>Total</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>PDF</th>
+        </tr>
+      </thead>
+      <tbody id="invoiceBody">
+        <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px">Loading…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MOBILE CARDS -->
+  <div class="mobile-list" id="invoiceMobile" style="margin-bottom:55px;"></div>
+
+</div>
+
 
       </div>
     </section>
@@ -459,6 +543,139 @@ document.getElementById("btnClearFilters").onclick = () => {
   document.getElementById(id).addEventListener("change", applyPaymentFilters);
 });
 
+/* =============================
+   INVOICES TAB LOGIC
+============================= */
+
+let RAW_INVOICES = [];
+
+/* Load invoices from API */
+async function loadInvoices() {
+  try {
+    const res = await fetch(API, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ action: "getCleanerInvoices", token })
+    });
+
+    const json = await res.json();
+    if (!json.success) return;
+
+    RAW_INVOICES = json.data || [];
+    applyInvoiceFilters();
+
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+/* Render desktop invoices */
+function renderInvoicesDesktop(list) {
+  const tbody = document.getElementById("invoiceBody");
+
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px">No invoices</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = list.map(inv => `
+    <tr>
+      <td>${inv["Invoice ID"]}</td>
+      <td>${inv["Booking ID"]}</td>
+      <td>$${Number(inv["Total"]||0).toFixed(2)}</td>
+      <td>${new Date(inv["Date"]).toLocaleDateString()}</td>
+      <td>${inv["Status"]}</td>
+      <td><button class="btn download" onclick="window.open('${inv["PDF URL"]}','_blank')">PDF</button></td>
+    </tr>
+  `).join("");
+}
+
+/* Render mobile invoices */
+function renderInvoicesMobile(list) {
+  const mobile = document.getElementById("invoiceMobile");
+
+  if (!list.length) {
+    mobile.innerHTML = `<div style="padding:18px;text-align:center;color:var(--muted)">No invoices</div>`;
+    return;
+  }
+
+  mobile.innerHTML = list.map(inv => `
+    <div class="mp-card">
+      <div class="mp-top">${inv["Invoice ID"]}</div>
+
+      <div class="mp-row"><span class="mp-label">Booking:</span> ${inv["Booking ID"]}</div>
+      <div class="mp-row"><span class="mp-label">Total:</span> $${Number(inv["Total"]||0).toFixed(2)}</div>
+      <div class="mp-row"><span class="mp-label">Date:</span> ${new Date(inv["Date"]).toLocaleDateString()}</div>
+      <div class="mp-row"><span class="mp-label">Status:</span> ${inv["Status"]}</div>
+
+      <button class="btn download" style="margin-top:10px" onclick="window.open('${inv["PDF URL"]}','_blank')">PDF</button>
+    </div>
+  `).join("");
+}
+
+/* APPLY INVOICE FILTERS */
+function applyInvoiceFilters() {
+  let status = document.getElementById("invoiceStatus").value;
+  let date = document.getElementById("invoiceDate").value;
+
+  let filtered = RAW_INVOICES.filter(inv => {
+
+    if (status !== "all" && inv.Status !== status) return false;
+
+    if (date) {
+      const d = new Date(inv["Date"]);
+      const sel = new Date(date);
+      if (
+        d.getFullYear() !== sel.getFullYear() ||
+        d.getMonth() !== sel.getMonth() ||
+        d.getDate() !== sel.getDate()
+      ) return false;
+    }
+
+    return true;
+  });
+
+  renderInvoicesDesktop(filtered);
+  renderInvoicesMobile(filtered);
+}
+
+/* Clear invoice filters */
+document.getElementById("clearInvoiceFilters").onclick = () => {
+  document.getElementById("invoiceStatus").value = "all";
+  document.getElementById("invoiceDate").value = "";
+  applyInvoiceFilters();
+};
+
+["invoiceStatus","invoiceDate"].forEach(id => {
+  document.getElementById(id).addEventListener("change", applyInvoiceFilters);
+});
+
+/* TAB SWITCHING */
+document.getElementById("tabRequests").onclick = () => {
+  document.getElementById("tabRequestsContent").style.display = "block";
+  document.getElementById("tabInvoicesContent").style.display = "none";
+
+  tabRequests.classList.add("active");
+  tabInvoices.classList.remove("active");
+  tabRequests.style.color = "var(--primary)";
+  tabInvoices.style.color = "var(--muted)";
+  tabRequests.style.borderBottom = "3px solid var(--primary)";
+  tabInvoices.style.borderBottom = "none";
+};
+
+document.getElementById("tabInvoices").onclick = async () => {
+  document.getElementById("tabRequestsContent").style.display = "none";
+  document.getElementById("tabInvoicesContent").style.display = "block";
+
+  tabRequests.classList.remove("active");
+  tabInvoices.classList.add("active");
+  tabInvoices.style.color = "var(--primary)";
+  tabRequests.style.color = "var(--muted)";
+  tabInvoices.style.borderBottom = "3px solid var(--primary)";
+  tabRequests.style.borderBottom = "none";
+
+  await loadInvoices();
+};
 
 
 </script>
