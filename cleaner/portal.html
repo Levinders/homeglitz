@@ -619,6 +619,8 @@
    =========================== */
 const PROXY_BASE = "https://homeglitz.raphaellevinders.workers.dev/"; // <- keep as-is or update
 const tokenKey = 'homeglitz_cleaner_token';
+let AUTO_PAUSE = false;
+
 
 /* ---------------------------
    small UI helpers
@@ -816,9 +818,12 @@ listCards.innerHTML = rows.map(r => {
    Drawer open/close
    --------------------------- */
 function openDrawer(bookingId) {
+  AUTO_PAUSE = true; // ⛔ pause auto-refresh
+
   const row = JOBS.find(r => (r['Booking ID']||'') === bookingId);
   if (!row) return showToast('Job not found', {duration:2000});
   CURRENT = row;
+
   dwBookingId.textContent = bookingId;
   dwPropName.textContent = row['Property Name'] || '';
   dwCleaner.textContent = row['Cleaners'] || '';
@@ -826,27 +831,28 @@ function openDrawer(bookingId) {
   dwNotes.value = row['Notes'] || row['Note'] || '';
   dwRequestAmount.value = row['Request Amount'] || '';
 
-  // highlight status buttons and set CURRENT._newStatus to current status
   document.querySelectorAll('.status-badge[data-status]').forEach(b => {
     b.style.opacity = (b.getAttribute('data-status') === (row['Status'] || 'Pending')) ? '1' : '0.45';
   });
   CURRENT._newStatus = row['Status'] || 'Pending';
 
-  // payment UI: only enable if Completed
   setPaymentEnabled((row['Status'] || '') === 'Completed');
 
-  // show drawer
   drawer.classList.add('open');
   drawer.setAttribute('aria-hidden','false');
-  // focus the first actionable element
+
   document.getElementById('dwNotes').focus();
 }
+
 
 function closeDrawer() {
   drawer.classList.remove('open');
   drawer.setAttribute('aria-hidden','true');
   CURRENT = null;
+
+  AUTO_PAUSE = false; // ✅ resume auto-refresh
 }
+
 
 /* set payment field/button enabled only when true */
 function setPaymentEnabled(enabled) {
@@ -1047,15 +1053,19 @@ function progressFinish() {
   }, 150); 
 })();
 
-  /* ============================
-   AUTO-REFRESH EVERY X SECONDS
+/* ============================
+   AUTO-REFRESH EVERY 2 SECONDS (PAUSES WHEN DRAWER OPEN)
    ============================ */
 
-const AUTO_REFRESH_INTERVAL = 2000; // 5 seconds
+const AUTO_REFRESH_INTERVAL = 2000; // 2 seconds
 
 setInterval(() => {
-  document.getElementById("btnRefresh").click();
+  if (AUTO_PAUSE) return; // drawer open → skip refresh
+
+  const refreshBtn = document.getElementById("btnRefresh");
+  if (refreshBtn) refreshBtn.click();
 }, AUTO_REFRESH_INTERVAL);
+
 
 
 </script>
