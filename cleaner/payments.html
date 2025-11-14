@@ -183,6 +183,7 @@ tr:hover td{background:#fbfdff}
       <div class="card">
 
         <h2>Payments</h2>
+
          <!-- FILTER BAR -->
 <div class="filters" style="
   margin-top:16px;
@@ -199,11 +200,8 @@ tr:hover td{background:#fbfdff}
     <option value="Paid">Paid</option>
   </select>
 
-  <!-- Date From -->
-  <input id="filterFrom" type="date" style="padding:10px;border-radius:10px;border:1px solid #e6eef8;">
-
-  <!-- Date To -->
-  <input id="filterTo" type="date" style="padding:10px;border-radius:10px;border:1px solid #e6eef8;">
+  <!-- Single Date Filter -->
+  <input id="filterDate" type="date" style="padding:10px;border-radius:10px;border:1px solid #e6eef8;">
 
   <!-- Clear Filters -->
   <button id="btnClearFilters" style="
@@ -215,6 +213,7 @@ tr:hover td{background:#fbfdff}
     color:#3a4b5c;
   ">Clear</button>
 </div>
+
 
 
         <div class="summary-box">
@@ -419,42 +418,53 @@ let RAW_PAYMENTS = []; // store original list
 
 function applyPaymentFilters() {
   let status = document.getElementById("filterStatus").value;
-  let property = document.getElementById("filterProperty").value;
-  let from = document.getElementById("filterFrom").value;
-  let to = document.getElementById("filterTo").value;
+  let dateFilter = document.getElementById("filterDate").value;
 
   let filtered = RAW_PAYMENTS.filter(p => {
-    // status filter
+
+    // ✓ Status filter
     if (status !== "all" && p.Status !== status) return false;
 
-    // property filter
-    if (property !== "all" && p["Property Name"] !== property) return false;
-
-    // date filter
-    let reqDate = new Date(p["Requested At"]);
-    if (from && reqDate < new Date(from)) return false;
-    if (to && reqDate > new Date(to)) return false;
+    // ✓ Single date filter (Requested At = selected date)
+    if (dateFilter) {
+      const req = new Date(p["Requested At"]);
+      const sel = new Date(dateFilter);
+      if (
+        req.getFullYear() !== sel.getFullYear() ||
+        req.getMonth() !== sel.getMonth() ||
+        req.getDate() !== sel.getDate()
+      ) return false;
+    }
 
     return true;
   });
 
+  // === UPDATE TOTALS BASED ON FILTERED LIST ===
+  const totalEarnings = filtered.reduce((s, r) => s + (r.Amount || 0), 0);
+  const totalPaid = filtered
+    .filter(r => r.Status === "Paid")
+    .reduce((s, r) => s + (r.Amount || 0), 0);
+
+  document.getElementById("totalEarnings").textContent = "$" + totalEarnings;
+  document.getElementById("totalPaid").textContent = "$" + totalPaid;
+
+  // Render updated lists
   renderDesktop(filtered);
   renderMobile(filtered);
 }
 
+
 /* Clear filters */
 document.getElementById("btnClearFilters").onclick = () => {
   document.getElementById("filterStatus").value = "all";
-  document.getElementById("filterProperty").value = "all";
-  document.getElementById("filterFrom").value = "";
-  document.getElementById("filterTo").value = "";
+  document.getElementById("filterDate").value = "";
   applyPaymentFilters();
 };
 
-/* Change events */
-["filterStatus","filterProperty","filterFrom","filterTo"].forEach(id=>{
+   ["filterStatus", "filterDate"].forEach(id => {
   document.getElementById(id).addEventListener("change", applyPaymentFilters);
 });
+
 
 
 </script>
