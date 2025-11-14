@@ -3,287 +3,106 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>HomeGlitz — Cleaner Login</title>
-
+<title>HomeGlitz — Cleaner login</title>
 <link rel="icon" href="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/64%C3%9764pxlogo.png"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --primary:#0F72B4;
-  --muted:#6c757d;
-  --panel: rgba(255,255,255,0.85);
-  --shadow: 0 20px 40px rgba(0,0,0,0.09);
-  --radius:20px;
-}
-
-* { box-sizing:border-box; font-family:'Montserrat',sans-serif; }
-
-html, body {
-  margin:0; padding:0;
-  height:100%;
-  background: linear-gradient(135deg, #d6e8ff, #f1f7ff 40%, #ffffff);
-  display:flex; align-items:center; justify-content:center;
-  overflow-x:hidden;
-}
-
-/* Wrapper */
-.wrap {
-  width:100%;
-  padding:20px;
-  display:flex;
-  justify-content:center;
-}
-
-/* Login Card */
-.card {
-  width:100%;
-  max-width:600px; /* ✔ wider */
-  background:var(--panel);
-  backdrop-filter: blur(16px);
-  padding:38px 32px;
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  animation:fadeUp .55s cubic-bezier(.2,.8,.25,1);
-  position:relative;
-}
-
-/* Logo centered */
-.logo {
-  width:100%;
-  text-align:center;
-  margin-bottom:18px;
-}
-.logo img {
-  height:74px;
-  filter:drop-shadow(0 2px 3px rgba(0,0,0,0.08));
-  animation:fadeDown .6s ease;
-}
-
-/* Titles */
-h1 {
-  margin:10px 0 4px;
-  font-size:23px;
-  font-weight:700;
-  color:#0F72B4;
-  text-align:center;
-  animation:fadeUp .65s ease;
-}
-p.lead {
-  margin:0 auto 24px;
-  font-size:14px;
-  color:var(--muted);
-  text-align:center;
-  animation:fadeUp .7s ease;
-}
-
-/* Form */
-.form-group { margin-bottom:20px; }
-label {
-  font-size:13px;
-  font-weight:600;
-  color:var(--primary);
-  margin-bottom:6px;
-  display:block;
-}
-
-/* Input wrapper for password toggle */
-.input-wrap {
-  position:relative;
-}
-
-input {
-  width:100%;
-  padding:13px 14px;
-  border:1px solid #dce7f3;
-  border-radius:12px;
-  background:white;
-  font-size:15px;
-  transition:border .2s, box-shadow .2s;
-}
-
-input:focus {
-  border-color:var(--primary);
-  box-shadow:0 0 0 3px rgba(15,114,180,0.15);
-  outline:none;
-}
-
-/* Show/Hide Icon inside field */
-.toggle-pass {
-  position:absolute;
-  right:12px;
-  top:50%;
-  transform:translateY(-50%);
-  cursor:pointer;
-  color:#7c8a9a;
-  font-size:15px;
-  transition:color .2s;
-}
-.toggle-pass:hover { color:var(--primary); }
-
-/* Button */
-button.primary {
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:14px;
-  background:var(--primary);
-  color:white;
-  font-size:16px;
-  font-weight:700;
-  margin-top:4px;
-  transition:opacity .2s, transform .15s, box-shadow .2s;
-  animation:fadeUp .8s ease;
-}
-
-button.primary:hover {
-  box-shadow:0 6px 14px rgba(15,114,180,0.28);
-}
-
-button.primary:active {
-  transform:scale(.97);
-}
-
-/* Inline message */
-.inline-msg {
-  margin-top:12px;
-  min-height:18px;
-  color:#d93636;
-  text-align:center;
-  font-size:13px;
-}
-
-/* Links */
-.small-link {
-  display:block;
-  margin-top:18px;
-  text-align:center;
-  font-size:13px;
-  color:var(--muted);
-  text-decoration:none;
-  animation:fadeUp .9s ease;
-}
-.small-link:hover { text-decoration:underline; }
-
-.footer-note {
-  margin-top:16px;
-  text-align:center;
-  font-size:12px;
-  color:#9aa2ad;
-  animation:fadeUp 1s ease;
-}
-
-/* Animations */
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(20px); }
-  to { opacity:1; transform:translateY(0); }
-}
-@keyframes fadeDown {
-  from { opacity:0; transform:translateY(-10px); }
-  to { opacity:1; transform:translateY(0); }
-}
-
-@media (max-width:480px){
-  .card { padding:30px 22px; }
-  .logo img { height:64px; }
-}
+  :root{--primary:#0F72B4;--panel:#fff;--muted:#6c757d;--radius:12px}
+  *{box-sizing:border-box;font-family:'Montserrat',sans-serif}
+  html,body{height:100%;margin:0;background:#f5faff}
+  .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{width:100%;max-width:420px;background:var(--panel);padding:28px;border-radius:16px;box-shadow:0 8px 30px rgba(15,114,180,.06)}
+  .logo{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .logo img{height:44px}
+  h1{margin:0;font-size:20px;color:var(--primary)}
+  p.lead{margin:6px 0 18px;color:var(--muted);font-size:14px}
+  .form-group{display:flex;flex-direction:column;margin-bottom:12px}
+  label{font-weight:600;color:var(--primary);font-size:13px;margin-bottom:6px}
+  input{padding:12px;border-radius:10px;border:1px solid #e6eef8;font-size:14px}
+  button.primary{width:100%;padding:12px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:700}
+  .inline-msg{margin-top:12px;color:#c0392b;font-size:13px;min-height:18px}
+  .small-link{display:block;margin-top:12px;text-align:center;color:var(--muted);font-size:13px}
+  .center-small { text-align:center; color:var(--muted); font-size:13px; margin-top:10px; }
+  @media (max-width:420px){.card{padding:18px}}
 </style>
 </head>
-
 <body>
-<div class="wrap">
-  <div class="card" role="main">
-
-    <!-- Logo -->
-    <div class="logo">
-      <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png" alt="HomeGlitz">
-    </div>
-
-    <h1>Cleaner Login</h1>
-    <p class="lead">Access your cleaner dashboard</p>
-
-    <!-- Email -->
-    <div class="form-group">
-      <label>Email</label>
-      <input id="email" type="email" autocomplete="username" />
-    </div>
-
-    <!-- Password with toggle -->
-    <div class="form-group">
-      <label>Password</label>
-      <div class="input-wrap">
-        <input id="password" type="password" autocomplete="current-password" />
-        <i class="fa-solid fa-eye toggle-pass" id="togglePass"></i>
+  <div class="wrap">
+    <div class="card" role="main">
+      <div class="logo">
+        <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png" alt="HomeGlitz">
+        <div>
+          <h1><br>Cleaner Sign in</h1>
+          <div class="lead">Enter your cleaner credentials</div>
+        </div>
       </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="username" />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password" />
+      </div>
+
+      <button class="primary" id="btnLogin">Sign in</button>
+      <div class="inline-msg" id="msg"></div>
+      <a class="small-link" href="https://levinders.github.io/portfolio">© Raphael Levinders</a>
     </div>
-
-    <button class="primary" id="btnLogin">Sign in</button>
-
-    <div class="inline-msg" id="msg"></div>
-
-    <a class="small-link" href="/homeglitz/cleaner/portal.html">I already have a token</a>
-
-    <div class="footer-note">Powered by HomeGlitz</div>
   </div>
-</div>
 
 <script>
-/* Worker backend */
+/*
+  Uses your Cloudflare Worker proxy (Option 1). Update PROXY_BASE if you change worker domain.
+*/
 const PROXY_BASE = "https://homeglitz.raphaellevinders.workers.dev/";
 
+/* small helper: POST JSON to worker and return parsed JSON or throw */
 async function fetchApi(payload) {
-  const res = await fetch(PROXY_BASE, {
-    method: 'POST',
-    headers: { 'Content-Type':'application/json' },
-    body: JSON.stringify(payload)
-  });
-  const text = await res.text();
-  try { return JSON.parse(text); }
-  catch { throw new Error("Invalid JSON from server"); }
+  try {
+    const res = await fetch(PROXY_BASE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const text = await res.text();
+    // try parse json, else throw
+    try { return JSON.parse(text); } 
+    catch(e) { throw new Error('Invalid JSON response from server'); }
+  } catch (err) {
+    // bubble a friendly message
+    throw err;
+  }
 }
 
 const msgEl = document.getElementById('msg');
-
-/* Password toggle logic */
-document.getElementById("togglePass").addEventListener("click", () => {
-  const pw = document.getElementById("password");
-  const icon = document.getElementById("togglePass");
-  const isHidden = pw.type === "password";
-
-  pw.type = isHidden ? "text" : "password";
-  icon.className = isHidden ? "fa-solid fa-eye-slash toggle-pass" : "fa-solid fa-eye toggle-pass";
-});
-
-/* Login */
 document.getElementById('btnLogin').addEventListener('click', async () => {
   msgEl.textContent = '';
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value.trim();
-
-  if (!email || !password) {
-    msgEl.textContent = "Please enter email and password";
-    return;
-  }
+  const email = (document.getElementById('email').value || '').trim();
+  const password = (document.getElementById('password').value || '').trim();
+  if (!email || !password) { msgEl.textContent = 'Please enter email and password'; return; }
 
   try {
-    const json = await fetchApi({ action:"loginCleaner", email, password });
-
-    if (!json.success) {
-      msgEl.textContent = json.message || "Login failed";
+    const json = await fetchApi({ action: 'loginCleaner', email, password });
+    if (!json || !json.success) {
+      msgEl.textContent = (json && json.message) ? json.message : 'Login failed';
       return;
     }
-
+    // persist token + cleaner info
     localStorage.setItem('homeglitz_cleaner_token', json.token);
     localStorage.setItem('homeglitz_cleaner_id', json.cleanerId || '');
     localStorage.setItem('homeglitz_cleaner_name', json.name || '');
 
+    // redirect to portal
     window.location.href = '/homeglitz/cleaner/portal.html';
-  } catch (e) {
-    msgEl.textContent = "Network error — try again";
+  } catch (err) {
+    console.error(err);
+    msgEl.textContent = 'Network error — check deployment';
   }
 });
 </script>
-
 </body>
 </html>
