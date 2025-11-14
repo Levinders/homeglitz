@@ -14,47 +14,78 @@
 
   html,body{
     height:100%;margin:0;background:#f5faff;
-    animation:fadeIn .6s ease;
+    animation:fadeIn .5s ease;
   }
 
   .wrap{
-    min-height:100vh;display:flex;
-    align-items:center;justify-content:center;padding:24px;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
   }
 
   .card{
-    width:100%;max-width:420px;background:var(--panel);
-    padding:28px;border-radius:16px;
+    width:100%;
+    max-width:420px;
+    background:var(--panel);
+    padding:28px;
+    border-radius:16px;
     box-shadow:0 8px 30px rgba(15,114,180,.06);
-    animation:slideUp .55s cubic-bezier(.2,.8,.25,1);
-    position:relative;
+    animation:slideUp .5s cubic-bezier(.23,.88,.33,1);
   }
 
-  .logo{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-  .logo img{height:44px;animation:fadeDown .6s ease}
+  .logo{
+    display:flex;align-items:center;gap:12px;
+    margin-bottom:18px;
+  }
 
-  h1{margin:0;font-size:20px;color:var(--primary)}
-  p.lead{margin:6px 0 18px;color:var(--muted);font-size:14px}
+  .logo img{height:44px}
 
-  .form-group{display:flex;flex-direction:column;margin-bottom:12px}
-  label{font-weight:600;color:var(--primary);font-size:13px;margin-bottom:6px}
+  h1{
+    margin:0;
+    font-size:20px;
+    color:var(--primary);
+    margin-top:-6px;
+  }
 
-  /* Password wrapper */
+  .lead{
+    margin:5px 0 16px;
+    color:var(--muted);
+    font-size:14px;
+  }
+
+  .form-group{
+    display:flex;
+    flex-direction:column;
+    margin-bottom:14px;
+  }
+
+  label{
+    font-weight:600;
+    color:var(--primary);
+    font-size:13px;
+    margin-bottom:6px;
+  }
+
   .input-wrap{
     position:relative;
   }
 
   input{
-    padding:12px;border-radius:10px;border:1px solid #e6eef8;font-size:14px;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #e6eef8;
+    font-size:14px;
     transition:border .2s, box-shadow .2s;
   }
+
   input:focus{
     outline:none;
     border-color:var(--primary);
     box-shadow:0 0 0 3px rgba(15,114,180,.18);
   }
 
-  /* Show/Hide Icon */
   .toggle-pass{
     position:absolute;
     right:12px;
@@ -63,87 +94,128 @@
     cursor:pointer;
     color:#7d8b99;
     font-size:14px;
-    transition:color .2s;
   }
+
   .toggle-pass:hover{color:var(--primary)}
 
   button.primary{
-    width:100%;padding:12px;border-radius:10px;border:none;
-    background:var(--primary);color:#fff;font-weight:700;
-    transition:transform .15s, box-shadow .2s;
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+    background:var(--primary);
+    color:#fff;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    transition:transform .12s ease;
   }
+
   button.primary:active{
     transform:scale(.97);
   }
 
-  .inline-msg{margin-top:12px;color:#c0392b;font-size:13px;min-height:18px}
-
-  .small-link{
-    display:block;margin-top:12px;text-align:center;
-    color:var(--muted);font-size:13px;
+  .spinner{
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,0.35);
+    border-top-color:#fff;
+    animation:spin .6s linear infinite;
   }
 
-  @media (max-width:420px){
-    .card{padding:18px}
+  .inline-msg{
+    margin-top:14px;
+    color:#c0392b;
+    font-size:13px;
+    min-height:18px;
+    text-align:center;
+  }
+
+  .shake{
+    animation:shake .35s cubic-bezier(.36,.07,.19,.97);
+  }
+
+  .small-link{
+    display:block;
+    margin-top:14px;
+    text-align:center;
+    color:var(--muted);
+    font-size:13px;
   }
 
   /* Animations */
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-  @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
-  @keyframes fadeDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
 
+  @keyframes shake{
+    10%, 90% {transform:translateX(-2px);}
+    20%, 80% {transform:translateX(4px);}
+    30%, 50%, 70% {transform:translateX(-6px);}
+    40%, 60% {transform:translateX(6px);}
+  }
+
+  @media (max-width:420px){
+    .card{padding:20px}
+  }
 </style>
 </head>
 
 <body>
   <div class="wrap">
-    <div class="card" role="main">
+    <div class="card" role="main" id="cardBox">
 
       <div class="logo">
-        <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png" alt="HomeGlitz">
+        <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png">
         <div>
           <h1><br>Cleaner Sign in</h1>
+          <div class="lead">Enter your cleaner credentials</div>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="email">Email</label>
-        <input id="email" type="email" autocomplete="username" />
+        <label>Email</label>
+        <input id="email" type="email" autocomplete="username"/>
       </div>
 
       <div class="form-group">
-        <label for="password">Password</label>
-
+        <label>Password</label>
         <div class="input-wrap">
-          <input id="password" type="password" autocomplete="current-password" />
+          <input id="password" type="password" autocomplete="current-password"/>
           <i class="fa-solid fa-eye toggle-pass" id="togglePass"></i>
         </div>
-
       </div>
 
-      <button class="primary" id="btnLogin">Sign in</button>
+      <button class="primary" id="btnLogin">
+        Sign in
+      </button>
 
       <div class="inline-msg" id="msg"></div>
 
       <a class="small-link" href="https://levinders.github.io/portfolio">© Raphael Levinders</a>
+
     </div>
   </div>
 
 <script>
 const PROXY_BASE = "https://homeglitz.raphaellevinders.workers.dev/";
+const btnLogin = document.getElementById("btnLogin");
+const msgEl = document.getElementById("msg");
+const cardBox = document.getElementById("cardBox");
 
+/* Fetch API wrapper */
 async function fetchApi(payload) {
   const res = await fetch(PROXY_BASE, {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(payload)
+    method:"POST",
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
   });
   const text = await res.text();
-  try { return JSON.parse(text); }
-  catch(e) { throw new Error('Invalid JSON response from server'); }
+  return JSON.parse(text);
 }
-
-const msgEl = document.getElementById('msg');
 
 /* ======================
    Show / Hide Password
@@ -160,32 +232,45 @@ document.getElementById("togglePass").addEventListener("click", () => {
 /* ======================
    LOGIN
    ====================== */
-document.getElementById('btnLogin').addEventListener('click', async () => {
+btnLogin.addEventListener("click", async () => {
   msgEl.textContent = '';
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value.trim();
+  cardBox.classList.remove("shake");
 
-  if (!email || !password) {
-    msgEl.textContent = 'Please enter email and password';
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!email || !password){
+    msgEl.textContent = "Please enter email and password";
+    cardBox.classList.add("shake");
     return;
   }
 
-  try {
-    const json = await fetchApi({ action:'loginCleaner', email, password });
+  // show loading spinner
+  btnLogin.innerHTML = `Signing in <span class="spinner"></span>`;
+  btnLogin.disabled = true;
 
-    if (!json || !json.success) {
-      msgEl.textContent = json.message || 'Login failed';
+  try {
+    const json = await fetchApi({ action:"loginCleaner", email, password });
+
+    if (!json || !json.success){
+      msgEl.textContent = json.message || "Login failed";
+      cardBox.classList.add("shake");
       return;
     }
 
-    localStorage.setItem('homeglitz_cleaner_token', json.token);
-    localStorage.setItem('homeglitz_cleaner_id', json.cleanerId || '');
-    localStorage.setItem('homeglitz_cleaner_name', json.name || '');
+    localStorage.setItem("homeglitz_cleaner_token", json.token);
+    localStorage.setItem("homeglitz_cleaner_id", json.cleanerId || "");
+    localStorage.setItem("homeglitz_cleaner_name", json.name || "");
 
-    window.location.href = '/homeglitz/cleaner/portal.html';
-  } 
-  catch (err) {
-    msgEl.textContent = 'Network error — check deployment';
+    window.location.href = "/homeglitz/cleaner/portal.html";
+  }
+  catch(e){
+    msgEl.textContent = "Network error — check deployment";
+    cardBox.classList.add("shake");
+  }
+  finally {
+    btnLogin.innerHTML = "Sign in";
+    btnLogin.disabled = false;
   }
 });
 </script>
