@@ -50,7 +50,7 @@
 
       <button class="primary" id="btnLogin">Sign in</button>
       <div class="inline-msg" id="msg"></div>
-      <a class="small-link" href="/homeglitz/cleaner-portal.html">I already have a token</a>
+      <a class="small-link" href="/homeglitz/cleaner/portal.html">I already have a token</a>
       <div class="center-small">Hosted by HomeGlitz</div>
     </div>
   </div>
@@ -98,7 +98,7 @@ document.getElementById('btnLogin').addEventListener('click', async () => {
     localStorage.setItem('homeglitz_cleaner_name', json.name || '');
 
     // redirect to portal
-    window.location.href = '/homeglitz/cleaner-portal.html';
+    window.location.href = '/homeglitz/cleaner/portal.html';
   } catch (err) {
     console.error(err);
     msgEl.textContent = 'Network error — check deployment';
