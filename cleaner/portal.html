@@ -497,47 +497,94 @@
 </main>
 
 <!-- Drawer -->
-<aside id="drawer" class="drawer" role="dialog" aria-hidden="true" aria-labelledby="dwBookingId">
+  <aside id="drawer" class="drawer" role="dialog" aria-hidden="true" aria-labelledby="dwBookingId">
+
+  <!-- Header -->
   <div class="head">
-    <div>
+    <div style="display:flex; flex-direction:column;">
       <strong id="dwBookingId">Booking</strong>
-      <div id="dwPropName" style="font-size:13px;color:var(--muted)"></div>
-    </div>
-    <div><button id="btnCloseDrawer" style="background:none;border:none;font-size:18px;color:var(--muted)"><i class="fa-solid fa-xmark"></i></button></div>
-  </div>
-  <div class="body">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-      <div><label style="font-weight:700;color:var(--primary)">Cleaner</label><div id="dwCleaner"></div></div>
-      <div><label style="font-weight:700;color:var(--primary)">Date</label><div id="dwDate"></div></div>
+
+      <div id="dwPropName" 
+           style="font-size:14px; color:var(--muted); margin-top:2px;">
+      </div>
     </div>
 
-    <div style="margin-bottom:10px">
-      <label style="font-weight:700;color:var(--primary)">Status</label>
-      <div class="status-row" aria-hidden="false">
+    <button id="btnCloseDrawer"
+            style="background:none;border:none;font-size:22px;color:var(--muted);padding:6px 8px;">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="body">
+
+    <!-- GRID: Cleaner + Date -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:18px;">
+      <div>
+        <label>Cleaner</label>
+        <div id="dwCleaner" style="font-weight:600;"></div>
+      </div>
+
+      <div>
+        <label>Date</label>
+        <div id="dwDate" style="font-weight:600;"></div>
+      </div>
+    </div>
+
+    <!-- STATUS SECTION -->
+    <div style="margin-bottom:20px;">
+      <label>Status</label>
+
+      <div class="status-row" style="margin-top:10px;">
         <button class="status-badge s-pending" data-status="Pending">Pending</button>
-        <button class="status-badge s-underway" data-status="Clean Underway">Clean Underway</button>
+        <button class="status-badge s-underway" data-status="Clean Underway">Underway</button>
         <button class="status-badge s-completed" data-status="Completed">Completed</button>
         <button class="status-badge s-cancelled" data-status="Cancelled">Cancelled</button>
       </div>
     </div>
 
-    <div style="margin-bottom:12px">
-      <label style="font-weight:700;color:var(--primary)">Notes</label>
-      <textarea id="dwNotes" rows="3" style="width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef8"></textarea>
+    <!-- NOTES SECTION -->
+    <div style="margin-bottom:22px;">
+      <label>Notes</label>
+      <textarea id="dwNotes"
+        rows="4"
+        style="width:100%;padding:12px;border-radius:10px;border:1px solid #e6eef8;font-size:14px;"></textarea>
     </div>
 
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-      <label style="font-weight:700;color:var(--primary);min-width:110px">Payment amount</label>
-      <input id="dwRequestAmount" placeholder="Amount (ex GST)" style="padding:8px;border-radius:8px;border:1px solid #e6eef8;width:140px" inputmode="numeric" />
-      <div style="font-size:13px;color:var(--muted)">Only allowed when job is <strong>Completed</strong></div>
+    <!-- PAYMENT SECTION -->
+    <div style="
+      background:#f9fbff;
+      padding:14px;
+      border:1px solid #e6eef8;
+      border-radius:12px;
+      margin-bottom:20px;">
+      <label style="display:block;margin-bottom:6px;">Payment amount</label>
+
+      <div style="display:flex; align-items:center; gap:10px;">
+        <input id="dwRequestAmount"
+          placeholder="Amount (ex GST)"
+          inputmode="numeric"
+          style="padding:10px;
+                 border-radius:10px;
+                 border:1px solid #dfe7f2;
+                 width:150px;
+                 font-size:14px;">
+        <div style="font-size:13px;color:var(--muted);line-height:1.3;">
+          Allowed only when<br><strong>job is Completed</strong>
+        </div>
+      </div>
     </div>
+
   </div>
 
-  <div class="footer">
-    <button class="btn ghost" id="btnSaveStatus">Save status</button>
+  <!-- Footer -->
+  <div class="footer" style="padding:14px; border-top:1px solid #eef4fc;">
+    <button class="btn ghost" id="btnSaveStatus">Save Status</button>
     <button class="btn btn-primary" id="btnRequestPayment">Request Payment</button>
   </div>
+
 </aside>
+
 
 <!-- Mobile bottom nav -->
 <nav class="bottom-nav" role="navigation" aria-label="Primary">
@@ -615,7 +662,7 @@ let token = localStorage.getItem(tokenKey);
 /* Redirect to login helper */
 function redirectToLogin() {
   localStorage.removeItem(tokenKey);
-  window.location.href = '/homeglitz/cleaner-login.html';
+  window.location.href = '/homeglitz/cleaner/login.html';
 }
 
 /* ---------------------------
@@ -917,7 +964,7 @@ btnLogout.addEventListener('click', () => {
   localStorage.removeItem(tokenKey);
   localStorage.removeItem('homeglitz_cleaner_id');
   localStorage.removeItem('homeglitz_cleaner_name');
-  window.location.href = '/homeglitz/cleaner-login.html';
+  window.location.href = '/homeglitz/cleaner/login.html';
 });
 
 /* ---------------------------
