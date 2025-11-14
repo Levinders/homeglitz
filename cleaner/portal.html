@@ -409,9 +409,26 @@
   }
 }
 
+  /* ============================
+   YOUTUBE-STYLE TOP PROGRESS BAR
+   ============================ */
+#topProgressBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: var(--primary);
+  z-index: 9999;
+  transition: width 0.35s ease;
+}
+
 </style>
 </head>
 <body>
+
+  <div id="topProgressBar"></div>
+
 
 <!-- Header -->
 <header class="header">
@@ -686,6 +703,7 @@ async function fetchApi(payload) {
    Load tasks
    --------------------------- */
 async function loadTasks() {
+  progressStart(); // 🔥 start progress bar
   inlineMsg.textContent = '';
   try {
     const json = await fetchApi({ action: 'getCleanerTasks', token });
@@ -705,6 +723,9 @@ async function loadTasks() {
     console.error(err);
     inlineMsg.textContent = 'Network error';
     renderJobs([]);
+  }
+  finally {
+      progressFinish(); // 🔥 finish bar
   }
 }
 
@@ -975,9 +996,31 @@ function formatDateCell(v){
 }
 function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-/* ---------------------------
-   Boot / session checks
-   --------------------------- */
+/* ===============================
+   PROGRESS BAR CONTROLS
+   =============================== */
+function progressStart() {
+  const bar = document.getElementById("topProgressBar");
+  bar.style.width = "0%";
+  bar.style.display = "block";
+
+  // Animate like YouTube
+  setTimeout(() => (bar.style.width = "30%"), 100);
+  setTimeout(() => (bar.style.width = "55%"), 300);
+  setTimeout(() => (bar.style.width = "75%"), 600);
+}
+
+function progressFinish() {
+  const bar = document.getElementById("topProgressBar");
+  bar.style.width = "100%";
+
+  // Hide after animation
+  setTimeout(() => {
+    bar.style.display = "none";
+    bar.style.width = "0%";
+  }, 500);
+}
+
 /* ---------------------------
    Boot / session checks
    --------------------------- */
@@ -1003,6 +1046,17 @@ function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;'
     document.getElementById('btnRefresh').click();
   }, 150); 
 })();
+
+  /* ============================
+   AUTO-REFRESH EVERY X SECONDS
+   ============================ */
+
+const AUTO_REFRESH_INTERVAL = 2000; // 5 seconds
+
+setInterval(() => {
+  document.getElementById("btnRefresh").click();
+}, AUTO_REFRESH_INTERVAL);
+
 
 </script>
 </body>
