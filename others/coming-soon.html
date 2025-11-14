@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HomeGlitz — Page Not Found</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+
+<style>
+  :root{
+    --primary:#0F72B4;
+    --muted:#6c757d;
+    --panel:#ffffff;
+  }
+  *{box-sizing:border-box;font-family:'Montserrat',sans-serif;}
+  body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#f5faff;
+    color:#142139;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{
+    text-align:center;
+    max-width:440px;
+    padding:24px;
+    background:var(--panel);
+    border-radius:16px;
+    border:1px solid #eaf2fb;
+    box-shadow:0 14px 40px rgba(12,60,120,0.08);
+    animation:fadeUp .55s ease-out;
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(20px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  .logo{
+    height:56px;
+    margin-bottom:10px;
+  }
+
+  h1{
+    margin:10px 0;
+    font-size:28px;
+    font-weight:700;
+    color:var(--primary);
+  }
+
+  p{
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.6;
+    margin-top:8px;
+  }
+
+  .btn{
+    margin-top:22px;
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+    background:var(--primary);
+    color:#fff;
+    padding:10px 20px;
+    border-radius:10px;
+    font-weight:700;
+    text-decoration:none;
+    box-shadow:0 4px 14px rgba(0,0,0,0.06);
+  }
+
+  .btn i{
+    font-size:14px;
+  }
+
+  /* mobile tweaks */
+  @media(max-width:480px){
+    .wrap{ margin:0 16px; padding:22px; }
+    h1{ font-size:24px; }
+    p{ font-size:14px; }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+  <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png" class="logo" alt="HomeGlitz Logo">
+
+  <h1>Page Not Found</h1>
+
+  <p>
+    The page you're looking for doesn't exist yet — or we're still working on it.<br>
+    Please check back soon.
+  </p>
+
+  <a href="/homeglitz/" class="btn">
+    <i class="fa-solid fa-house"></i> Back to Home
+  </a>
+</div>
+
+</body>
+</html>
