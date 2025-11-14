@@ -341,7 +341,6 @@ function renderMobile(list){
 return `
   <div class="mp-card">
     <div class="mp-top">${p["Property Name"] || "Property"}</div>
-
     <div class="mp-row"><span class="mp-label">Amount:</span> $${p.Amount}</div>
     <div class="mp-row"><span class="mp-label">Status:</span> <span class="badge ${cls}">${p.Status}</span></div>
     <div class="mp-row"><span class="mp-label">Requested:</span> ${new Date(p["Requested At"]).toLocaleDateString()}</div>
