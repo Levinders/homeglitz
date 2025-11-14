@@ -3,232 +3,371 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>HomeGlitz — Payments</title>
+<title>HomeGlitz — Cleaner Payments</title>
 
 <link rel="icon" href="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/64%C3%9764pxlogo.png"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-  :root { 
-    --primary:#0F72B4;
-    --panel:#fff;
-    --muted:#6c757d;
-    --success:#16a34a;
-    --danger:#ef4444;
-  }
-  *{box-sizing:border-box;font-family:'Montserrat',sans-serif}
-  html,body{margin:0;background:#f5faff;color:#222}
+/* -------------------------------------------
+   THEME VARIABLES (same as cleaner-portal)
+-------------------------------------------- */
+:root{
+  --primary:#0F72B4;
+  --panel:#ffffff;
+  --muted:#6c757d;
+  --success:#16a34a;
+  --danger:#ef4444;
+  --radius:14px;
+  --shadow:0 10px 30px rgba(12,60,120,.06);
+  --max-w:1080px;
+}
 
-  header.top{
-    height:60px; display:flex; align-items:center;
-    justify-content:space-between; background:#fff;
-    padding:0 16px; border-bottom:1px solid #e6eef8;
-  }
-  header .brand{display:flex;align-items:center;gap:10px}
-  header .brand img{height:36px}
+*{box-sizing:border-box;font-family:'Montserrat',sans-serif;}
+html,body{margin:0;height:100%;background:#f5faff;color:#111;}
 
-  .wrap{display:flex;min-height:calc(100vh - 60px)}
+/* -------------------------------------------
+   FIXED HEADER (same style as portal)
+-------------------------------------------- */
+.header{
+  position:sticky;top:0;z-index:60;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;background:#fff;border-bottom:1px solid #eef6fb;
+  box-shadow:0 2px 10px rgba(12,60,120,0.02);
+}
+.header .brand{display:flex;align-items:center;gap:12px;color:var(--primary);font-weight:800}
+.header img{height:38px;border-radius:8px}
+.header-right{display:flex;align-items:center;gap:12px}
 
-  nav.side{
-    width:220px;background:#fff;border-right:1px solid #e6eef8;
-    padding:18px;display:flex;flex-direction:column;gap:12px;
-  }
-  nav.side .profile{display:flex;gap:12px;align-items:center}
-  nav.side .avatar{
-    width:44px;height:44px;border-radius:10px;background:#f0f6fb;
-    display:flex;align-items:center;justify-content:center;
-    font-weight:700;color:var(--primary);
-  }
-  nav.side a{
-    padding:10px;border-radius:10px;text-decoration:none;
-    color:var(--muted);display:flex;gap:10px;font-weight:600;
-  }
-  nav.side a.active{
-    background:#f8fbff;color:var(--primary);
-    box-shadow:0 6px 18px rgba(15,114,180,.06);
-  }
+/* -------------------------------------------
+   LAYOUT WRAPPER
+-------------------------------------------- */
+.page {max-width:var(--max-w);margin:20px auto;padding:0 16px}
+.grid {display:grid;grid-template-columns:1fr 320px;gap:18px}
+@media(max-width:980px){.grid{grid-template-columns:1fr}.side{display:none}}
 
-  main.content{flex:1;padding:18px;overflow:auto}
+/* -------------------------------------------
+   SIDEBAR (desktop only)
+-------------------------------------------- */
+.side{
+  background:#fff;border:1px solid #eaf2fb;border-radius:12px;
+  padding:16px;height:fit-content;box-shadow:var(--shadow);
+}
+.profile{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.avatar{
+  width:42px;height:42px;border-radius:10px;background:#f0f6fb;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--primary);font-weight:700;
+}
+.side a{
+  display:block;padding:10px;border-radius:10px;margin-bottom:8px;
+  text-decoration:none;font-weight:700;color:var(--muted);
+}
+.side a.active{
+  background:#f8fbff;color:var(--primary);
+  box-shadow:0 6px 18px rgba(15,114,180,.04);
+}
 
-  .card{
-    background:#fff;padding:20px;border-radius:14px;
-    border:1px solid #eaf2fb;
+/* -------------------------------------------
+   CARD AND CONTENT
+-------------------------------------------- */
+.card{
+  background:#fff;border-radius:14px;padding:20px;
+  border:1px solid #eaf2fb;box-shadow:var(--shadow);
+}
+
+h2{margin:0;color:var(--primary);font-size:20px}
+.section-title{
+  margin-top:24px;margin-bottom:10px;color:var(--primary);
+  font-weight:700;font-size:17px;
+}
+
+/* SUMMARY BOXES */
+.summary-box{
+  display:grid;gap:14px;grid-template-columns:1fr 1fr;margin-top:14px;
+}
+.sum{
+  background:#f8fbff;border:1px solid #e6eef8;
+  border-radius:12px;padding:16px;
+}
+.sum .value{font-size:22px;font-weight:700}
+.sum .label{font-size:13px;color:var(--muted)}
+
+@media(max-width:650px){
+  .summary-box{grid-template-columns:1fr}
+}
+
+/* -------------------------------------------
+   TABLE + MOBILE CARDS
+-------------------------------------------- */
+.table-wrap{overflow:auto;margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{
+  padding:12px;border-bottom:1px solid #eef2f7;
+  text-align:left;
+}
+th{background:#f9fbfd;color:var(--primary);font-weight:800}
+tr:hover td{background:#fbfdff}
+
+/* BADGE COLORS */
+.badge{
+  padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700;
+}
+.b-pending{background:#fff7df;color:#b27a00}
+.b-approved{background:#eaffec;color:#137c39}
+.b-paid{background:#eaf4ff;color:#0a5ba8}
+
+/* MOBILE – hide table, show cards */
+@media(max-width:650px){
+  table{display:none}
+  .mobile-list{display:block;margin-top:12px}
+
+  .mp-card{
+    background:#fff;border-radius:14px;
+    padding:16px;margin-bottom:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,.04);
+    border:1px solid #eef2f7;
   }
+  .mp-top{font-weight:700;color:var(--primary);margin-bottom:6px}
+  .mp-row{display:flex;justify-content:space-between;margin:4px 0;font-size:14px}
+  .mp-label{color:var(--muted)}
+}
+@media(min-width:651px){.mobile-list{display:none}}
 
-  h2{margin:0;color:var(--primary);font-size:20px}
+/* BOTTOM NAV (mobile) */
+.bottom-nav{
+  position:fixed;left:0;right:0;bottom:0;
+  background:#fff;border-top:1px solid #eef6ff;
+  display:flex;justify-content:space-around;z-index:80;
+  padding:8px 6px;
+}
+.bottom-nav a{
+  flex:1;text-align:center;text-decoration:none;font-weight:700;
+  color:var(--muted);padding:6px;
+}
+.bottom-nav a.active{color:var(--primary)}
 
-  .summary-box{
-    display:grid;gap:14px;grid-template-columns:1fr 1fr;
-    margin-top:14px;
-  }
-  .sum{
-    background:#f8fbff;border-radius:12px;padding:16px;
-    border:1px solid #e6eef8;
-  }
-  .sum .value{font-size:22px;font-weight:700}
-  .sum .label{font-size:13px;color:var(--muted)}
-
-  table{width:100%;border-collapse:collapse;margin-top:20px;font-size:14px}
-  th,td{border-bottom:1px solid #eef2f7;padding:10px;text-align:left}
-  tr:hover td{background:#fbfdff}
-
-  .badge{
-    padding:4px 8px;border-radius:99px;font-size:12px;font-weight:700;
-  }
-  .b-pending{background:#fff9da;color:#b07800}
-  .b-approved{background:#eaffec;color:#0e7c33}
-  .b-paid{background:#eaf4ff;color:#0a5ba8}
-
-  @media(max-width:880px){
-    nav.side{display:none}
-    .wrap{flex-direction:column}
-    header.top{padding:0 12px}
-    .summary-box{grid-template-columns:1fr}
-  }
+/* TOP PROGRESS BAR */
+#topProgressBar{
+  position:fixed;top:0;left:0;height:3px;width:0%;
+  background:var(--primary);z-index:9999;transition:width .35s ease;
+}
 </style>
 </head>
 
 <body>
-<header class="top">
+
+<div id="topProgressBar"></div>
+
+<!-- HEADER -->
+<header class="header">
   <div class="brand">
-    <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/64%C3%9764pxlogo.png">
-    <strong>HomeGlitz</strong>
+    <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png">
   </div>
-  <div>
-    <span id="cleanerNameDisplay" style="margin-right:12px;color:var(--muted)"></span>
-    <button id="btnLogout" style="padding:8px 12px;border-radius:8px;border:none;background:var(--primary);color:#fff;font-weight:700">Logout</button>
+
+  <div class="header-right">
+    <span id="cleanerNameTop" style="font-size:14px;color:var(--muted)"></span>
+    <button class="btn ghost" id="btnLogout" style="border:1px solid #e6eef8;padding:8px 10px;border-radius:10px;">
+      <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
   </div>
 </header>
 
-<div class="wrap">
+<!-- PAGE -->
+<main class="page">
+  <div class="grid">
 
-  <!-- SIDE NAV -->
-  <nav class="side">
-    <div class="profile">
-      <div class="avatar" id="avatar">CL</div>
-      <div>
-        <div id="navName" class="name" style="font-weight:700"></div>
-        <div id="navEmail" style="font-size:13px;color:var(--muted)"></div>
-      </div>
-    </div>
+    <!-- MAIN CONTENT -->
+    <section>
+      <div class="card">
 
-    <a href="/cleaner-portal.html"><i class="fa-solid fa-list-check"></i> My Jobs</a>
-    <a href="/cleaner-payments.html" class="active"><i class="fa-solid fa-wallet"></i> Payments</a>
-    <a href="/cleaner-account.html"><i class="fa-solid fa-gear"></i> Account</a>
-  </nav>
+        <h2>Payments</h2>
 
-  <main class="content">
-    <div class="card">
-
-      <h2>Payments</h2>
-
-      <div class="summary-box">
-        <div class="sum">
-          <div class="value" id="totalEarnings">$0</div>
-          <div class="label">Total Earnings</div>
+        <div class="summary-box">
+          <div class="sum">
+            <div class="value" id="totalEarnings">$0</div>
+            <div class="label">Total Earnings</div>
+          </div>
+          <div class="sum">
+            <div class="value" id="totalPaid">$0</div>
+            <div class="label">Paid Out</div>
+          </div>
         </div>
-        <div class="sum">
-          <div class="value" id="totalPaid">$0</div>
-          <div class="label">Amount Paid</div>
+
+        <div class="section-title">Payment Requests</div>
+
+        <!-- DESKTOP TABLE -->
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Requested</th>
+              </tr>
+            </thead>
+            <tbody id="paymentsBody">
+              <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- MOBILE CARDS -->
+        <div class="mobile-list" id="paymentsMobile"></div>
+
+      </div>
+    </section>
+
+    <!-- SIDEBAR -->
+    <aside class="side">
+      <div class="profile">
+        <div class="avatar" id="sideAvatar">CL</div>
+        <div>
+          <div id="sideName" style="font-weight:800">Cleaner</div>
+          <div id="sideEmail" style="font-size:13px;color:var(--muted)"></div>
         </div>
       </div>
 
-      <h3 style="margin-top:24px;margin-bottom:10px;color:var(--primary)">Payment Requests</h3>
+      <nav>
+        <a href="/homeglitz/cleaner/portal.html"><i class="fa-solid fa-list-check"></i> My Jobs</a>
+        <a href="/homeglitz/cleaner/payments.html" class="active"><i class="fa-solid fa-wallet"></i> Payments</a>
+        <a href="/homeglitz/others/coming-soon.html"><i class="fa-solid fa-gear"></i> Account</a>
+      </nav>
+    </aside>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Request ID</th>
-            <th>Booking</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Requested</th>
-          </tr>
-        </thead>
-        <tbody id="paymentsBody">
-          <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">Loading…</td></tr>
-        </tbody>
-      </table>
+  </div>
+</main>
 
-    </div>
-  </main>
-
-</div>
+<!-- MOBILE NAV -->
+<nav class="bottom-nav">
+  <a href="/homeglitz/cleaner/portal.html"><i class="fa-solid fa-list-check"></i><div style="font-size:12px">Jobs</div></a>
+  <a href="#" class="active"><i class="fa-solid fa-wallet"></i><div style="font-size:12px">Payments</div></a>
+  <a href="/homeglitz/others/coming-soon.html"><i class="fa-solid fa-gear"></i><div style="font-size:12px">Account</div></a>
+</nav>
 
 <script>
 const API = "https://homeglitz.raphaellevinders.workers.dev/";
 
-const token  = localStorage.getItem("homeglitz_cleaner_token");
-const name   = localStorage.getItem("homeglitz_cleaner_name");
-const email  = localStorage.getItem("homeglitz_cleaner_email") || "";
-const cleanerId = localStorage.getItem("homeglitz_cleaner_id");
+let token      = localStorage.getItem("homeglitz_cleaner_token");
+let cleanerId  = localStorage.getItem("homeglitz_cleaner_id");
+let name       = localStorage.getItem("homeglitz_cleaner_name");
+let email      = localStorage.getItem("homeglitz_cleaner_email");
 
-if (!token) location.href = "/cleaner-login.html";
+if(!token || !cleanerId){
+  location.href = "/homeglitz/cleaner/login.html";
+}
 
-document.getElementById("navName").textContent = name || "";
-document.getElementById("navEmail").textContent = email || "";
-document.getElementById("avatar").textContent = (name||"CL").split(" ").map(s=>s[0]).join("").toUpperCase();
-document.getElementById("cleanerNameDisplay").textContent = name||"";
+/* Fill UI */
+document.getElementById("cleanerNameTop").textContent = name || "";
+document.getElementById("sideName").textContent = name || "";
+document.getElementById("sideEmail").textContent = email || "";
+document.getElementById("sideAvatar").textContent = (name||"CL").split(" ").map(s=>s[0]).join("").toUpperCase();
 
+/* Logout */
 document.getElementById("btnLogout").onclick = () => {
   localStorage.clear();
-  location.href="/cleaner-login.html";
+  location.href="/homeglitz/cleaner/login.html";
 };
+
+/* PROGRESS BAR */
+function progressStart(){
+  const bar = document.getElementById("topProgressBar");
+  bar.style.width="0%";
+  bar.style.display="block";
+  setTimeout(()=>bar.style.width="40%",80);
+}
+function progressFinish(){
+  const bar = document.getElementById("topProgressBar");
+  bar.style.width="100%";
+  setTimeout(()=>{bar.style.display="none";bar.style.width="0%"},450);
+}
 
 /* LOAD PAYMENTS */
 async function loadPayments(){
-  const body = { action:"getCleanerPayments", token };
-
+  progressStart();
   try{
     const res = await fetch(API, {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
-      body:JSON.stringify(body)
+      body:JSON.stringify({ action:"getCleanerPayments", token })
     });
 
     const json = await res.json();
-    if (!json.success) {
+    progressFinish();
+
+    if(!json.success){
       alert(json.message || "Unable to load payments");
       return;
     }
 
-    // Update totals
     document.getElementById("totalEarnings").textContent = "$" + (json.totalEarnings||0);
     document.getElementById("totalPaid").textContent     = "$" + (json.totalPaid||0);
 
-    // Render table
-    const tbody = document.getElementById("paymentsBody");
-    if (!json.payments || json.payments.length===0){
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">No payment requests</td></tr>`;
-      return;
-    }
+    const list = json.payments || [];
+    renderDesktop(list);
+    renderMobile(list);
 
-    tbody.innerHTML = json.payments.map(p=>{
-      const statusClass = 
-        p.Status === "Pending" ? "b-pending" :
-        p.Status === "Approved" ? "b-approved" :
-        "b-paid";
-
-      return `
-        <tr>
-          <td>${p["Request ID"]}</td>
-          <td>${p["Booking ID"]}</td>
-          <td>$${p.Amount}</td>
-          <td><span class="badge ${statusClass}">${p.Status}</span></td>
-          <td>${new Date(p["Requested At"]).toLocaleDateString()}</td>
-        </tr>
-      `;
-    }).join("");
-
-  }catch(err){
-    console.error(err);
+  }catch(e){
+    progressFinish();
+    console.error(e);
     alert("Network error");
   }
 }
 
-loadPayments();
-</script>
+function renderDesktop(list){
+  const tbody = document.getElementById("paymentsBody");
+  if(list.length===0){
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px">No payment requests</td></tr>`;
+    return;
+  }
 
+  tbody.innerHTML = list.map(p=>{
+    const cls = p.Status==="Pending" ? "b-pending" :
+                p.Status==="Approved" ? "b-approved" :
+                "b-paid";
+
+    return `
+      <tr>
+        <td>${p["Property Name"] || "—"}</td>
+        <td>$${p.Amount}</td>
+        <td><span class="badge ${cls}">${p.Status}</span></td>
+        <td>${new Date(p["Requested At"]).toLocaleDateString()}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function renderMobile(list){
+  const mobile = document.getElementById("paymentsMobile");
+  if(list.length===0){
+    mobile.innerHTML = `<div style="padding:18px;text-align:center;color:var(--muted)">No payment requests</div>`;
+    return;
+  }
+
+  mobile.innerHTML = list.map(p=>{
+    const cls = p.Status==="Pending" ? "b-pending" :
+                p.Status==="Approved" ? "b-approved" :
+                "b-paid";
+
+    return `
+      <div class="mp-card">
+        <div class="mp-top">${p["Property Name"] || "Property"}</div>
+
+        <div class="mp-row"><span class="mp-label">Amount:</span> $${p.Amount}</div>
+        <div class="mp-row"><span class="mp-label">Status:</span> <span class="badge ${cls}">${p.Status}</span></div>
+        <div class="mp-row"><span class="mp-label">Requested:</span> ${new Date(p["Requested At"]).toLocaleDateString()}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+loadPayments();
+
+/* AUTO-REFRESH EVERY 20s */
+setInterval(loadPayments, 20000);
+
+</script>
 </body>
 </html>
