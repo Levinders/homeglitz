@@ -7,29 +7,98 @@
 <link rel="icon" href="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/64%C3%9764pxlogo.png"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
   :root{--primary:#0F72B4;--panel:#fff;--muted:#6c757d;--radius:12px}
   *{box-sizing:border-box;font-family:'Montserrat',sans-serif}
-  html,body{height:100%;margin:0;background:#f5faff}
-  .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-  .card{width:100%;max-width:420px;background:var(--panel);padding:28px;border-radius:16px;box-shadow:0 8px 30px rgba(15,114,180,.06)}
+
+  html,body{
+    height:100%;margin:0;background:#f5faff;
+    animation:fadeIn .6s ease;
+  }
+
+  .wrap{
+    min-height:100vh;display:flex;
+    align-items:center;justify-content:center;padding:24px;
+  }
+
+  .card{
+    width:100%;max-width:420px;background:var(--panel);
+    padding:28px;border-radius:16px;
+    box-shadow:0 8px 30px rgba(15,114,180,.06);
+    animation:slideUp .55s cubic-bezier(.2,.8,.25,1);
+    position:relative;
+  }
+
   .logo{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-  .logo img{height:44px}
+  .logo img{height:44px;animation:fadeDown .6s ease}
+
   h1{margin:0;font-size:20px;color:var(--primary)}
   p.lead{margin:6px 0 18px;color:var(--muted);font-size:14px}
+
   .form-group{display:flex;flex-direction:column;margin-bottom:12px}
   label{font-weight:600;color:var(--primary);font-size:13px;margin-bottom:6px}
-  input{padding:12px;border-radius:10px;border:1px solid #e6eef8;font-size:14px}
-  button.primary{width:100%;padding:12px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:700}
+
+  /* Password wrapper */
+  .input-wrap{
+    position:relative;
+  }
+
+  input{
+    padding:12px;border-radius:10px;border:1px solid #e6eef8;font-size:14px;
+    transition:border .2s, box-shadow .2s;
+  }
+  input:focus{
+    outline:none;
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(15,114,180,.18);
+  }
+
+  /* Show/Hide Icon */
+  .toggle-pass{
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    color:#7d8b99;
+    font-size:14px;
+    transition:color .2s;
+  }
+  .toggle-pass:hover{color:var(--primary)}
+
+  button.primary{
+    width:100%;padding:12px;border-radius:10px;border:none;
+    background:var(--primary);color:#fff;font-weight:700;
+    transition:transform .15s, box-shadow .2s;
+  }
+  button.primary:active{
+    transform:scale(.97);
+  }
+
   .inline-msg{margin-top:12px;color:#c0392b;font-size:13px;min-height:18px}
-  .small-link{display:block;margin-top:12px;text-align:center;color:var(--muted);font-size:13px}
-  .center-small { text-align:center; color:var(--muted); font-size:13px; margin-top:10px; }
-  @media (max-width:420px){.card{padding:18px}}
+
+  .small-link{
+    display:block;margin-top:12px;text-align:center;
+    color:var(--muted);font-size:13px;
+  }
+
+  @media (max-width:420px){
+    .card{padding:18px}
+  }
+
+  /* Animations */
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
 </style>
 </head>
+
 <body>
   <div class="wrap">
     <div class="card" role="main">
+
       <div class="logo">
         <img src="https://raw.githubusercontent.com/Levinders/homeglitz/refs/heads/main/mainlogog-removebg-preview.png" alt="HomeGlitz">
         <div>
@@ -45,64 +114,82 @@
 
       <div class="form-group">
         <label for="password">Password</label>
-        <input id="password" type="password" autocomplete="current-password" />
+
+        <div class="input-wrap">
+          <input id="password" type="password" autocomplete="current-password" />
+          <i class="fa-solid fa-eye toggle-pass" id="togglePass"></i>
+        </div>
+
       </div>
 
       <button class="primary" id="btnLogin">Sign in</button>
+
       <div class="inline-msg" id="msg"></div>
+
       <a class="small-link" href="https://levinders.github.io/portfolio">© Raphael Levinders</a>
     </div>
   </div>
 
 <script>
-/*
-  Uses your Cloudflare Worker proxy (Option 1). Update PROXY_BASE if you change worker domain.
-*/
 const PROXY_BASE = "https://homeglitz.raphaellevinders.workers.dev/";
 
-/* small helper: POST JSON to worker and return parsed JSON or throw */
 async function fetchApi(payload) {
-  try {
-    const res = await fetch(PROXY_BASE, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const text = await res.text();
-    // try parse json, else throw
-    try { return JSON.parse(text); } 
-    catch(e) { throw new Error('Invalid JSON response from server'); }
-  } catch (err) {
-    // bubble a friendly message
-    throw err;
-  }
+  const res = await fetch(PROXY_BASE, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  });
+  const text = await res.text();
+  try { return JSON.parse(text); }
+  catch(e) { throw new Error('Invalid JSON response from server'); }
 }
 
 const msgEl = document.getElementById('msg');
+
+/* ======================
+   Show / Hide Password
+   ====================== */
+document.getElementById("togglePass").addEventListener("click", () => {
+  const pw = document.getElementById("password");
+  const icon = document.getElementById("togglePass");
+  const hidden = pw.type === "password";
+
+  pw.type = hidden ? "text" : "password";
+  icon.className = hidden ? "fa-solid fa-eye-slash toggle-pass" : "fa-solid fa-eye toggle-pass";
+});
+
+/* ======================
+   LOGIN
+   ====================== */
 document.getElementById('btnLogin').addEventListener('click', async () => {
   msgEl.textContent = '';
-  const email = (document.getElementById('email').value || '').trim();
-  const password = (document.getElementById('password').value || '').trim();
-  if (!email || !password) { msgEl.textContent = 'Please enter email and password'; return; }
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+
+  if (!email || !password) {
+    msgEl.textContent = 'Please enter email and password';
+    return;
+  }
 
   try {
-    const json = await fetchApi({ action: 'loginCleaner', email, password });
+    const json = await fetchApi({ action:'loginCleaner', email, password });
+
     if (!json || !json.success) {
-      msgEl.textContent = (json && json.message) ? json.message : 'Login failed';
+      msgEl.textContent = json.message || 'Login failed';
       return;
     }
-    // persist token + cleaner info
+
     localStorage.setItem('homeglitz_cleaner_token', json.token);
     localStorage.setItem('homeglitz_cleaner_id', json.cleanerId || '');
     localStorage.setItem('homeglitz_cleaner_name', json.name || '');
 
-    // redirect to portal
     window.location.href = '/homeglitz/cleaner/portal.html';
-  } catch (err) {
-    console.error(err);
+  } 
+  catch (err) {
     msgEl.textContent = 'Network error — check deployment';
   }
 });
 </script>
+
 </body>
 </html>
