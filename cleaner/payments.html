@@ -342,12 +342,6 @@ async function loadPayments(){
 /* Store original */
 RAW_PAYMENTS = list;
 
-/* Populate property dropdown */
-const propSelect = document.getElementById("filterProperty");
-const props = [...new Set(list.map(p => p["Property Name"]).filter(Boolean))];
-
-propSelect.innerHTML = `<option value="all">All Properties</option>` +
-  props.map(p => `<option value="${p}">${p}</option>`).join("");
 
 /* Apply all filters and render UI */
 applyPaymentFilters();
